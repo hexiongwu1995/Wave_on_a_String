@@ -21,8 +21,6 @@
   v(1em)
 }
 
-
-
 #set par(spacing: 2em, leading: 1em, justify: true)
 
 #set heading(numbering: "1.1")
