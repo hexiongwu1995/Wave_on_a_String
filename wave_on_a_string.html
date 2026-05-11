@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>琴弦振动可视化 - 波的数学模型</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        canvas {
+            border: 2px solid #374151;
+            background: #f8fafc;
+            image-rendering: crisp-edges;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 py-8">
+    <div class="max-w-5xl mx-auto px-6">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-semibold text-gray-800">琴弦振动可视化</h1>
+            <p class="text-gray-600 mt-2">基于傅里叶级数的解析解 · 小振幅横波模型</p>
+        </div>
+
+        <!-- 参数控制面板 -->
+        <div class="bg-white rounded-2xl shadow p-8 mb-10">
+            <h3 class="font-medium text-gray-700 mb-6 text-lg">参数控制</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8">
+                <!-- L0 -->
+                <div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-gray-600">弦长 L₀ (m)</span>
+                        <span id="val-L0" class="font-mono text-blue-600 font-medium">1.00</span>
+                    </div>
+                    <input type="range" id="slider-L0" min="0.5" max="2.0" step="0.05" value="1.0"
+                        class="w-full accent-blue-600">
+                </div>
+
+                <!-- x0 -->
+                <div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-gray-600">拨弦位置 x₀ (m)</span>
+                        <span id="val-x0" class="font-mono text-blue-600 font-medium">0.40</span>
+                    </div>
+                    <input type="range" id="slider-x0" min="0.05" max="1.95" step="0.01" value="0.40"
+                        class="w-full accent-blue-600">
+                </div>
+
+                <!-- A -->
+                <div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-gray-600">初始振幅 A (m)</span>
+                        <span id="val-A" class="font-mono text-blue-600 font-medium">0.020</span>
+                    </div>
+                    <input type="range" id="slider-A" min="0.005" max="0.08" step="0.001" value="0.020"
+                        class="w-full accent-blue-600">
+                </div>
+
+                <!-- T0 -->
+                <div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-gray-600">张力 T₀ (N)</span>
+                        <span id="val-T0" class="font-mono text-blue-600 font-medium">80.0</span>
+                    </div>
+                    <input type="range" id="slider-T0" min="20" max="300" step="5" value="80"
+                        class="w-full accent-blue-600">
+                </div>
+
+                <!-- μ0 -->
+                <div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-gray-600">线密度 μ₀ (kg/m)</span>
+                        <span id="val-mu0" class="font-mono text-blue-600 font-medium">0.0055</span>
+                    </div>
+                    <input type="range" id="slider-mu0" min="0.001" max="0.02" step="0.0001" value="0.0055"
+                        class="w-full accent-blue-600">
+                </div>
+
+                <!-- N（新增） -->
+                <div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-gray-600">模态项数 N</span>
+                        <span id="val-N" class="font-mono text-blue-600 font-medium">10</span>
+                    </div>
+                    <input type="range" id="slider-N" min="1" max="50" step="1" value="10"
+                        class="w-full accent-blue-600">
+                </div>
+
+                <!-- 波速显示 -->
+                <div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-gray-600">波速 c = √(T₀/μ₀) (m/s)</span>
+                        <span id="val-c" class="font-mono text-emerald-600 font-semibold">120.6</span>
+                    </div>
+                    <div class="h-10 flex items-center text-xs text-gray-500 bg-gray-50 rounded-lg px-4">
+                        波速由张力和线密度自动计算
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t flex items-center justify-between">
+                <div class="flex items-center gap-6 text-sm">
+                    <div>
+                        <span class="text-gray-600">动画速度：</span>
+                        <span id="val-speed" class="font-mono text-blue-600 font-medium">1.0×</span>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button id="play-btn"
+                        class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors flex items-center gap-2 shadow-sm">
+                        <span id="play-text">播放</span>
+                    </button>
+                    <button id="reset-btn"
+                        class="px-8 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-medium transition-colors shadow-sm">
+                        重置
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 动画面板 -->
+        <div class="bg-white rounded-2xl shadow p-8">
+            <div class="flex justify-between items-center mb-6">
+                <span id="time-display" class="font-mono text-xl font-semibold text-gray-700">t = 0.000 s</span>
+                <div class="text-sm text-gray-500">蓝色实线：当前琴弦形状　｜　灰色虚线：初始三角形位移</div>
+            </div>
+            
+            <canvas id="canvas" width="900" height="380" class="w-full rounded-2xl"></canvas>
+            
+            <div class="mt-4 flex justify-between text-xs text-gray-500 px-2">
+                <div>固定端 x=0</div>
+                <div>固定端 x=L₀</div>
+            </div>
+        </div>
+
+        <div class="text-center text-xs text-gray-500 mt-10">
+            使用 HTML Canvas + JavaScript 实现 · 解析解傅里叶级数求和
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let L0 = 1.0;
+        let x0 = 0.40;
+        let A = 0.020;
+        let T0 = 80.0;
+        let mu0 = 0.0055;
+        let c = Math.sqrt(T0 / mu0);
+        
+        let N = 10;
+        let speed = 1.0;
+        
+        let t = 0;
+        let isPlaying = false;
+        let lastTime = 0;
+        
+        let bn = [];
+        
+        function computeBn() {
+            bn = [];
+            for (let n = 1; n <= 50; n++) {
+                const sinTerm = Math.sin(n * Math.PI * x0 / L0);
+                const b = (2 * A * L0 * L0 * sinTerm) / (x0 * (L0 - x0) * Math.PI * Math.PI * n * n);
+                bn.push(b);
+            }
+        }
+        
+        function updateWaveSpeed() {
+            c = Math.sqrt(T0 / mu0);
+            document.getElementById('val-c').textContent = c.toFixed(1);
+        }
+        
+        function y(x, t) {
+            let sum = 0;
+            const k = Math.PI / L0;
+            for (let n = 1; n <= N; n++) {
+                sum += bn[n-1] * Math.sin(n * k * x) * Math.cos(n * k * c * t);
+            }
+            return sum;
+        }
+        
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const paddingLeft = 70;
+            const paddingRight = 70;
+            const paddingTop = 50;
+            const paddingBottom = 50;
+            const plotWidth = canvas.width - paddingLeft - paddingRight;
+            const plotHeight = canvas.height - paddingTop - paddingBottom;
+            const midY = paddingTop + plotHeight / 2;
+            
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(paddingLeft, paddingTop);
+            ctx.lineTo(paddingLeft, canvas.height - paddingBottom);
+            ctx.moveTo(paddingLeft, midY);
+            ctx.lineTo(canvas.width - paddingRight, midY);
+            ctx.stroke();
+            
+            // 初始形状 (虚线)
+            ctx.strokeStyle = '#9ca3af';
+            ctx.setLineDash([5, 4]);
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            const x0Pixel = paddingLeft + (x0 / L0) * plotWidth;
+            ctx.moveTo(paddingLeft, midY);
+            ctx.lineTo(x0Pixel, midY - A * (plotHeight / 0.12));
+            ctx.lineTo(canvas.width - paddingRight, midY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // 当前波形
+            ctx.strokeStyle = '#2563eb';
+            ctx.lineWidth = 4;
+            ctx.lineJoin = 'round';
+            ctx.shadowColor = 'rgba(37, 99, 235, 0.5)';
+            ctx.shadowBlur = 12;
+            
+            ctx.beginPath();
+            const points = 450;
+            for (let i = 0; i <= points; i++) {
+                const x = (i / points) * L0;
+                const yy = y(x, t);
+                const px = paddingLeft + (x / L0) * plotWidth;
+                const py = midY - yy * (plotHeight / 0.12);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            
+            // 固定端标记
+            ctx.fillStyle = '#1f2937';
+            ctx.fillRect(paddingLeft - 8, midY - 16, 16, 32);
+            ctx.fillRect(canvas.width - paddingRight - 8, midY - 16, 16, 32);
+        }
+        
+        function updateDisplays() {
+            document.getElementById('val-L0').textContent = L0.toFixed(2);
+            document.getElementById('val-x0').textContent = x0.toFixed(2);
+            document.getElementById('val-A').textContent = A.toFixed(3);
+            document.getElementById('val-T0').textContent = T0.toFixed(1);
+            document.getElementById('val-mu0').textContent = mu0.toFixed(4);
+            document.getElementById('val-N').textContent = N;
+            document.getElementById('val-speed').textContent = speed.toFixed(1) + '×';
+            updateWaveSpeed();
+            document.getElementById('time-display').textContent = `t = ${t.toFixed(3)} s`;
+        }
+        
+        function animate(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            const dt = (timestamp - lastTime) / 1000 * speed;
+            lastTime = timestamp;
+            
+            if (isPlaying) {
+                t += dt * 1.8;
+                updateDisplays();
+                draw();
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        function reset() {
+            t = 0;
+            updateDisplays();
+            draw();
+        }
+        
+        function bindSliders() {
+            const sliders = {
+                'slider-L0': (v) => { L0 = parseFloat(v); if (x0 >= L0) x0 = L0 * 0.4; computeBn(); },
+                'slider-x0': (v) => { x0 = parseFloat(v); if (x0 > L0 - 0.01) x0 = L0 * 0.95; computeBn(); },
+                'slider-A': (v) => { A = parseFloat(v); computeBn(); },
+                'slider-T0': (v) => { T0 = parseFloat(v); },
+                'slider-mu0': (v) => { mu0 = parseFloat(v); },
+                'slider-N': (v) => { N = parseInt(v); },
+                'slider-speed': (v) => { speed = parseFloat(v); }
+            };
+            
+            Object.keys(sliders).forEach(id => {
+                const slider = document.getElementById(id);
+                if (slider) {
+                    slider.addEventListener('input', (e) => {
+                        sliders[id](e.target.value);
+                        updateDisplays();
+                        draw();
+                    });
+                }
+            });
+        }
+        
+        document.getElementById('play-btn').addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            document.getElementById('play-text').textContent = isPlaying ? '暂停' : '播放';
+        });
+        
+        document.getElementById('reset-btn').addEventListener('click', reset);
+        
+        function init() {
+            computeBn();
+            updateDisplays();
+            draw();
+            bindSliders();
+            requestAnimationFrame(animate);
+        }
+        
+        window.onload = init;
+    </script>
+</body>
+</html>
