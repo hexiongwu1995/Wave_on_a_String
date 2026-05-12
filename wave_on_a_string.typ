@@ -49,7 +49,7 @@
 #import "@preview/gentle-clues:1.3.1": *
 #import "@preview/physica:0.9.8": *
 #show: gentle-clues.with(
-  breakable:true,
+  breakable: true,
 )
 
 #title()
@@ -232,9 +232,12 @@ $ (partial^2 y)/(partial x^2) = mu_0/T_x dot (partial^2 y)/(partial t^2) $<wave_
 
 等式 @wave_equation 可以写成如下形式：
 
-#text(fill: rgb("#0073ff"))[$
-  (partial^2 y)/(partial t^2) &= T_0/mu_0 dot (partial^2 y)/(partial x^2) #linebreak() &= c^2 (partial^2 y)/(partial x^2) #h(1cm) inline(c= sqrt(T_0/mu_0) "是波速")
-$<Wave_Equation>]
+#abstract(title: [波动方程])[
+  $
+    (partial^2 y)/(partial t^2) &= T_0/mu_0 dot (partial^2 y)/(partial x^2) #linebreak() &= c^2 (partial^2 y)/(partial x^2) #h(1cm) inline(c= sqrt(T_0/mu_0) "是波速")
+  $<Wave_Equation>]
+
+
 
 
 这是一个二阶线性偏微分方程，尝试使用分离变量法求解：
@@ -261,7 +264,7 @@ $<Wave_Equation>]
 
 == 解微分方程组
 
-#info(title: [二阶常系数齐次线性微分方程组])[
+#abstract(title: [二阶常系数齐次线性微分方程组])[
   方程 @Eq-Space 对应的是空间部分，方程 @Eq-Time 对应的是时间部分。
   $ (d^2 X)/(d x^2) - C X =0 $<Eq-Space>
 
@@ -291,7 +294,7 @@ $ cases(y(L_0, t) = X(L_0)T(t) =0, T(t) "为非零解") #h(1cm) arrow.r.double.l
 
 当 $C < 0$时，对应的微分方程的通解为：$X(x) = C_1 cos(sqrt(-C)x) + C_2 sin(sqrt(-C)x)$
 
-#tip(
+#abstract(
   title: [注意],
 )[这里的$C_1$和$C_2$都必须是实常数，因为原微分方程中的函数X(x)是实函数，系数C也是实数，对于实初值条件，解也一定是实函数，这要求通解形式能产生实函数。]
 
@@ -304,7 +307,7 @@ $ cases(y(L_0, t) = X(L_0)T(t) =0, T(t) "为非零解") #h(1cm) arrow.r.double.l
   table(
     columns: 5,
     inset: 1em,
-    fill: (_, y) => { if y == 0 { rgb("#0f52e424") } else { none } },
+    fill: (_, y) => { if y == 0 { rgb("#79bdc946")} else { none } },
     align: (x, y) => { if x == 2 and y != 0 { right + horizon } else { center + horizon } },
     "常数C", "通解形式", "代入边界条件", "系数", "满足边界条件的特解",
     [$C>0$],
@@ -328,7 +331,7 @@ $ X_n (x) =C_(2, n) sin(k_n x) #h(1cm) "其中：" k_n = (n pi)/L_0 $<Particular
 
 由于空间解还需要满足初始时刻(t=0时刻)的三角波条件，因此，需要取三角级数以拟合三角波的形状，即：
 
-#info(title: [Solution_of_Space_Differential_Equation])[
+#abstract(title: [Solution_of_Space_Differential_Equation])[
   $ X(x) = sum_(n=1)^(infinity) C_(2, n) sin((n pi)/L_0 x) $<Solution_of_Space_Differential_Equation>
 ]
 
@@ -402,7 +405,7 @@ $]
 
 则，完整解为：
 
-#success(title: [满足所有边界条件和初始条件（初始三角波）的完整解$y(x,t)$为：])[
+#abstract(title: [满足所有边界条件和初始条件（初始三角波）的完整解$y(x,t)$为：])[
   $
     y(x,t) & = X(x) T(t) #linebreak() & = underbrace(sum_(n=1)^(infinity) (b_n sin(k_n x) cos(omega_n t)), "驻波") #linebreak() &= 1/2 sum_(n=1)^(infinity) (b_n ( underbrace(sin(k_n x + omega_n t), "左行波") + underbrace(sin(k_n x - omega_n t), "右行波") ) )
   $<Complete_Solution>
@@ -411,7 +414,7 @@ $]
 ]
 
 
-#info(title: [驻波形式（级数叠加和模态分析）])[
+#abstract(title: [驻波形式（级数叠加和模态分析）])[
   物理意义：
   - 每个 n 对应一个谐波（第 n 阶模态），弦的振动被分解为无穷多个驻波模式（即简正模）的线性叠加：
     - $sin(k_n x)$：空间形状因子（波节在两端，中间有 n−1 个节点），决定了弦上各点的振动幅度分布（波节和波腹位置固定）。
@@ -420,7 +423,7 @@ $]
   - 驻波的特点是波节和波腹位置固定，不随时间移动。
 ]
 
-#info(title: [行波形式])[
+#abstract(title: [行波形式])[
   利用三角恒等式$sin A cos B = 1/2 (sin(A+B)+sin(A−B))$，将驻波分解为两个反向传播的行波：
 
   - $sin(k_n x + omega_n t)$：左行波（向左传播，+ 号表示波随时间增加向左移动）
@@ -428,7 +431,7 @@ $]
   - 这表明：驻波可以看作两列振幅相同、传播方向相反的行波的叠加，这是波动理论中的一个核心结论。
 ]
 
-#info(title: [分离变量形式])[
+#abstract(title: [分离变量形式])[
   通过分离变量法，假设解可以分解为空间函数 X(x) 和时间函数 T(t) 的乘积。
 ]
 
@@ -453,7 +456,7 @@ $ omega_n = sqrt(T_0/mu_0) dot k_n $
 
 $ T_y (x, t) & = T(x, t) dot sin (theta(x, t)) #linebreak() & = T(x, t) dot cos(theta(x, t)) dot tan(theta(x, t)) $
 
-#info(title: [近似])[
+#abstract(title: [近似])[
   由小振幅假设：
   - 将 $cos(theta(x, t))$ 近似为 1
   - 将琴弦上的张力 $T(x ,t)$近似为静止预张力$T_0$
@@ -470,7 +473,7 @@ $
 $
 
 
-#success(title: [琴弦张力的竖直分量$T_y (x,t)$])[
+#abstract(title: [琴弦张力的竖直分量$T_y (x,t)$])[
   $
     T_y (x,t) = - T_0/2 dot sum_(n=1)^(infinity) lr({ b_n k_n lr([ cos(k_n x + omega_n t) + cos(k_n x - omega_n t) ], size: #200%) }, size: #150%)
   $
@@ -496,7 +499,7 @@ $ f(x) tilde frac(a_(0), 2) + sum_(n = 1)^(infinity)[ a_(n) cos(frac(2 pi n x, T
 
 其中符号 $tilde$ 表示右边的级数是由 $f$ 的傅里叶系数形式构造的，要使其真正等于 $f(x)$，还需附加收敛条件。
 
-#info(title: [绝对可积])[
+#abstract(title: [绝对可积])[
   可积 (Integrable)的直觉含义：函数 $f(x)$ 在区间 [a,b] 上的积分存在（有限值）。
 
   绝对可积 (Absolutely Integrable)的直觉含义：$|f(x)|$是可积的，即$display(integral)_a^b |f(x)| d x < infinity$
@@ -538,7 +541,7 @@ $
   integral_(x_(0))^(x_(0)+ T) cos frac(2 pi m x, T) cos frac(2 pi n x, T) d x = cases(0 #h(1cm) & m != n, display(frac(T, 2)) #h(1cm) & m = n != 0, T #h(1cm) & m = n = 0) #h(1cm) forall m,n in NN
 $
 
-#info(title: [证明])[
+#abstract(title: [证明])[
   证明：$display(integral_(x_(0))^(x_(0)+ T) cos frac(2 pi m x, T) cos frac(2 pi n x, T) d x =0 #h(1cm) "当" m!=n "时")$
 
   提示：使用积化和差公式 $display(cos A cos B = 1/2 [cos(A+B) + cos(A-B)])$
@@ -550,7 +553,7 @@ $
   integral_(x_(0))^(x_(0)+ T) sin frac(2 pi m x, T) sin frac(2 pi n x, T) d x = cases(0 #h(1cm) & m != n, display(frac(T, 2)) #h(1cm) & m = n != 0, 0 #h(1cm) & m = n = 0) #h(1cm) forall m,n in NN
 $
 
-#info(title: [证明])[
+#abstract(title: [证明])[
   证明：$display(integral_(x_(0))^(x_(0)+ T) sin frac(2 pi m x, T) sin frac(2 pi n x, T) d x =0 #h(1cm) "当" m!=n "时")$
 
   提示：使用积化和差公式 $display(sin A sin B = 1/2 [cos(A-B) - cos(A+B)])$
@@ -561,7 +564,7 @@ $
 
 $ integral_(x_(0))^(x_(0)+ T) cos frac(2 pi m x, T) sin frac(2 pi n x, T) d x = 0 #h(1cm) forall m \, n in NN $
 
-#info(title: [证明])[
+#abstract(title: [证明])[
   证明：$display(integral_(x_(0))^(x_(0)+ T) cos frac(2 pi m x, T) sin frac(2 pi n x, T) d x =0 #h(1cm) forall m \, n in NN)$
 
   提示：使用积化和差公式 $display(cos A sin B = 1/2[sin(B+A) + sin(B-A)])$
@@ -577,7 +580,7 @@ $
   f(x) tilde.op frac(A_(0), 2) + sum_(n = 1)^(infinity)[ A_(n) cos(frac(2 pi n x, T)) + B_(n) sin(frac(2 pi n x, T)) ]
 $<Fourier_Series_Expansion>
 
-#info(title: [$n in NN^+$])[
+#abstract(title: [$n in NN^+$])[
   不需要求解 $B_0$
 ]
 
@@ -617,7 +620,7 @@ $ S(x) = frac(f(x^(+)) + f(x^(-)), 2) $
 - 若 $x$ 是间断点，则 $S(x)$ 收敛于左右极限的算术平均值
 - 在端点 $x_(0)$ 和 $x_(0)+ T$ 处（由于周期性，本质是同一点），$S(x_(0)) = display(frac(f(x_(0)^(+)) + f((x_0 + T)^-), 2))$
 
-#info(title: [傅里叶级数的和函数$S(x)$])[
+#abstract(title: [傅里叶级数的和函数$S(x)$])[
   S(x)就是式 @Fourier_Series_Expansion 右侧的函数值，它是由傅里叶系数构造出来的级数在点 x 处的收敛值。
   简单直觉：你不能直接用 f(x) 表示傅里叶级数的和，因为在间断点处级数不会收敛到 f(x) 本身（会 overshoot，即 Gibbs 现象），而是收敛到跳跃两边的"中间值"。所以引入 S(x) 来精确描述级数实际收敛到的值。
 ]
