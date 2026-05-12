@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js 3D Torus (圆环)</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* 防止出现滚动条 */
+            background-color: #1a1a1a;
+        }
+        canvas {
+            display: block;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            pointer-events: none; /* 让文字不挡住鼠标操作 */
+            text-shadow: 1px 1px 2px black;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">按住鼠标左键拖拽旋转，滚轮缩放</div>
+
+    <!-- 使用 ES Modules 方式从 CDN 引入 Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // 1. 创建场景 (Scene)
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a1a1a); // 设置深灰色背景
+
+        // 2. 创建相机 (Camera)
+        const camera = new THREE.PerspectiveCamera(
+            75, // 视野角度 (FOV)
+            window.innerWidth / window.innerHeight, // 宽高比
+            0.1, // 近截面
+            1000 // 远截面
+        );
+        camera.position.z = 30; // 将相机向后拉，以便看到物体
+
+        // 3. 创建渲染器 (Renderer)
+        const renderer = new THREE.WebGLRenderer({ antialias: true }); // 开启抗锯齿
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio); // 适配高清屏
+        document.body.appendChild(renderer.domElement);
+
+        // 4. 创建圆环几何体 (TorusGeometry) 和材质 (Material)
+        // 参数说明: TorusGeometry(半径, 管道粗细, 径向分段数, 管状分段数)
+        const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
+        
+        // 使用标准材质，它对光照有真实的物理反应
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0x00ff88,    // 青绿色
+            roughness: 0.3,     // 粗糙度 (0-1)，越小越光滑
+            metalness: 0.5      // 金属度 (0-1)，越大越像金属
+        });
+        
+        const torus = new THREE.Mesh(geometry, material);
+        scene.add(torus);
+
+        // 5. 添加灯光 (Lights)
+        // 环境光：提供基础照明，避免背光面全黑
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        // 平行光：模拟太阳光，产生立体感和高光
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        directionalLight.position.set(10, 10, 10);
+        scene.add(directionalLight);
+
+        // 6. 添加鼠标控制器 (OrbitControls)
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // 开启阻尼滑动效果，更有质感
+
+        // 7. 处理窗口大小调整
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // 8. 动画循环 (Animation Loop)
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 让圆环自动旋转
+            torus.rotation.x += 0.01;
+            torus.rotation.y += 0.005;
+
+            // 更新控制器（如果开启了阻尼效果，必须在动画循环中调用）
+            controls.update();
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
