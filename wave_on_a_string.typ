@@ -46,6 +46,8 @@
 
 #set math.equation(numbering: "(1)", supplement: [Eq.])
 
+#show math.equation: set block(breakable: false)
+
 #import "@preview/gentle-clues:1.3.1": *
 #import "@preview/physica:0.9.8": *
 #show: gentle-clues.with(
@@ -307,7 +309,7 @@ $ cases(y(L_0, t) = X(L_0)T(t) =0, T(t) "为非零解") #h(1cm) arrow.r.double.l
   table(
     columns: 5,
     inset: 1em,
-    fill: (_, y) => { if y == 0 { rgb("#79bdc946")} else { none } },
+    fill: (_, y) => { if y == 0 { rgb("#79bdc946") } else { none } },
     align: (x, y) => { if x == 2 and y != 0 { right + horizon } else { center + horizon } },
     "常数C", "通解形式", "代入边界条件", "系数", "满足边界条件的特解",
     [$C>0$],
@@ -331,7 +333,7 @@ $ X_n (x) =C_(2, n) sin(k_n x) #h(1cm) "其中：" k_n = (n pi)/L_0 $<Particular
 
 由于空间解还需要满足初始时刻(t=0时刻)的三角波条件，因此，需要取三角级数以拟合三角波的形状，即：
 
-#abstract(title: [Solution_of_Space_Differential_Equation])[
+#abstract(title: [空间微分方程的解])[
   $ X(x) = sum_(n=1)^(infinity) C_(2, n) sin((n pi)/L_0 x) $<Solution_of_Space_Differential_Equation>
 ]
 
@@ -396,7 +398,7 @@ $<Fourier_Series_Form>
 对比傅里叶级数的展开形式可知：
 
 #text(size: 8pt)[$
-  b_n = C_(2, n) D_(1, n) &= 2/L_0 integral_(0)^(L_0) y(x,0) sin((n pi x)/L_0) d x #linebreak() &= 2/L_0 (A/x_0 integral_0^(x_0) x sin((n pi x)/L_0) d x + (A L_0)/(L_0 -x_0) integral_(x_0)^(L_0) sin((n pi x)/L_0) d x - A/(L_0 - x_0) integral_(x_0)^(L_0) x sin((n pi x)/L_0) d x ) #linebreak() &= (2A)/(L_0 x_0) integral_0^(x_0) x sin(k_n x) d x + (2A)/(L_0 - x_0) integral_(x_0)^(L_0) sin(k_n x) d x - (2A)/(L_0 (L_0 - x_0)) integral_(x_0)^(L_0) x sin(k_n x) d x #linebreak() &= - (2A)/(L_0 x_0 k_n) ( (x cos(k_n x)) lr(|, size: #200%)_0^(x_0) - integral_0^(x_0) cos(k_n x) d x) - (2A)/((L_0 - x_0)k_n) cos(k_n x) lr(|, size: #200%)_(x_0)^(L_0) + (2A)/(L_0 (L_0 - x_0) k_n) (x cos(k_n x) lr(|, size: #200%)_(x_0)^(L_0) - integral_(x_0)^(L_0) cos(k_n x) d x) #linebreak() &= - (2A)/(L_0 x_0 k_n) (x_0 cos(k_n x_0) - 1/k_n sin(k_n x_0)) - (2A)/((L_0 -x_0)k_n) (cos(k_n L_0) - cos(k_n x_0)) #linebreak() & + (2A)/(L_0(L_0 - x_0)k_n) (L_0 cos(k_n L_0) - x_0 cos(k_n x_0) - 1/k_n (sin(k_n L_0) - sin(k_n x_0)))
+  b_n &= C_(2, n) D_(1, n) #linebreak() &= 2/L_0 integral_(0)^(L_0) y(x,0) sin((n pi x)/L_0) d x #linebreak() &= 2/L_0 (A/x_0 integral_0^(x_0) x sin((n pi x)/L_0) d x + (A L_0)/(L_0 -x_0) integral_(x_0)^(L_0) sin((n pi x)/L_0) d x - A/(L_0 - x_0) integral_(x_0)^(L_0) x sin((n pi x)/L_0) d x ) #linebreak() &= (2A)/(L_0 x_0) integral_0^(x_0) x sin(k_n x) d x + (2A)/(L_0 - x_0) integral_(x_0)^(L_0) sin(k_n x) d x - (2A)/(L_0 (L_0 - x_0)) integral_(x_0)^(L_0) x sin(k_n x) d x #linebreak() &= - (2A)/(L_0 x_0 k_n) ( (x cos(k_n x)) lr(|, size: #200%)_0^(x_0) - integral_0^(x_0) cos(k_n x) d x) - (2A)/((L_0 - x_0)k_n) cos(k_n x) lr(|, size: #200%)_(x_0)^(L_0) + (2A)/(L_0 (L_0 - x_0) k_n) (x cos(k_n x) lr(|, size: #200%)_(x_0)^(L_0) - integral_(x_0)^(L_0) cos(k_n x) d x) #linebreak() &= - (2A)/(L_0 x_0 k_n) (x_0 cos(k_n x_0) - 1/k_n sin(k_n x_0)) - (2A)/((L_0 -x_0)k_n) (cos(k_n L_0) - cos(k_n x_0)) #linebreak() & + (2A)/(L_0(L_0 - x_0)k_n) (L_0 cos(k_n L_0) - x_0 cos(k_n x_0) - 1/k_n (sin(k_n L_0) - sin(k_n x_0)))
   #linebreak() &= 2(- A/(L_0 k_n) + A/((L_0 - x_0)k_n) - (A x_0)/(L_0(L_0 - x_0)k_n)) cos(k_n x_0) + 2(- A/((L_0 - x_0)k_n) + A/((L_0 - x_0)k_n))cos(k_n L_0) #linebreak() & + 2(A/(L_0 x_0 k_n^2) + A/(L_0 (L_0 -x_0) k_n^2)) sin(k_n x_0) - (2A)/(L_0(L_0 - x_0) k_n^2) sin(k_n L_0)
   #linebreak() &= 0 + 0 + (2A)/(L_0 k_n^2) dot L_0/(x_0(L_0- x_0)) sin(k_n x_0) - 0
   #linebreak() &= (2A)/(x_0(L_0 - x_0) k_n^2 ) sin(k_n x_0) #h(1cm) "其中：" k_n= (n pi)/L_0 #linebreak() &= (2 A L_0^2)/(x_0(L_0 - x_0) pi^2 n^2) sin((n pi x_0)/L_0)
@@ -413,6 +415,9 @@ $]
   核心物理意义：两端固定的弦在初始三角波激励下的自由振动，可以分解为无穷多个简正模态的驻波叠加，而每个驻波又可以进一步分解为一对反向传播的行波。系数 $b_n$ 随 $1/n^2$衰减，说明高阶谐波的贡献迅速减小，实际振动主要由前几阶模态主导。
 ]
 
+#abstract(title: [分离变量形式])[
+  通过分离变量法，假设解可以分解为空间函数 X(x) 和时间函数 T(t) 的乘积。
+]
 
 #abstract(title: [驻波形式（级数叠加和模态分析）])[
   物理意义：
@@ -431,9 +436,7 @@ $]
   - 这表明：驻波可以看作两列振幅相同、传播方向相反的行波的叠加，这是波动理论中的一个核心结论。
 ]
 
-#abstract(title: [分离变量形式])[
-  通过分离变量法，假设解可以分解为空间函数 X(x) 和时间函数 T(t) 的乘积。
-]
+
 
 
 其中：
