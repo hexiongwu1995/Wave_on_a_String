@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>琴弦振动可视化 - 波的数学模型。</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
             font-family: system-ui, -apple-system, sans-serif;
@@ -23,7 +24,24 @@
         <div class="text-center mb-10">
             <h1 class="text-3xl font-semibold text-gray-800">琴弦振动可视化</h1>
             <p class="text-gray-600 mt-2">基于傅里叶级数的解析解 · 小振幅横波模型。</p>
+
+
         </div>
+
+        <div class="bg-white rounded-2xl shadow p-8 mb-8">
+            <p class="text-1xl font-medium text-gray-500 mt-4">
+                满足所有边界条件和初始条件（初始三角波）的完整解\(y(x,t)\)为：</p>
+            <p class="text-1xl font-medium text-gray-500 mt-4">
+                $$
+                \begin{aligned}
+                y(x,t) &= X(x)T(t) \\ 
+                &= \sum_{n=1}^{\infty}(b_n \sin(k_n x) \cos(\omega_n t)) \\ 
+                &= \frac{1}{2} \sum_{n=1}^{\infty}\left(b_n \left(\sin(k_n x + \omega_n t) + \sin(k_n x - \omega_n t)\right)\right) 
+                \end{aligned}
+                $$
+            </p>
+        </div>
+    
 
         <!-- 参数控制面板 -->
         <div class="bg-white rounded-2xl shadow p-8 mb-10">
