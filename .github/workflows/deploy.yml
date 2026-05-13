@@ -35,7 +35,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'  # 或您的构建输出目录，如 './docs' 或 './build'
+          # path: '.'  # 或您的构建输出目录，如 './docs' 或 './build'
+          paths: '**.html'
 
   deploy:
     environment:
