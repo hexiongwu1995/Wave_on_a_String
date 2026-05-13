@@ -3,351 +3,401 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>琴弦振动可视化 - 波的数学模型。</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <title>琴弦振动可视化</title>
     <style>
         body {
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e0e7f0 100%);
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(90deg, #1e40af, #3b82f6);
+            color: white;
+            padding: 24px 32px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        .subtitle {
+            margin: 8px 0 0;
+            opacity: 0.95;
+            font-size: 15px;
+        }
+        .content {
+            padding: 32px;
         }
         canvas {
-            border: 2px solid #374151;
-            background: #f8fafc;
+            border: 3px solid #e5e7eb;
+            border-radius: 12px;
+            background: #ffffff;
             image-rendering: crisp-edges;
+            width: 100%;
             max-width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            display: block;
+        }
+        .controls {
+            background: #f8fafc;
+            padding: 28px;
+            border-radius: 12px;
+            margin-top: 24px;
+            border: 1px solid #e5e7eb;
+        }
+        .slider-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        label {
+            display: inline-block;
+            width: 138px;
+            font-weight: 500;
+            color: #374151;
+            font-size: 14.5px;
+        }
+        input[type="range"] {
+            flex: 1;
+            max-width: 280px;
+            accent-color: #3b82f6;
+        }
+        .value {
+            display: inline-block;
+            width: 78px;
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e40af;
+            background: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            text-align: right;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+        }
+        .button-group {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 10px 22px;
+            font-size: 15px;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #playBtn {
+            background: #1e40af;
+            color: white;
+        }
+        #playBtn:hover {
+            background: #1e3a8a;
+            transform: translateY(-1px);
+        }
+        #resetBtn {
+            background: #64748b;
+            color: white;
+        }
+        #resetBtn:hover {
+            background: #475569;
+            transform: translateY(-1px);
+        }
+        .info {
+            margin-top: 28px;
+            padding: 16px 20px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            font-size: 14px;
+            border-left: 4px solid #3b82f6;
+        }
+        .time-display {
+            font-family: 'SF Mono', monospace;
+            font-size: 15.5px;
+            font-weight: 600;
+            color: #1e40af;
+            background: white;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .intro {
+            padding: 32px;
         }
     </style>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
-<body class="bg-gray-50 py-8">
-    <div class="max-w-5xl mx-auto px-4">
+<body>
+    <div class="container">
+        <header>
+            <h1>琴弦振动可视化</h1>
+            <p class="subtitle">基于波动方程的弦振动实时模拟</p>
+        </header>
 
-        <div class="text-center mb-10">
-            <h1 class="text-3xl font-semibold text-gray-800">琴弦振动可视化</h1>
-            <p class="text-gray-600 mt-2">基于傅里叶级数的解析解 · 小振幅横波模型。</p>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow p-8 mb-8">
-            <p class="text-xs font-medium text-gray-500 mt-4">
-                满足所有边界条件和初始条件（初始三角波）的完整解\(y(x,t)\)为：</p>
-            <p style="font-size:60%">
+        <div class="content">
+            <div class="info">
+            <p>我已经解得琴弦的振动方程\(y(x,t)\)。现在需要在这个html文档中使用Javascript对振动方程\(y(x,t)\)进行可视化。创建一个带参数滑块的动画，用来模拟琴弦的振动。</p>
+            <p>
+                满足所有边界条件和初始条件（初始三角波）的琴弦振动方程\(y(x,t)\)为：</p>
+            <p>
                 $$
                 \begin{aligned}
                 y(x,t) &= X(x)T(t) \\ 
                 &= \sum_{n=1}^{\infty}(b_n \sin(k_n x) \cos(\omega_n t)) \\ 
-                &= \frac{1}{2} \sum_{n=1}^{\infty}\left(b_n \left(\sin(k_n x + \omega_n t) + \sin(k_n x - \omega_n t)\right)\right) 
                 \end{aligned}
                 $$
             </p>
-        </div>
-    
-        <div class="bg-white rounded-2xl shadow p-8 mb-8">
-            <p style= "font-size:60%">
-                琴弦张力的竖直分量\(T_y (x,t)\)</p>
-            <p style="font-size:60%">
-                $$
-                T_y \left(x , t\right) = - \frac{T_0}{2} \cdot \sum_{n = 1}^{\infty} \Big\{b_n k_n \bigg[\cos(k_n x + \omega_n t) + \cos(k_n x - \omega_n t)\bigg]\Big\} 
-                $$
-            </p>
-        </div>
-
-        <!-- 参数控制面板 -->
-        <div class="bg-white rounded-2xl shadow p-8 mb-10">
-            <h3 class="font-medium text-gray-700 mb-6 text-lg">参数控制</h3>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8">
-                <!-- L0 -->
-                <div>
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-600">弦长 L₀ (m)</span>
-                        <span id="val-L0" class="font-mono text-blue-600 font-medium">1.00</span>
-                    </div>
-                    <input type="range" id="slider-L0" min="0.5" max="2.0" step="0.05" value="1.0"
-                        class="w-full accent-blue-600">
-                </div>
-
-                <!-- x0 -->
-                <div>
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-600">拨弦位置 x₀ (m)</span>
-                        <span id="val-x0" class="font-mono text-blue-600 font-medium">0.40</span>
-                    </div>
-                    <input type="range" id="slider-x0" min="0.05" max="1.95" step="0.01" value="0.40"
-                        class="w-full accent-blue-600">
-                </div>
-
-                <!-- A -->
-                <div>
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-600">初始振幅 A (m)</span>
-                        <span id="val-A" class="font-mono text-blue-600 font-medium">0.020</span>
-                    </div>
-                    <input type="range" id="slider-A" min="0.005" max="0.08" step="0.001" value="0.020"
-                        class="w-full accent-blue-600">
-                </div>
-
-                <!-- T0 -->
-                <div>
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-600">张力 T₀ (N)</span>
-                        <span id="val-T0" class="font-mono text-blue-600 font-medium">80.0</span>
-                    </div>
-                    <input type="range" id="slider-T0" min="20" max="300" step="5" value="80"
-                        class="w-full accent-blue-600">
-                </div>
-
-                <!-- μ0 -->
-                <div>
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-600">线密度 μ₀ (kg/m)</span>
-                        <span id="val-mu0" class="font-mono text-blue-600 font-medium">0.0055</span>
-                    </div>
-                    <input type="range" id="slider-mu0" min="0.001" max="0.02" step="0.0001" value="0.0055"
-                        class="w-full accent-blue-600">
-                </div>
-
-                <!-- N（新增） -->
-                <div>
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-600">模态项数 N</span>
-                        <span id="val-N" class="font-mono text-blue-600 font-medium">10</span>
-                    </div>
-                    <input type="range" id="slider-N" min="1" max="50" step="1" value="10"
-                        class="w-full accent-blue-600">
-                </div>
-
-                <!-- 波速显示 -->
-                <div>
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-600">波速 c = √(T₀/μ₀) (m/s)</span>
-                        <span id="val-c" class="font-mono text-emerald-600 font-semibold">120.6</span>
-                    </div>
-                    <div class="h-10 flex items-center text-xs text-gray-500 bg-gray-50 rounded-lg px-4">
-                        波速由张力和线密度自动计算
-                    </div>
-                </div>
+            <p style="text-align: center; line-height: 1.8;">其中：
+    \(k_n = \frac{n \pi}{L_0}\)&emsp;&emsp;\(V = \sqrt{\frac{T_0}{\mu_0}}\)&emsp;&emsp;\(\omega_n = V \cdot k_n\)</p>
+            <p>
+                $$ b_n = \frac{2 A_0 L_0^2}{x_0\left(L_0 - x_0\right) \pi^2 n^2} \sin(\frac{n \pi x_0}{L_0}) $$</p>
+            </div>
+            <br>
+            <div style="margin-bottom: 20px; text-align: center;">
+                <canvas id="canvas" width="820" height="320"></canvas>
             </div>
 
-            <div class="mt-8 pt-6 border-t flex items-center justify-between">
-                <div class="flex items-center gap-6 text-sm">
-                    <div>
-                        <span class="text-gray-600">动画速度：</span>
-                        <span id="val-speed" class="font-mono text-blue-600 font-medium">1.0×</span>
-                    </div>
+            <div class="controls">
+                <div class="slider-group">
+                    <label>A₀ (振幅, m):</label>
+                    <input type="range" id="A0" min="0.005" max="0.02" step="0.0005" value="0.01">
+                    <span class="value" id="A0_val">0.0100</span>
                 </div>
                 
-                <div class="flex gap-4">
-                    <button id="play-btn"
-                        class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-colors flex items-center gap-2 shadow-sm">
-                        <span id="play-text">播放</span>
-                    </button>
-                    <button id="reset-btn"
-                        class="px-8 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-medium transition-colors shadow-sm">
-                        重置
-                    </button>
+                <div class="slider-group">
+                    <label>L₀ (弦长, m):</label>
+                    <input type="range" id="L0" min="0.2" max="1.0" step="0.01" value="0.6">
+                    <span class="value" id="L0_val">0.60</span>
+                </div>
+                
+                <div class="slider-group">
+                    <label>x₀ / L₀ (拨弦位置):</label>
+                    <input type="range" id="xrel" min="0.1" max="0.9" step="0.01" value="0.3">
+                    <span class="value" id="xrel_val">0.30</span>
+                </div>
+                
+                <div class="slider-group">
+                    <label>T₀ (张力, N):</label>
+                    <input type="range" id="T0" min="70" max="100" step="1" value="80">
+                    <span class="value" id="T0_val">80</span>
+                </div>
+                
+                <div class="slider-group">
+                    <label>μ₀ (线密度, kg/m):</label>
+                    <input type="range" id="mu0" min="0.004" max="0.012" step="0.0001" value="0.01">
+                    <span class="value" id="mu0_val">0.0100</span>
+                </div>
+                
+                <div class="slider-group">
+                    <label>N (截断项数):</label>
+                    <input type="range" id="N" min="1" max="50" step="1" value="12">
+                    <span class="value" id="N_val">12</span>
+                </div>
+                
+                <div class="slider-group">
+                    <label>动画速度:</label>
+                    <input type="range" id="s" min="0.000001" max="0.001" step="0.000001" value="0.00001">
+                    <span class="value" id="s_val">1.0e-5</span>
+                </div>
+
+                <div class="button-group">
+                    <button id="playBtn">暂停</button>
+                    <button id="resetBtn">重置时间</button>
+                    <span class="time-display" id="timeDisplay">t = 0.0000 s</span>
                 </div>
             </div>
-        </div>
 
-        <!-- 动画面板 -->
-        <div class="bg-white rounded-2xl shadow p-2">
-
-<div class="flex items-center mb-6">
-    <!-- 左侧区域：添加 flex-1 实现等分 -->
-    <span id="time-display" class="flex-1 font-mono text-sm font-semibold text-gray-700">t = 0.000 s</span>
-    
-    <!-- 右侧区域：添加 flex-1 实现等分，并设置靠右对齐 -->
-    <div class="flex-1 text-sm text-gray-500 text-left">
-        蓝色实线：当前琴弦形状<br>灰色虚线：初始三角形位移
-    </div>
-</div>
-
-
-
-            <canvas id="canvas" width="1000" height="500" class="w-full rounded-2xl"></canvas>
-            
-            <div class="mt-4 flex justify-between text-xs text-gray-500 px-2">
-                <div>固定端 x=0</div>
-                <div>固定端 x=L₀</div>
-            </div>
-        </div>
-
-        <div class="text-center text-xs text-gray-500 mt-10">
-            使用 HTML Canvas + JavaScript 实现 · 解析解傅里叶级数求和
         </div>
     </div>
 
     <script>
+        // ==================== 参数 ====================
+        let A0 = 0.01;
+        let L0 = 0.6;
+        let xrel = 0.3;
+        let T0 = 80;
+        let mu0 = 0.01;
+        let N_terms = 12;
+        let speed = 1e-5;
+
+        let t = 0;
+        let isPlaying = true;
+        let lastTime = Date.now();
+
+        // ==================== DOM 元素 ====================
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         
-        let L0 = 1.0;
-        let x0 = 0.40;
-        let A = 0.020;
-        let T0 = 80.0;
-        let mu0 = 0.0055;
-        let c = Math.sqrt(T0 / mu0);
-        
-        let N = 10;
-        let speed = 1.0;
-        
-        let t = 0;
-        let isPlaying = false;
-        let lastTime = 0;
-        
-        let bn = [];
-        
-        function computeBn() {
-            bn = [];
-            for (let n = 1; n <= 50; n++) {
-                const sinTerm = Math.sin(n * Math.PI * x0 / L0);
-                const b = (2 * A * L0 * L0 * sinTerm) / (x0 * (L0 - x0) * Math.PI * Math.PI * n * n);
-                bn.push(b);
+        const sliders = {
+            A0: document.getElementById('A0'),
+            L0: document.getElementById('L0'),
+            xrel: document.getElementById('xrel'),
+            T0: document.getElementById('T0'),
+            mu0: document.getElementById('mu0'),
+            N: document.getElementById('N'),
+            s: document.getElementById('s')
+        };
+
+        const values = {
+            A0: document.getElementById('A0_val'),
+            L0: document.getElementById('L0_val'),
+            xrel: document.getElementById('xrel_val'),
+            T0: document.getElementById('T0_val'),
+            mu0: document.getElementById('mu0_val'),
+            N: document.getElementById('N_val'),
+            s: document.getElementById('s_val')
+        };
+
+        // ==================== 更新显示 ====================
+        function updateSliderDisplays() {
+            values.A0.textContent = A0.toFixed(4);
+            values.L0.textContent = L0.toFixed(2);
+            values.xrel.textContent = xrel.toFixed(2);
+            values.T0.textContent = T0.toFixed(0);
+            values.mu0.textContent = mu0.toFixed(4);
+            values.N.textContent = N_terms;
+            values.s.textContent = speed.toExponential(1);
+        }
+
+        // ==================== 计算函数 ====================
+        function computeCoefficients() {
+            const x0 = xrel * L0;
+            const bn = new Array(N_terms);
+            const denom = x0 * (L0 - x0) * Math.PI * Math.PI;
+            
+            for (let n = 1; n <= N_terms; n++) {
+                bn[n-1] = (2 * A0 * L0 * L0 / (denom * n * n)) * Math.sin(n * Math.PI * x0 / L0);
             }
+            return bn;
         }
-        
-        function updateWaveSpeed() {
-            c = Math.sqrt(T0 / mu0);
-            document.getElementById('val-c').textContent = c.toFixed(1);
-        }
-        
-        function y(x, t) {
-            let sum = 0;
-            const k = Math.PI / L0;
-            for (let n = 1; n <= N; n++) {
-                sum += bn[n-1] * Math.sin(n * k * x) * Math.cos(n * k * c * t);
+
+        function wave(x, t, bn) {
+            let y = 0;
+            const V = Math.sqrt(T0 / mu0);
+            
+            for (let n = 1; n <= N_terms; n++) {
+                const kn = n * Math.PI / L0;
+                const wn = V * kn;
+                y += bn[n-1] * Math.sin(kn * x) * Math.cos(wn * t);
             }
-            return sum;
+            return y;
         }
-        
+
+        // ==================== 绘图 ====================
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            const paddingLeft = 70;
-            const paddingRight = 70;
-            const paddingTop = 50;
-            const paddingBottom = 50;
+            const paddingLeft = 50;
+            const paddingRight = 40;
+            const paddingTop = 40;
             const plotWidth = canvas.width - paddingLeft - paddingRight;
-            const plotHeight = canvas.height - paddingTop - paddingBottom;
-            const midY = paddingTop + plotHeight / 2;
+            const plotHeight = canvas.height - paddingTop * 2;
             
-            ctx.strokeStyle = '#e5e7eb';
-            ctx.lineWidth = 1.5;
+            const bn = computeCoefficients();
+            
+            // 绘制琴弦
             ctx.beginPath();
-            ctx.moveTo(paddingLeft, paddingTop);
-            ctx.lineTo(paddingLeft, canvas.height - paddingBottom);
-            ctx.moveTo(paddingLeft, midY);
-            ctx.lineTo(canvas.width - paddingRight, midY);
-            ctx.stroke();
+            ctx.strokeStyle = '#1e40af';
+            ctx.lineWidth = 4.5;
+            ctx.lineJoin = "round";
+            ctx.lineCap = "round";
             
-            // 初始形状 (虚线)
-            ctx.strokeStyle = '#9ca3af';
-            ctx.setLineDash([5, 4]);
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            const x0Pixel = paddingLeft + (x0 / L0) * plotWidth;
-            ctx.moveTo(paddingLeft, midY);
-            ctx.lineTo(x0Pixel, midY - A * (plotHeight / 0.12));
-            ctx.lineTo(canvas.width - paddingRight, midY);
-            ctx.stroke();
-            ctx.setLineDash([]);
-            
-            // 当前波形
-            ctx.strokeStyle = '#2563eb';
-            ctx.lineWidth = 4;
-            ctx.lineJoin = 'round';
-            ctx.shadowColor = 'rgba(37, 99, 235, 0.5)';
-            ctx.shadowBlur = 12;
-            
-            ctx.beginPath();
-            const points = 450;
-            for (let i = 0; i <= points; i++) {
-                const x = (i / points) * L0;
-                const yy = y(x, t);
-                const px = paddingLeft + (x / L0) * plotWidth;
-                const py = midY - yy * (plotHeight / 0.12);
+            const steps = 280;
+            for (let i = 0; i <= steps; i++) {
+                const x_phys = (i / steps) * L0;
+                const y_phys = wave(x_phys, t, bn);
+                
+                const px = paddingLeft + (x_phys / L0) * plotWidth;
+                const py = canvas.height / 2 - (y_phys / (A0 * 2.2)) * (plotHeight / 2);
+                
                 if (i === 0) ctx.moveTo(px, py);
                 else ctx.lineTo(px, py);
             }
             ctx.stroke();
-            ctx.shadowBlur = 0;
-            
-            // 固定端标记
-            ctx.fillStyle = '#1f2937';
-            ctx.fillRect(paddingLeft - 8, midY - 16, 16, 32);
-            ctx.fillRect(canvas.width - paddingRight - 8, midY - 16, 16, 32);
+
+            // 中心参考线
+            ctx.beginPath();
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([6, 3]);
+            ctx.moveTo(paddingLeft, canvas.height / 2);
+            ctx.lineTo(canvas.width - paddingRight, canvas.height / 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 时间显示
+            document.getElementById('timeDisplay').textContent = `t = ${t.toFixed(4)} s`;
         }
-        
-        function updateDisplays() {
-            document.getElementById('val-L0').textContent = L0.toFixed(2);
-            document.getElementById('val-x0').textContent = x0.toFixed(2);
-            document.getElementById('val-A').textContent = A.toFixed(3);
-            document.getElementById('val-T0').textContent = T0.toFixed(1);
-            document.getElementById('val-mu0').textContent = mu0.toFixed(4);
-            document.getElementById('val-N').textContent = N;
-            document.getElementById('val-speed').textContent = speed.toFixed(1) + '×';
-            updateWaveSpeed();
-            document.getElementById('time-display').textContent = `t = ${t.toFixed(3)} s`;
-        }
-        
-        function animate(timestamp) {
-            if (!lastTime) lastTime = timestamp;
-            const dt = (timestamp - lastTime) / 1000 * speed;
-            lastTime = timestamp;
-            
+
+        // ==================== 动画循环 ====================
+        function animate() {
             if (isPlaying) {
-                t += dt * 1.8;
-                updateDisplays();
-                draw();
+                const now = Date.now();
+                const delta = (now - lastTime) / 1000;
+                lastTime = now;
+                t += speed * delta * 950;
             }
             
+            draw();
             requestAnimationFrame(animate);
         }
-        
-        function reset() {
-            t = 0;
-            updateDisplays();
-            draw();
-        }
-        
+
+        // ==================== 事件绑定 ====================
         function bindSliders() {
-            const sliders = {
-                'slider-L0': (v) => { L0 = parseFloat(v); if (x0 >= L0) x0 = L0 * 0.4; computeBn(); },
-                'slider-x0': (v) => { x0 = parseFloat(v); if (x0 > L0 - 0.01) x0 = L0 * 0.95; computeBn(); },
-                'slider-A': (v) => { A = parseFloat(v); computeBn(); },
-                'slider-T0': (v) => { T0 = parseFloat(v); },
-                'slider-mu0': (v) => { mu0 = parseFloat(v); },
-                'slider-N': (v) => { N = parseInt(v); },
-                'slider-speed': (v) => { speed = parseFloat(v); }
-            };
-            
-            Object.keys(sliders).forEach(id => {
-                const slider = document.getElementById(id);
-                if (slider) {
-                    slider.addEventListener('input', (e) => {
-                        sliders[id](e.target.value);
-                        updateDisplays();
-                        draw();
-                    });
-                }
+            Object.keys(sliders).forEach(key => {
+                sliders[key].addEventListener('input', () => {
+                    if (key === 'A0') A0 = parseFloat(sliders.A0.value);
+                    if (key === 'L0') L0 = parseFloat(sliders.L0.value);
+                    if (key === 'xrel') xrel = parseFloat(sliders.xrel.value);
+                    if (key === 'T0') T0 = parseFloat(sliders.T0.value);
+                    if (key === 'mu0') mu0 = parseFloat(sliders.mu0.value);
+                    if (key === 'N') N_terms = parseInt(sliders.N.value);
+                    if (key === 's') speed = parseFloat(sliders.s.value);
+                    
+                    updateSliderDisplays();
+                });
             });
         }
-        
-        document.getElementById('play-btn').addEventListener('click', () => {
+
+        // ==================== 按钮事件 ====================
+        document.getElementById('playBtn').addEventListener('click', () => {
             isPlaying = !isPlaying;
-            document.getElementById('play-text').textContent = isPlaying ? '暂停' : '播放';
+            document.getElementById('playBtn').textContent = isPlaying ? '暂停' : '播放';
         });
-        
-        document.getElementById('reset-btn').addEventListener('click', reset);
-        
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            t = 0;
+        });
+
+        // ==================== 初始化 ====================
         function init() {
-            computeBn();
-            updateDisplays();
-            draw();
+            updateSliderDisplays();
             bindSliders();
-            requestAnimationFrame(animate);
+            draw();
+            animate();
         }
-        
+
         window.onload = init;
     </script>
 </body>
