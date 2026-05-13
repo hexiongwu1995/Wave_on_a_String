@@ -50,6 +50,7 @@
 
 #import "@preview/gentle-clues:1.3.1": *
 #import "@preview/physica:0.9.8": *
+#import "@preview/numty:0.1.0" as nt
 #show: gentle-clues.with(
   breakable: true,
 )
@@ -75,15 +76,25 @@
 
 
 
-
-#import "@preview/numty:0.1.0" as nt
-
+// CeTZ 绘图参数
 #let L = 15
 #let A = 0.5
 #let H = 2
 #let R = 1
 #let bez-contr = (4, 1)
 #let tube-pos = (10, 5)
+
+
+// 真实数学建模时需要使用到的默认参数（与Javascript进行数据共享）
+#let A_0 = 0.01           // 初始振幅，单位为 m，参数滑块数据范围：(0.005, 0.02)
+#let L_0 = 0.6            // 弦长，单位为 m，参数滑块数据范围：(0.2, 1.0)
+#let x_0 = 0.2 * L_0      // 初始拨弦位置，单位为 m，参数滑块数据范围：(0.1, 0.9)*L_0
+#let T_0 = 80             // 预张力，单位为 N，参数滑块数据范围：(70, 100)
+#let mu_0 = 0.01          // 线密度，单位为 kg/m，参数滑块数据范围：(0.004, 0.01)
+#let N = 10               // 级数截断项数，无量纲，参数滑块数据范围：(1, 50)
+#let s = 1e-5              // 动画速度系数，无量纲，参数滑块数据范围：(1e-6, 1.0)
+
+
 
 #import "@preview/cetz:0.5.0"
 
