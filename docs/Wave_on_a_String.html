@@ -125,11 +125,19 @@
 
         <!-- 动画面板 -->
         <div class="bg-white rounded-1xl shadow p-4">
-            <div class="flex justify-between items-center mb-6">
-                <span id="time-display" class="font-mono text-sm font-semibold text-gray-700">t = 0.000 s</span>
-                <div class="text-sm text-gray-500">蓝色实线：当前琴弦形状　｜　灰色虚线：初始三角形位移</div>
-            </div>
-            
+
+<div class="flex items-center mb-6">
+    <!-- 左侧区域：添加 flex-1 实现等分 -->
+    <span id="time-display" class="flex-1 font-mono text-sm font-semibold text-gray-700">t = 0.000 s</span>
+    
+    <!-- 右侧区域：添加 flex-1 实现等分，并设置靠右对齐 -->
+    <div class="flex-1 text-sm text-gray-500 text-right">
+        蓝色实线：当前琴弦形状　｜　灰色虚线：初始三角形位移
+    </div>
+</div>
+
+
+
             <canvas id="canvas" width="1000" height="380" class="w-full rounded-1xl"></canvas>
             
             <div class="mt-4 flex justify-between text-xs text-gray-500 px-2">
