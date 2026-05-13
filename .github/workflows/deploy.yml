@@ -2,8 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ]  # 或您的默认分支
-  workflow_dispatch:  # 允许手动触发
+    branches: [ "main" ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: true  # 新 push 取消旧任务，减少冲突
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -21,22 +21,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 如果需要构建（如 Typst 编译 HTML/PDF，或其他处理）
-      # - name: Install dependencies
-      #   run: | 
-      #     # 示例：安装 Typst 或其他工具
-      #     sudo apt update && sudo apt install -y typst  # 如需
-      # - name: Build
-      #   run: typst compile yourfile.typ output.html  # 根据实际调整
-
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # path: '.'  # 或您的构建输出目录，如 './docs' 或 './build'
-          paths: '**.html'
+          path: 'docs'   # 关键修正：指向包含 HTML 文件的 docs 文件夹
 
   deploy:
     environment:
