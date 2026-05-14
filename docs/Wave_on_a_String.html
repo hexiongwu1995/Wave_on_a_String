@@ -6,81 +6,82 @@
     <title>琴弦振动可视化</title>
     <style>
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #f0f4f8 0%, #e0e7f0 100%);
-            color: #1f2937;
+            font-family: system-ui, sans-serif;
+            margin: 20px 10px;
+            padding: 0px;
+            background:white;
+            color: black;
             line-height: 1.6;
         }
         .container {
-            max-width: 900px;
-            margin: 0 auto;
+            max-width: 1000px;
+            margin: 10px auto;
             background: white;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 10px rgba(0, 0, 0, 0.075);
             overflow: hidden;
         }
         header {
-            background: linear-gradient(90deg, #1e40af, #3b82f6);
+            background: rgba(9, 74, 202, 0.84);
             color: white;
-            padding: 24px 32px;
+            margin:0px;
+            padding: 20px;
             text-align: center;
         }
         h1 {
             margin: 0;
             font-size: 28px;
             font-weight: 600;
-            letter-spacing: -0.5px;
+            letter-spacing: 2px;
         }
         .subtitle {
-            margin: 8px 0 0;
-            opacity: 0.95;
-            font-size: 15px;
+            margin: 8px 8px;
+            font-size: 16px;
         }
         .content {
-            padding: 32px;
+            margin:10px;
+            padding: 0px;
         }
         canvas {
-            border: 3px solid #e5e7eb;
-            border-radius: 12px;
-            background: #ffffff;
+            border: 3px solid #c2c2c23a;
+            border-radius: 16px;
+            background: rgba(249, 250, 252, 0.854);
             image-rendering: crisp-edges;
             width: 100%;
             max-width: 100%;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 10px 10px rgba(222, 227, 233, 0.847);
             display: block;
         }
         .controls {
-            background: #f8fafc;
+            background: #f1f2f59b;
             padding: 28px;
-            border-radius: 12px;
-            margin-top: 24px;
+            border-radius: 16px;
+            margin: 24px 0px;
             border: 1px solid #e5e7eb;
         }
         .slider-group {
             display: flex;
             align-items: center;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
+            justify-content:space-evenly;
+            width:100%;
         }
         label {
             display: inline-block;
-            width: 138px;
+            width: 150px;
             font-weight: 500;
             color: #374151;
-            font-size: 14.5px;
+            font-size: 12px;
         }
         input[type="range"] {
             flex: 1;
-            max-width: 280px;
             accent-color: #3b82f6;
         }
         .value {
             display: inline-block;
-            width: 78px;
-            font-family: 'SF Mono', Monaco, Consolas, monospace;
+            width: 50px;
             font-size: 14px;
             font-weight: 600;
             color: #1e40af;
@@ -88,8 +89,8 @@
             padding: 4px 10px;
             border-radius: 6px;
             border: 1px solid #d1d5db;
-            text-align: right;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.03);
+            text-align: left;
+            box-shadow: inset 0 5px 5px rgba(0, 0, 0, 0.062);
         }
         .button-group {
             margin-top: 20px;
