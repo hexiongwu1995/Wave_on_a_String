@@ -133,6 +133,10 @@
             font-size: 14px;
             border-left: 4px solid #3b82f6;
         }
+        .math-equation{
+            font-size:12px;
+            text-align:center;
+        }
         .time-display {
             font-family: 'SF Mono', monospace;
             font-size: 15.5px;
@@ -162,7 +166,7 @@
             <p>我已经解得琴弦的振动方程\(y(x,t)\)。现在需要在这个html文档中使用Javascript对振动方程\(y(x,t)\)进行可视化。创建一个带参数滑块的动画，用来模拟琴弦的振动。</p>
             <p>
                 满足所有边界条件和初始条件（初始三角波）的琴弦振动方程\(y(x,t)\)为：</p>
-            <p>
+            <p class="math-equation">
                 $$
                 \begin{aligned}
                 y(x,t) &= X(x)T(t) \\ 
@@ -170,9 +174,9 @@
                 \end{aligned}
                 $$
             </p>
-            <p style="text-align: center; line-height: 1.8;">其中：
+            <p class="math-equation">其中：
     \(k_n = \frac{n \pi}{L_0}\)&emsp;&emsp;\(V = \sqrt{\frac{T_0}{\mu_0}}\)&emsp;&emsp;\(\omega_n = V \cdot k_n\)</p>
-            <p>
+            <p class="math-equation">
                 $$ b_n = \frac{2 A_0 L_0^2}{x_0\left(L_0 - x_0\right) \pi^2 n^2} \sin(\frac{n \pi x_0}{L_0}) $$</p>
             </div>
             <br>
