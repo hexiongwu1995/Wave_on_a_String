@@ -14,15 +14,15 @@
             line-height: 1.6;
         }
         .container {
-            max-width: 1000px;
-            margin: 10px auto;
+            max-width: 1100px;
+            margin: 20px auto;
             background: white;
             border-radius: 16px;
             box-shadow: 0 10px 10px rgba(0, 0, 0, 0.075);
             overflow: hidden;
         }
         header {
-            background: rgba(9, 74, 202, 0.84);
+            background: #3177e7;
             color: white;
             margin:0px;
             padding: 20px;
@@ -35,34 +35,53 @@
             letter-spacing: 2px;
         }
         .subtitle {
-            margin: 8px 8px;
+            margin: 8px;
             font-size: 16px;
         }
         .content {
             margin:10px;
             padding: 0px;
+            font-size:14px;
+            color:black;
+            text-align:left;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 16px 20px;
+            background: #f1f2f59b;
+            border-radius: 10px;
+            border-left: 4px solid #3b82f6;
+            box-shadow: 0 10px 10px #cbd5e1;
+            font-size:16px;
+            line-height: 1.6;
+        }
+        .math-equation{
+            font-size:14px;
+            text-align:center;
         }
         canvas {
-            border: 3px solid #c2c2c23a;
+            margin-top:10px;
+            border: 3px solid #cbd5e1;
             border-radius: 16px;
-            background: rgba(249, 250, 252, 0.854);
+            background: #f1f2f59b;
             image-rendering: crisp-edges;
             width: 100%;
             max-width: 100%;
-            box-shadow: 0 10px 10px rgba(222, 227, 233, 0.847);
+            box-shadow: 0 10px 10px #cbd5e1;
             display: block;
         }
         .controls {
             background: #f1f2f59b;
+            margin: 20px 0px;
             padding: 10px;
             border-radius: 16px;
-            margin: 10px 5px;
             border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 10px #cbd5e1;
         }
         .slider-group {
             display: flex;
             align-items: center;
-            margin: 16px 5px;
+            margin: 20px 5px;
             padding: 0px;
             flex-wrap: nowrap;
             gap: 10px;
@@ -74,7 +93,7 @@
             width: 120px;
             font-weight: 500;
             font-size: 12px;
-text-align: left;
+            text-align: left;
         }
         input[type="range"] {
             flex: 1;
@@ -83,15 +102,15 @@ text-align: left;
         .value {
             display: inline-block;
             width: 60px;
-            font-size: 10px;
+            font-size: 12px;
             font-weight: 600;
-            color: #1e40af;
+            color: #64748b;
             background: white;
             padding: 4px 10px;
             border-radius: 6px;
-            border: 1px solid #d1d5db;
+            border: 1px solid #cbd5e1;
             text-align: left;
-            box-shadow: inset 0 5px 5px rgba(0, 0, 0, 0.062);
+            box-shadow: inset 0 5px 5px #e5e7eb;
         }
         .button-group {
             margin-top: 20px;
@@ -123,24 +142,13 @@ text-align: left;
         #resetBtn:hover {
             transform: translateY(-2px);
         }
-        .info {
-            margin-top: 20px;
-            padding: 16px 20px;
-            background: #f1f5f9;
-            border-radius: 16px;
-            font-size: 14px;
-            border-left: 4px solid #3b82f6;
-        }
-        .math-equation{
-            font-size:12px;
-            text-align:center;
-        }
+
         .time-display {
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 500;
             color: #1e40af;
             background: white;
-            padding: 6px 14px;
+            padding: 6px;
             border-radius: 6px;
             border: 1px solid #cbd5e1;
         }
@@ -149,10 +157,16 @@ text-align: left;
         } */
     </style>
 
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- ✅ 修复1：用 script 标签加载，加 id="typst" 监听 load 事件 -->
+    <script type="module"
+        src="https://cdn.jsdelivr.net/npm/@myriaddreamin/typst.ts/dist/esm/contrib/all-in-one-lite.bundle.js"
+        id="typst">
+    </script>
+
 </head>
 
 <body>
+
     <div class="container">
         <header>
             <h1>琴弦振动可视化</h1>
@@ -161,21 +175,15 @@ text-align: left;
 
         <div class="content">
             <div class="info">
-            <p>我已经解得琴弦的振动方程\(y(x,t)\)。现在需要在这个html文档中使用Javascript对振动方程\(y(x,t)\)进行可视化。创建一个带参数滑块的动画，用来模拟琴弦的振动。</p>
-            <p>
-                满足所有边界条件和初始条件（初始三角波）的琴弦振动方程\(y(x,t)\)为：</p>
-            <p class="math-equation">
-                $$
-                \begin{aligned}
-                y(x,t) &= X(x)T(t) \\ 
-                &= \sum_{n=1}^{\infty}(b_n \sin(k_n x) \cos(\omega_n t)) \\ 
-                \end{aligned}
-                $$
-            </p>
-            <p class="math-equation">其中：
-    \(k_n = \frac{n \pi}{L_0}\)&emsp;&emsp;\(V = \sqrt{\frac{T_0}{\mu_0}}\)&emsp;&emsp;\(\omega_n = V \cdot k_n\)</p>
-            <p class="math-equation">
-                $$ b_n = \frac{2 A_0 L_0^2}{x_0\left(L_0 - x_0\right) \pi^2 n^2} \sin(\frac{n \pi x_0}{L_0}) $$</p>
+            <p>我已经解得琴弦的振动方程y(x,t)。现在需要在这个html文档中使用Javascript对振动方程y(x,t)进行可视化。创建一个带参数滑块的动画，用来模拟琴弦的振动。</p>
+            <p>满足所有边界条件和初始条件（初始三角波）的琴弦振动方程y(x,t)为:</p>
+             <!-- ✅ 修复3：div 先于 script，确保 DOM 已存在 -->
+            <div id="Wave-equation" class="math-equation">出错…</div>
+
+            <p>张力的竖直分量为T_y(x,t)为：</p>
+            <div id="Tension_Y_component" class="math-equation">出错…</div>
+            <p>相关的中间参数计算公式为：</p>
+            <div id="Intermediate-parameters" class="math-equation">出错…</div>
             </div>
             <br>
             <div style="margin-bottom: 20px; text-align: center;">
@@ -234,6 +242,8 @@ text-align: left;
 
         </div>
     </div>
+
+
 
     <script>
         // ==================== 参数 ====================
@@ -404,5 +414,53 @@ text-align: left;
 
         window.onload = init;
     </script>
+
+    <script>
+        // 😍 Typst 内容区
+        // ✅ 修复2：监听 load 事件，配置 WASM 路径后再调用 $typst.svg()
+        document.getElementById('typst').addEventListener('load', function () {
+            $typst.setCompilerInitOptions({
+                getModule: () =>
+                    'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm'
+            });
+            $typst.setRendererInitOptions({
+                getModule: () =>
+                    'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm'
+            });
+
+            $typst.svg({
+                mainContent: `#set page(width: auto, height: auto, margin: 0pt) 
+                #set text(size:16pt)
+                $ y(x,t) & = X(x) T(t) #linebreak() & = underbrace(sum_(n=1)^(infinity) (b_n sin(k_n x) cos(omega_n t)), "Standing Wave") #linebreak() &= 1/2 sum_(n=1)^(infinity) (b_n ( underbrace(sin(k_n x + omega_n t), "Left-traveling wave") + underbrace(sin(k_n x - omega_n t), "Right-traveling wave") ) ) $ `
+            }).then(svg => {
+                document.getElementById('Wave-equation').innerHTML = svg;
+            }).catch(err => {
+                document.getElementById('Wave-equation').textContent = '渲染失败：' + err;
+            });
+
+            $typst.svg({
+                mainContent: `#set page(width: auto, height: auto, margin: 0pt) 
+                #set text(size:16pt)
+                $ T_y (x,t) = - T_0/2 dot sum_(n=1)^(infinity) lr({ b_n k_n lr([ cos(k_n x + omega_n t) + cos(k_n x - omega_n t) ], size: #200%) }, size: #150%) $`
+            }).then(svg => {
+                document.getElementById('Tension_Y_component').innerHTML = svg;
+            }).catch(err => {
+                document.getElementById('Tension_Y_component').textContent = '渲染失败：' + err;
+            });
+
+            $typst.svg({
+                mainContent: `#set page(width: auto, height: auto, margin: 0pt) 
+                #set text(size:16pt)
+                $display(k_n = (n pi)/L_0)$  #h(2cm)  $display(omega_n = sqrt(T_0/mu_0) dot k_n)$ #h(2cm)  $display(b_n = (2 A_0 L_0^2)/(x_0(L_0 - x_0) pi^2 n^2) sin((n pi x_0)/L_0))$`
+            }).then(svg => {
+                document.getElementById('Intermediate-parameters').innerHTML = svg;
+            }).catch(err => {
+                document.getElementById('Intermediate-parameters').textContent = '渲染失败：' + err;
+            });
+
+            //  $k_n = (n pi)/L_0$  #h(2cm)  $omega_n = sqrt(T_0/mu_0) dot k_n$ #h(2cm)  $b_n = (2 A_0 L_0^2)/(x_0(L_0 - x_0) pi^2 n^2) sin((n pi x_0)/L_0)$
+        });
+    </script>
+
 </body>
 </html>
