@@ -190,7 +190,7 @@
                $$k_n = \frac{n\pi}{L_0} \hspace{1cm}  \omega_n = \sqrt{\frac{T_0}{\mu_0}} \cdot k_n$$
             </div>
             <div class="math-equation">
-               $$b_n = \frac{2A L_0^2}{x_0(L_0 - x_0) \pi^2 n^2} \sin\left(\frac{n\pi x_0}{L_0}\right)$$
+               $$b_n = \frac{2A_0 L_0^2}{x_0(L_0 - x_0) \pi^2 n^2} \sin\left(\frac{n\pi x_0}{L_0}\right)$$
             </div>
 
             </div>
@@ -330,43 +330,44 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            const paddingLeft = 50;
-            const paddingRight = 40;
-            const paddingTop = 40;
+            const paddingLeft = 20;
+            const paddingRight = 20;
+            const paddingTop = 100;
             const plotWidth = canvas.width - paddingLeft - paddingRight;
             const plotHeight = canvas.height - paddingTop * 2;
             
             const bn = computeCoefficients();
             
-            // 绘制琴弦
-            ctx.beginPath();
-            ctx.strokeStyle = '#1e40af';
-            ctx.lineWidth = 4.5;
-            ctx.lineJoin = "round";
-            ctx.lineCap = "round";
             
-            const steps = 280;
-            for (let i = 0; i <= steps; i++) {
-                const x_phys = (i / steps) * L0;
-                const y_phys = wave(x_phys, t, bn);
-                
-                const px = paddingLeft + (x_phys / L0) * plotWidth;
-                const py = canvas.height / 2 - (y_phys / (A0 * 2.2)) * (plotHeight / 2);
-                
-                if (i === 0) ctx.moveTo(px, py);
-                else ctx.lineTo(px, py);
-            }
-            ctx.stroke();
-
             // 中心参考线
             ctx.beginPath();
-            ctx.strokeStyle = '#e2e8f0';
+            ctx.strokeStyle = 'gray';
             ctx.lineWidth = 1.5;
             ctx.setLineDash([6, 3]);
             ctx.moveTo(paddingLeft, canvas.height / 2);
             ctx.lineTo(canvas.width - paddingRight, canvas.height / 2);
             ctx.stroke();
             ctx.setLineDash([]);
+
+            // 绘制琴弦
+            ctx.beginPath();
+            ctx.strokeStyle = '#1e40af';
+            ctx.lineWidth = 4.5;
+            ctx.lineJoin = "round";
+            ctx.lineCap = "round";
+
+            const steps = 200;
+            for (let i = 0; i <= steps; i++) {
+                const x_phys = (i / steps) * L0;
+                const y_phys = wave(x_phys, t, bn);
+                // canvas的坐标系原点位于画布的左上角，x轴正向是向右，y轴正向是向下。
+                const px = paddingLeft + (x_phys / L0) * plotWidth;
+                const py = canvas.height /2 - (y_phys / (A0)) * (plotHeight / 2) ;
+                
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
 
             // 时间显示
             document.getElementById('timeDisplay').textContent = `t = ${t.toFixed(4)} s`;
