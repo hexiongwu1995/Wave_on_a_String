@@ -156,13 +156,7 @@
             padding: 32px;
         } */
     </style>
-
-    <!-- ✅ 修复1：用 script 标签加载，加 id="typst" 监听 load 事件 -->
-    <script type="module"
-        src="https://cdn.jsdelivr.net/npm/@myriaddreamin/typst.ts/dist/esm/contrib/all-in-one-lite.bundle.js"
-        id="typst">
-    </script>
-
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 
 <body>
@@ -175,16 +169,26 @@
 
         <div class="content">
             <div class="info">
-            <p>我已经解得琴弦的振动方程y(x,t)。现在需要在这个html文档中使用Javascript对振动方程y(x,t)进行可视化。创建一个带参数滑块的动画，用来模拟琴弦的振动。</p>
-            <p>满足所有边界条件和初始条件（初始三角波）的琴弦振动方程y(x,t)为:</p>
-             <!-- ✅ 修复3：div 先于 script，确保 DOM 已存在 -->
-            <div id="Wave-equation" class="math-equation">出错…</div>
-
-            <p>张力的竖直分量为T_y(x,t)为：</p>
-            <div id="Tension_Y_component" class="math-equation">出错…</div>
-            <p>相关的中间参数计算公式为：</p>
-            <div id="Intermediate-parameters" class="math-equation">出错…</div>
+            <p>我已经解得琴弦的振动方程\(y(x,t)\)。现在需要在这个html文档中使用Javascript对振动方程\(y(x,t)\)进行可视化。创建一个带参数滑块的动画，用来模拟琴弦的振动。</p>
+            <p>满足所有边界条件和初始条件（初始三角波）的琴弦振动方程\(y(x,t)\)为:</p>
+            <div class="math-equation">
+                $$ 
+                \begin{aligned} y(x, t) & =X(x) T(t) \\ 
+                & =\underbrace{\sum_{n=1}^{\infty}\left(b_{n} \sin \left(k_{n} x\right) \cos \left(\omega_{n} t\right)\right)}_{\text {驻波 }} \\ 
+                & =\frac{1}{2} \sum_{n=1}^{\infty}(b_{n}(\underbrace{\sin \left(k_{n} x+\omega_{n} t\right)}_{\text {左行波 }}+\underbrace{\sin \left(k_{n} x-\omega_{n} t\right)}_{\text {右行波 }})) \end{aligned}
+                $$
             </div>
+
+            <p>张力的竖直分量为\(T_y(x,t)\)为：</p>
+            <div class="math-equation">
+                $$T_y(x,t) = -\frac{T_0}{2} \cdot \sum_{n=1}^{\infty} \{ b_n k_n [\cos(k_n x + \omega_n t) + \cos(k_n x - \omega_n t)] \}$$
+            </div>
+            <p>相关的中间参数计算公式为：</p>
+            <div class="math-equation">
+               $$b_n = \frac{2A L_0^2}{x_0(L_0 - x_0) \pi^2 n^2} \sin\left(\frac{n\pi x_0}{L_0}\right) \hspace{2cm} k_n = \frac{n\pi}{L_0} \hspace{2cm}  \omega_n = \sqrt{\frac{T_0}{\mu_0}} \cdot k_n$$
+            </div>
+            </div>
+
             <br>
             <div style="margin-bottom: 20px; text-align: center;">
                 <canvas id="canvas" width="820" height="320"></canvas>
@@ -413,53 +417,6 @@
         }
 
         window.onload = init;
-    </script>
-
-    <script>
-        // 😍 Typst 内容区
-        // ✅ 修复2：监听 load 事件，配置 WASM 路径后再调用 $typst.svg()
-        document.getElementById('typst').addEventListener('load', function () {
-            $typst.setCompilerInitOptions({
-                getModule: () =>
-                    'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-web-compiler/pkg/typst_ts_web_compiler_bg.wasm'
-            });
-            $typst.setRendererInitOptions({
-                getModule: () =>
-                    'https://cdn.jsdelivr.net/npm/@myriaddreamin/typst-ts-renderer/pkg/typst_ts_renderer_bg.wasm'
-            });
-
-            $typst.svg({
-                mainContent: `#set page(width: auto, height: auto, margin: 0pt) 
-                #set text(size:16pt)
-                $ y(x,t) & = X(x) T(t) #linebreak() & = underbrace(sum_(n=1)^(infinity) (b_n sin(k_n x) cos(omega_n t)), "Standing Wave") #linebreak() &= 1/2 sum_(n=1)^(infinity) (b_n ( underbrace(sin(k_n x + omega_n t), "Left-traveling wave") + underbrace(sin(k_n x - omega_n t), "Right-traveling wave") ) ) $ `
-            }).then(svg => {
-                document.getElementById('Wave-equation').innerHTML = svg;
-            }).catch(err => {
-                document.getElementById('Wave-equation').textContent = '渲染失败：' + err;
-            });
-
-            $typst.svg({
-                mainContent: `#set page(width: auto, height: auto, margin: 0pt) 
-                #set text(size:16pt)
-                $ T_y (x,t) = - T_0/2 dot sum_(n=1)^(infinity) lr({ b_n k_n lr([ cos(k_n x + omega_n t) + cos(k_n x - omega_n t) ], size: #200%) }, size: #150%) $`
-            }).then(svg => {
-                document.getElementById('Tension_Y_component').innerHTML = svg;
-            }).catch(err => {
-                document.getElementById('Tension_Y_component').textContent = '渲染失败：' + err;
-            });
-
-            $typst.svg({
-                mainContent: `#set page(width: auto, height: auto, margin: 0pt) 
-                #set text(size:16pt)
-                $display(k_n = (n pi)/L_0)$  #h(2cm)  $display(omega_n = sqrt(T_0/mu_0) dot k_n)$ #h(2cm)  $display(b_n = (2 A_0 L_0^2)/(x_0(L_0 - x_0) pi^2 n^2) sin((n pi x_0)/L_0))$`
-            }).then(svg => {
-                document.getElementById('Intermediate-parameters').innerHTML = svg;
-            }).catch(err => {
-                document.getElementById('Intermediate-parameters').textContent = '渲染失败：' + err;
-            });
-
-            //  $k_n = (n pi)/L_0$  #h(2cm)  $omega_n = sqrt(T_0/mu_0) dot k_n$ #h(2cm)  $b_n = (2 A_0 L_0^2)/(x_0(L_0 - x_0) pi^2 n^2) sin((n pi x_0)/L_0)$
-        });
     </script>
 
 </body>
