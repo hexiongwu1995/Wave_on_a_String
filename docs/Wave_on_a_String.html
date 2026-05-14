@@ -60,13 +60,15 @@
             text-align:center;
         }
         canvas {
+            width:100%;
+            max-width: 100%;
+            aspect-ratio: 10/3;
+            height:auto;
             margin-top:10px;
             border: 3px solid #cbd5e1;
             border-radius: 16px;
             background: #f1f2f59b;
             image-rendering: crisp-edges;
-            width: 100%;
-            max-width: 100%;
             box-shadow: 0 10px 10px #cbd5e1;
             display: block;
         }
@@ -193,16 +195,15 @@
 
             </div>
 
-            <br>
-            <div style="margin-bottom: 20px; text-align: center;">
-                <canvas id="canvas" width="820" height="320"></canvas>
+            <div style="margin: 20px 0px; text-align: center;">
+                <canvas id="canvas" width= "1000" height="400"></canvas>
             </div>
 
             <div class="controls">
                 <div class="slider-group">
                     <label>A₀ (振幅, m):</label>
-                    <input type="range" id="A0" min="0.005" max="0.02" step="0.0005" value="0.01">
-                    <span class="value" id="A0_val">0.0100</span>
+                    <input type="range" id="A0" min="0.005" max="0.02" step="0.001" value="0.01">
+                    <span class="value" id="A0_val">0.010</span>
                 </div>
                 
                 <div class="slider-group">
@@ -218,27 +219,27 @@
                 </div>
                 
                 <div class="slider-group">
-                    <label>T₀ (张力, N):</label>
+                    <label>T₀ (预张力, N):</label>
                     <input type="range" id="T0" min="70" max="100" step="1" value="80">
                     <span class="value" id="T0_val">80</span>
                 </div>
                 
                 <div class="slider-group">
                     <label>μ₀ (线密度, kg/m):</label>
-                    <input type="range" id="mu0" min="0.004" max="0.012" step="0.0001" value="0.01">
-                    <span class="value" id="mu0_val">0.0100</span>
+                    <input type="range" id="mu0" min="0.004" max="0.012" step="0.001" value="0.01">
+                    <span class="value" id="mu0_val">0.010</span>
                 </div>
                 
                 <div class="slider-group">
                     <label>N (截断项数):</label>
-                    <input type="range" id="N" min="1" max="50" step="1" value="12">
-                    <span class="value" id="N_val">12</span>
+                    <input type="range" id="N" min="1" max="50" step="1" value="20">
+                    <span class="value" id="N_val">20</span>
                 </div>
                 
                 <div class="slider-group">
-                    <label>动画速度:</label>
-                    <input type="range" id="s" min="0.000001" max="0.001" step="0.000001" value="0.00001">
-                    <span class="value" id="s_val">1.0e-5</span>
+                    <label>动画速度系数:</label>
+                    <input type="range" id="s" min="5e-7" max="1e-4" step="5e-7" value="5e-7">
+                    <span class="value" id="s_val">5e-7</span>
                 </div>
 
                 <div class="button-group">
@@ -252,7 +253,6 @@
     </div>
 
 
-
     <script>
         // ==================== 参数 ====================
         let A0 = 0.01;
@@ -260,8 +260,8 @@
         let xrel = 0.3;
         let T0 = 80;
         let mu0 = 0.01;
-        let N_terms = 12;
-        let speed = 1e-5;
+        let N_terms = 20;
+        let speed = 5e-7;
 
         let t = 0;
         let isPlaying = true;
@@ -293,11 +293,11 @@
 
         // ==================== 更新显示 ====================
         function updateSliderDisplays() {
-            values.A0.textContent = A0.toFixed(4);
+            values.A0.textContent = A0.toFixed(3);
             values.L0.textContent = L0.toFixed(2);
             values.xrel.textContent = xrel.toFixed(2);
             values.T0.textContent = T0.toFixed(0);
-            values.mu0.textContent = mu0.toFixed(4);
+            values.mu0.textContent = mu0.toFixed(3);
             values.N.textContent = N_terms;
             values.s.textContent = speed.toExponential(1);
         }
