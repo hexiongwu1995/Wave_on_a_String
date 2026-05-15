@@ -236,7 +236,7 @@
                 </div>
 
                 <div class="slider-group">
-                    <label>x₀ / L₀ (拨弦位置):</label>
+                    <label>x₀/L₀ (拨弦位置):</label>
                     <input type="range" id="xrel" min="0.1" max="0.9" step="0.01" value="0.3">
                     <span class="value" id="xrel_val">0.30</span>
                 </div>
@@ -260,9 +260,9 @@
                 </div>
 
                 <div class="slider-group">
-                    <label>动画速度系数:</label>
-                    <input type="range" id="s" min="5e-7" max="1e-4" step="5e-7" value="5e-7">
-                    <span class="value" id="s_val">5e-7</span>
+                    <label>Speed(动画速度):</label>
+                    <input type="range" id="speed" min="5e-4" max="1e-1" step="5e-4" value="5e-4">
+                    <span class="value" id="speed_val">5e-7</span>
                 </div>
 
                 <div class="button-group">
@@ -284,7 +284,7 @@
         let T0 = 80;
         let mu0 = 0.01;
         let N_terms = 20;
-        let speed = 5e-7;
+        let speed = 5e-4; // 单位为 s/s
         let t = 0;
         let isPlaying = true;
         let lastTime = Date.now();
@@ -302,7 +302,7 @@
             T0: document.getElementById('T0'),
             mu0: document.getElementById('mu0'),
             N: document.getElementById('N'),
-            s: document.getElementById('s')
+            speed: document.getElementById('speed')
         };
 
         const values = {
@@ -313,7 +313,7 @@
             T0: document.getElementById('T0_val'),
             mu0: document.getElementById('mu0_val'),
             N: document.getElementById('N_val'),
-            s: document.getElementById('s_val')
+            speed: document.getElementById('speed_val')
         };
 
         // ==================== 更新显示 ====================
@@ -326,7 +326,7 @@
             values.T0.textContent = T0.toFixed(0);
             values.mu0.textContent = mu0.toFixed(3);
             values.N.textContent = N_terms;
-            values.s.textContent = speed.toExponential(1);
+            values.speed.textContent = speed.toExponential(1);
         }
 
         // ==================== 计算函数 ====================
@@ -365,37 +365,42 @@
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 中心参考线
+            // Canvas 变换是全局累积的，clearRect 只清像素，不清状态。
+            ctx.save();
+            ctx.translate(paddingLeft, canvas.height / 2);
+            ctx.scale(1, -1);  // 翻转 y 轴：正 y 向上
+
+            // 中心参考线（x 轴，y=0）
             ctx.beginPath();
             ctx.strokeStyle = 'gray';
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 2;
             ctx.setLineDash([6, 3]);
-            ctx.moveTo(paddingLeft, canvas.height / 2);
-            ctx.lineTo(canvas.width - paddingRight, canvas.height / 2);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(plotWidth, 0);
             ctx.stroke();
             ctx.setLineDash([]);
 
             // 绘制琴弦
             ctx.beginPath();
             ctx.strokeStyle = '#1e40af';
-            ctx.lineWidth = 4.5;
+            ctx.lineWidth = 2;
             ctx.lineJoin = "round";
             ctx.lineCap = "round";
 
-            const steps = 200;
+            const steps = 100;
             for (let i = 0; i <= steps; i++) {
                 const x_phys = (i / steps) * L0;
                 const y_phys = wave(x_phys, t, bn);
-                // canvas的坐标系原点位于画布的左上角，x轴正向是向右，y轴正向是向下。
-                const px = paddingLeft + (x_phys / L0) * plotWidth;
-                const py = canvas.height / 2 - (y_phys / (A0)) * (plotHeight / 2);
+                const px = (x_phys / L0) * plotWidth;
+                const py = (y_phys / A0) * (plotHeight / 2);
 
                 if (i === 0) ctx.moveTo(px, py);
                 else ctx.lineTo(px, py);
             }
             ctx.stroke();
+            ctx.restore();
 
-            // 时间显示
+            // 时间显示（不受变换影响）
             document.getElementById('timeDisplay').textContent = `t = ${t.toFixed(4)} s`;
         }
 
@@ -403,11 +408,11 @@
         function animate() {
             if (isPlaying) {
                 const now = Date.now();
-                const delta = (now - lastTime) / 1000;
+                // Delta是实际帧间隔，每帧之间的真实时间差值，单位为毫秒
+                const delta = (now - lastTime);
                 lastTime = now;
-                t += speed * delta * 950;
+                t += speed * delta / 1000; // t的单位为 s
             }
-
             draw();
             requestAnimationFrame(animate);
         }
@@ -422,7 +427,7 @@
                     if (key === 'T0') T0 = parseFloat(sliders.T0.value);
                     if (key === 'mu0') mu0 = parseFloat(sliders.mu0.value);
                     if (key === 'N') N_terms = parseInt(sliders.N.value);
-                    if (key === 's') speed = parseFloat(sliders.s.value);
+                    if (key === 'speed') speed = parseFloat(sliders.speed.value);
 
                     updateSliderDisplays();
                 });
