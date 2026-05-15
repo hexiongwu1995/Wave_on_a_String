@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,10 +10,11 @@
             font-family: KaiTi, system-ui, sans-serif;
             margin: 20px 10px;
             padding: 0px;
-            background:white;
+            background: white;
             color: black;
             line-height: 1.6;
         }
+
         .container {
             max-width: 1100px;
             margin: 20px auto;
@@ -21,30 +23,35 @@
             box-shadow: 0 10px 10px rgba(0, 0, 0, 0.075);
             overflow: hidden;
         }
+
         header {
             background: #3177e7;
             color: white;
-            margin:0px;
+            margin: 0px;
             padding: 20px;
             text-align: center;
         }
+
         h1 {
             margin: 0;
             font-size: 28px;
             font-weight: 600;
             letter-spacing: 2px;
         }
+
         .subtitle {
             margin: 8px;
             font-size: 16px;
         }
+
         .content {
-            margin:10px;
+            margin: 10px;
             padding: 0px;
-            font-size:14px;
-            color:black;
-            text-align:left;
+            font-size: 14px;
+            color: black;
+            text-align: left;
         }
+
         .info {
             margin-top: 20px;
             padding: 16px 20px;
@@ -52,19 +59,20 @@
             border-radius: 10px;
             border-left: 4px solid #3b82f6;
             box-shadow: 0 10px 10px #cbd5e1;
-            font-size:16px;
+            font-size: 16px;
             line-height: 1.6;
         }
-        .math-equation{
-            font-size:10px;
-            text-align:center;
+
+        .math-equation {
+            font-size: 10px;
+            text-align: center;
         }
+
         canvas {
-            width:100%;
+            width: 100%;
             max-width: 100%;
-            aspect-ratio: 10/3;
-            height:auto;
-            margin-top:10px;
+            height: 400px;
+            margin-top: 10px;
             border: 3px solid #cbd5e1;
             border-radius: 16px;
             background: #f1f2f59b;
@@ -72,6 +80,7 @@
             box-shadow: 0 10px 10px #cbd5e1;
             display: block;
         }
+
         .controls {
             background: #f1f2f59b;
             margin: 20px 0px;
@@ -80,6 +89,7 @@
             border: 1px solid #e5e7eb;
             box-shadow: 0 10px 10px #cbd5e1;
         }
+
         .slider-group {
             display: flex;
             align-items: center;
@@ -87,9 +97,10 @@
             padding: 0px;
             flex-wrap: nowrap;
             gap: 10px;
-            justify-content:space-evenly;
-            width:100%;
+            justify-content: space-evenly;
+            width: 100%;
         }
+
         label {
             display: inline-block;
             width: 120px;
@@ -97,10 +108,12 @@
             font-size: 12px;
             text-align: left;
         }
+
         input[type="range"] {
             flex: 1;
             accent-color: #3b82f6;
         }
+
         .value {
             display: inline-block;
             width: 60px;
@@ -114,6 +127,7 @@
             text-align: left;
             box-shadow: inset 0 5px 5px #e5e7eb;
         }
+
         .button-group {
             margin-top: 20px;
             display: flex;
@@ -121,6 +135,7 @@
             gap: 12px;
             flex-wrap: nowrap;
         }
+
         button {
             padding: 10px 12px;
             font-size: 12px;
@@ -130,17 +145,21 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
+
         #playBtn {
             background: #1e40af;
             color: white;
         }
+
         #playBtn:hover {
             transform: translateY(-2px);
         }
+
         #resetBtn {
             background: #64748b;
             color: white;
         }
+
         #resetBtn:hover {
             transform: translateY(-2px);
         }
@@ -154,6 +173,7 @@
             border-radius: 6px;
             border: 1px solid #cbd5e1;
         }
+
         /* .intro {
             padding: 32px;
         } */
@@ -171,32 +191,35 @@
 
         <div class="content">
             <div class="info">
-            <p>我已经解得琴弦的振动方程\(y(x,t)\)。现在需要在这个html文档中使用Javascript对振动方程\(y(x,t)\)进行可视化。创建一个带参数滑块的动画，用来模拟琴弦的振动。</p>
-            <p>满足所有边界条件和初始条件（初始三角波）的琴弦振动方程\(y(x,t)\)为:</p>
-            <div class="math-equation">
-                $$ 
-                \begin{aligned} y(x, t) & =X(x) T(t) \\ 
-                & =\underbrace{\sum_{n=1}^{\infty}\left(b_{n} \sin \left(k_{n} x\right) \cos \left(\omega_{n} t\right)\right)}_{\text {驻波 }} \\ 
-                & =\frac{1}{2} \sum_{n=1}^{\infty}(b_{n}(\underbrace{\sin \left(k_{n} x+\omega_{n} t\right)}_{\text {左行波 }}+\underbrace{\sin \left(k_{n} x-\omega_{n} t\right)}_{\text {右行波 }})) \end{aligned}
-                $$
-            </div>
+                <p>我已经解得琴弦的振动方程\(y(x,t)\)。现在需要在这个html文档中使用Javascript对振动方程\(y(x,t)\)进行可视化。创建一个带参数滑块的动画，用来模拟琴弦的振动。</p>
+                <p>满足所有边界条件和初始条件（初始三角波）的琴弦振动方程\(y(x,t)\)为:</p>
+                <div class="math-equation">
+                    $$
+                    \begin{aligned} y(x, t) & =X(x) T(t) \\
+                    & =\underbrace{\sum_{n=1}^{\infty}\left(b_{n} \sin \left(k_{n} x\right) \cos \left(\omega_{n}
+                    t\right)\right)}_{\text {驻波 }} \\
+                    & =\frac{1}{2} \sum_{n=1}^{\infty}(b_{n}(\underbrace{\sin \left(k_{n} x+\omega_{n} t\right)}_{\text
+                    {左行波 }}+\underbrace{\sin \left(k_{n} x-\omega_{n} t\right)}_{\text {右行波 }})) \end{aligned}
+                    $$
+                </div>
 
-            <p>张力的竖直分量为\(T_y(x,t)\)为：</p>
-            <div class="math-equation">
-                $$T_y(x,t) = -\frac{T_0}{2} \cdot \sum_{n=1}^{\infty} \{ b_n k_n [\cos(k_n x + \omega_n t) + \cos(k_n x - \omega_n t)] \}$$
-            </div>
-            <p>相关的中间参数计算公式为：</p>
-            <div class="math-equation">
-               $$k_n = \frac{n\pi}{L_0} \hspace{1cm}  \omega_n = \sqrt{\frac{T_0}{\mu_0}} \cdot k_n$$
-            </div>
-            <div class="math-equation">
-               $$b_n = \frac{2A_0 L_0^2}{x_0(L_0 - x_0) \pi^2 n^2} \sin\left(\frac{n\pi x_0}{L_0}\right)$$
-            </div>
+                <p>张力的竖直分量为\(T_y(x,t)\)为：</p>
+                <div class="math-equation">
+                    $$T_y(x,t) = -\frac{T_0}{2} \cdot \sum_{n=1}^{\infty} \{ b_n k_n [\cos(k_n x + \omega_n t) +
+                    \cos(k_n x - \omega_n t)] \}$$
+                </div>
+                <p>相关的中间参数计算公式为：</p>
+                <div class="math-equation">
+                    $$k_n = \frac{n\pi}{L_0} \hspace{1cm} \omega_n = \sqrt{\frac{T_0}{\mu_0}} \cdot k_n$$
+                </div>
+                <div class="math-equation">
+                    $$b_n = \frac{2A_0 L_0^2}{x_0(L_0 - x_0) \pi^2 n^2} \sin\left(\frac{n\pi x_0}{L_0}\right)$$
+                </div>
 
             </div>
 
             <div style="margin: 20px 0px; text-align: center;">
-                <canvas id="canvas" width= "1000" height="400"></canvas>
+                <canvas id="canvas" width="1000" height="300"></canvas>
             </div>
 
             <div class="controls">
@@ -205,37 +228,37 @@
                     <input type="range" id="A0" min="0.005" max="0.02" step="0.001" value="0.01">
                     <span class="value" id="A0_val">0.010</span>
                 </div>
-                
+
                 <div class="slider-group">
                     <label>L₀ (弦长, m):</label>
                     <input type="range" id="L0" min="0.2" max="1.0" step="0.01" value="0.6">
                     <span class="value" id="L0_val">0.60</span>
                 </div>
-                
+
                 <div class="slider-group">
                     <label>x₀ / L₀ (拨弦位置):</label>
                     <input type="range" id="xrel" min="0.1" max="0.9" step="0.01" value="0.3">
                     <span class="value" id="xrel_val">0.30</span>
                 </div>
-                
+
                 <div class="slider-group">
                     <label>T₀ (预张力, N):</label>
                     <input type="range" id="T0" min="70" max="100" step="1" value="80">
                     <span class="value" id="T0_val">80</span>
                 </div>
-                
+
                 <div class="slider-group">
                     <label>μ₀ (线密度, kg/m):</label>
                     <input type="range" id="mu0" min="0.004" max="0.012" step="0.001" value="0.01">
                     <span class="value" id="mu0_val">0.010</span>
                 </div>
-                
+
                 <div class="slider-group">
                     <label>N (截断项数):</label>
                     <input type="range" id="N" min="1" max="50" step="1" value="20">
                     <span class="value" id="N_val">20</span>
                 </div>
-                
+
                 <div class="slider-group">
                     <label>动画速度系数:</label>
                     <input type="range" id="s" min="5e-7" max="1e-4" step="5e-7" value="5e-7">
@@ -262,16 +285,17 @@
         let mu0 = 0.01;
         let N_terms = 20;
         let speed = 5e-7;
-
         let t = 0;
         let isPlaying = true;
         let lastTime = Date.now();
+        // 返回当前时间戳（以毫秒为单位，从 1970 年 1 月 1 日起计算的 Unix 时间戳，例如当前可能为 1,778,832,647,089 左右）。
 
         // ==================== DOM 元素 ====================
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        
+
         const sliders = {
+            // DOM input 元素引用
             A0: document.getElementById('A0'),
             L0: document.getElementById('L0'),
             xrel: document.getElementById('xrel'),
@@ -282,6 +306,7 @@
         };
 
         const values = {
+            // DOM span元素引用
             A0: document.getElementById('A0_val'),
             L0: document.getElementById('L0_val'),
             xrel: document.getElementById('xrel_val'),
@@ -292,7 +317,9 @@
         };
 
         // ==================== 更新显示 ====================
+        // updateSliderDisplays() 是一个通过 function 关键字 定义的普通函数，不是JavaScript对象。
         function updateSliderDisplays() {
+            // .textContent 是 DOM 元素的属性，用于获取或设置元素的纯文本内容
             values.A0.textContent = A0.toFixed(3);
             values.L0.textContent = L0.toFixed(2);
             values.xrel.textContent = xrel.toFixed(2);
@@ -307,9 +334,9 @@
             const x0 = xrel * L0;
             const bn = new Array(N_terms);
             const denom = x0 * (L0 - x0) * Math.PI * Math.PI;
-            
+
             for (let n = 1; n <= N_terms; n++) {
-                bn[n-1] = (2 * A0 * L0 * L0 / (denom * n * n)) * Math.sin(n * Math.PI * x0 / L0);
+                bn[n - 1] = (2 * A0 * L0 * L0 / (denom * n * n)) * Math.sin(n * Math.PI * x0 / L0);
             }
             return bn;
         }
@@ -317,28 +344,27 @@
         function wave(x, t, bn) {
             let y = 0;
             const V = Math.sqrt(T0 / mu0);
-            
+
             for (let n = 1; n <= N_terms; n++) {
                 const kn = n * Math.PI / L0;
                 const wn = V * kn;
-                y += bn[n-1] * Math.sin(kn * x) * Math.cos(wn * t);
+                y += bn[n - 1] * Math.sin(kn * x) * Math.cos(wn * t);
             }
             return y;
         }
 
         // ==================== 绘图 ====================
         function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
             const paddingLeft = 20;
             const paddingRight = 20;
             const paddingTop = 100;
             const plotWidth = canvas.width - paddingLeft - paddingRight;
             const plotHeight = canvas.height - paddingTop * 2;
-            
+
             const bn = computeCoefficients();
-            
-            
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
             // 中心参考线
             ctx.beginPath();
             ctx.strokeStyle = 'gray';
@@ -362,8 +388,8 @@
                 const y_phys = wave(x_phys, t, bn);
                 // canvas的坐标系原点位于画布的左上角，x轴正向是向右，y轴正向是向下。
                 const px = paddingLeft + (x_phys / L0) * plotWidth;
-                const py = canvas.height /2 - (y_phys / (A0)) * (plotHeight / 2) ;
-                
+                const py = canvas.height / 2 - (y_phys / (A0)) * (plotHeight / 2);
+
                 if (i === 0) ctx.moveTo(px, py);
                 else ctx.lineTo(px, py);
             }
@@ -381,7 +407,7 @@
                 lastTime = now;
                 t += speed * delta * 950;
             }
-            
+
             draw();
             requestAnimationFrame(animate);
         }
@@ -397,7 +423,7 @@
                     if (key === 'mu0') mu0 = parseFloat(sliders.mu0.value);
                     if (key === 'N') N_terms = parseInt(sliders.N.value);
                     if (key === 's') speed = parseFloat(sliders.s.value);
-                    
+
                     updateSliderDisplays();
                 });
             });
@@ -425,4 +451,5 @@
     </script>
 
 </body>
+
 </html>
