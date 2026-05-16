@@ -68,17 +68,22 @@
             text-align: center;
         }
 
-        canvas {
+        .svg-container {
             width: 100%;
             max-width: 100%;
-            height: 400px;
             margin-top: 10px;
             border: 3px solid #cbd5e1;
             border-radius: 16px;
             background: #f1f2f59b;
-            image-rendering: crisp-edges;
             box-shadow: 0 10px 10px #cbd5e1;
             display: block;
+            overflow: hidden;
+        }
+
+        .svg-container svg {
+            display: block;
+            width: 100%;
+            height: auto;
         }
 
         .controls {
@@ -268,8 +273,9 @@
                 </div>
             </div>
 
-            <div style="margin: 20px 0px; text-align: center;">
-                <canvas id="canvas" width="1000" height="300"></canvas>
+            <div class="svg-container" style="margin: 20px 0px; text-align: center;">
+                <svg id="svgCanvas" viewBox="0 0 1000 300" width="1000" height="300"
+                    preserveAspectRatio="xMidYMid meet"></svg>
             </div>
 
         </div>
@@ -288,14 +294,48 @@
         let t = 0;
         let isPlaying = false;
         let lastTime = Date.now();
-        // 返回当前时间戳（以毫秒为单位，从 1970 年 1 月 1 日起计算的 Unix 时间戳，例如当前可能为 1,778,832,647,089 左右）。
+
+        // ==================== SVG 常量 ====================
+        const SVG_W = 1000;
+        const SVG_H = 300;
+        const PAD_L = 20;
+        const PAD_R = 20;
+        const PAD_T = 100;
+        const PLOT_W = SVG_W - PAD_L - PAD_R;
+        const PLOT_H = SVG_H - PAD_T * 2;
+        const CX = PAD_L;           // 坐标系原点 x (SVG坐标)
+        const CY = SVG_H / 2;       // 坐标系原点 y (SVG坐标)
 
         // ==================== DOM 元素 ====================
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
+        const svg = document.getElementById('svgCanvas');
+
+        // 创建 SVG 结构（一次创建，后续只更新属性）
+        // 外层 group 做坐标变换：平移至 (PAD_L, SVG_H/2) 并翻转 y 轴
+        const rootG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        rootG.setAttribute('transform', `translate(${CX}, ${CY}) scale(1, -1)`);
+        svg.appendChild(rootG);
+
+        // 参考线（x 轴）
+        const axisLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        axisLine.setAttribute('x1', '0');
+        axisLine.setAttribute('y1', '0');
+        axisLine.setAttribute('x2', String(PLOT_W));
+        axisLine.setAttribute('y2', '0');
+        axisLine.setAttribute('stroke', 'gray');
+        axisLine.setAttribute('stroke-width', '2');
+        axisLine.setAttribute('stroke-dasharray', '6,3');
+        rootG.appendChild(axisLine);
+
+        // 琴弦 polyline
+        const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        polyline.setAttribute('fill', 'none');
+        polyline.setAttribute('stroke', '#1e40af');
+        polyline.setAttribute('stroke-width', '3');
+        polyline.setAttribute('stroke-linejoin', 'round');
+        polyline.setAttribute('stroke-linecap', 'round');
+        rootG.appendChild(polyline);
 
         const sliders = {
-            // DOM input 元素引用
             A0: document.getElementById('A0'),
             L0: document.getElementById('L0'),
             xrel: document.getElementById('xrel'),
@@ -306,7 +346,6 @@
         };
 
         const values = {
-            // DOM span元素引用
             A0: document.getElementById('A0_val'),
             L0: document.getElementById('L0_val'),
             xrel: document.getElementById('xrel_val'),
@@ -317,9 +356,7 @@
         };
 
         // ==================== 更新显示 ====================
-        // updateSliderDisplays() 是一个通过 function 关键字 定义的普通函数，不是JavaScript对象。
         function updateSliderDisplays() {
-            // .textContent 是 DOM 元素的属性，用于获取或设置元素的纯文本内容
             values.A0.textContent = A0.toFixed(3);
             values.L0.textContent = L0.toFixed(2);
             values.xrel.textContent = xrel.toFixed(2);
@@ -353,54 +390,23 @@
             return y;
         }
 
-        // ==================== 绘图 ====================
+        // ==================== 绘图 (SVG) ====================
         function draw() {
-            const paddingLeft = 20;
-            const paddingRight = 20;
-            const paddingTop = 100;
-            const plotWidth = canvas.width - paddingLeft - paddingRight;
-            const plotHeight = canvas.height - paddingTop * 2;
-
             const bn = computeCoefficients();
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Canvas 变换是全局累积的，clearRect 只清像素，不清状态。
-            ctx.save();
-            ctx.translate(paddingLeft, canvas.height / 2);
-            ctx.scale(1, -1);  // 翻转 y 轴：正 y 向上
-
-            // 中心参考线（x 轴，y=0）
-            ctx.beginPath();
-            ctx.strokeStyle = 'gray';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([6, 3]);
-            ctx.moveTo(0, 0);
-            ctx.lineTo(plotWidth, 0);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // 绘制琴弦
-            ctx.beginPath();
-            ctx.strokeStyle = '#1e40af';
-            ctx.lineWidth = 2;
-            ctx.lineJoin = "round";
-            ctx.lineCap = "round";
-
-            const steps = 200;
+            // 构建 polyline 的 points 字符串
+            const steps = 300; // 更多采样点，SVG 能轻松处理
+            const pts = [];
             for (let i = 0; i <= steps; i++) {
                 const x_phys = (i / steps) * L0;
                 const y_phys = wave(x_phys, t, bn);
-                const px = (x_phys / L0) * plotWidth;
-                const py = (y_phys / A0) * (plotHeight / 2);
-
-                if (i === 0) ctx.moveTo(px, py);
-                else ctx.lineTo(px, py);
+                const px = (x_phys / L0) * PLOT_W;
+                const py = (y_phys / A0) * (PLOT_H / 2);
+                pts.push(`${px.toFixed(2)},${py.toFixed(2)}`);
             }
-            ctx.stroke();
-            ctx.restore();
+            polyline.setAttribute('points', pts.join(' '));
 
-            // 时间显示（不受变换影响）
+            // 时间显示
             document.getElementById('timeDisplay').textContent = `t = ${t.toFixed(4)} s`;
         }
 
@@ -408,14 +414,11 @@
         function animate() {
             if (isPlaying) {
                 const now = Date.now();
-                // Delta是实际帧间隔，每帧之间的真实时间差值，单位为毫秒
                 const delta = (now - lastTime);
                 lastTime = now;
-                t += speed * delta / 1000; // t的单位为 s
+                t += speed * delta / 1000;
             }
             draw();
-            // 浏览器在下一帧渲染前调用 animate() 函数
-            // 形成无限循环，持续动画
             requestAnimationFrame(animate);
         }
 
@@ -440,12 +443,12 @@
         document.getElementById('playBtn').addEventListener('click', () => {
             isPlaying = !isPlaying;
             document.getElementById('playBtn').textContent = isPlaying ? '暂停' : '播放';
-            if (isPlaying) lastTime = Date.now(); // 重置 lastTime
+            if (isPlaying) lastTime = Date.now();
         });
 
         document.getElementById('resetBtn').addEventListener('click', () => {
             t = 0;
-            draw(); // 立即重绘以更新时间显示
+            draw();
         });
 
         // ==================== 初始化 ====================
