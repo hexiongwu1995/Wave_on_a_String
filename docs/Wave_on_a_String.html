@@ -252,7 +252,8 @@
 
         <div class="content">
             <div class="info">
-                <p><strong>真实的物理模型是：</strong>一根两端固定的琴弦，初始时刻\(t=0\)，在\(x=x_0\)处向上拉伸至\(y=A_0\)处，然后释放琴弦。</p>
+                <p><strong>真实的物理模型是：</strong>一根两端固定的琴弦，初始时刻\(t=0\)，静止释放（初始速度为零），初始位形为三角波：在\(x=x_0\)处的横向位移为\(A_0\)，两端（\(x=0\)和\(x=L_0\)）固定为零，其余各点位移由线性插值确定。
+                </p>
                 <p><strong>近似条件是：</strong></p>
                 <ol>
                     <li>小振幅假设：振幅\(A_0\)远小于弦长\(L_0\)</li>
@@ -275,9 +276,9 @@
                     $$
                 </div>
 
-                <p>b. 张力的竖直分量\(T_y(x,t)\)为：</p>
+                <p>b. 张力的竖直分量\(T_y(x,t)\)为（由小角度近似\(T_y = T_0\,\partial y/\partial x\)导出）：</p>
                 <div class="math-equation">
-                    $$T_y(x,t) = -\frac{T_0}{2} \cdot \sum_{n=1}^{\infty} \left\{ b_n k_n \left[\cos(k_n x + \omega_n t)
+                    $$T_y(x,t) = \frac{T_0}{2} \cdot \sum_{n=1}^{\infty} \left\{ b_n k_n \left[\cos(k_n x + \omega_n t)
                     +
                     \cos(k_n x - \omega_n t)\right] \right\}$$
                 </div>
@@ -286,7 +287,8 @@
                     $$k_n = \frac{n\pi}{L_0} \hspace{1cm} \omega_n = \sqrt{\frac{T_0}{\mu_0}} \cdot k_n$$
                 </div>
                 <div class="math-equation">
-                    $$b_n = \frac{2A_0 L_0^2}{x_0(L_0 - x_0) \pi^2 n^2} \sin\left(\frac{n\pi x_0}{L_0}\right)$$
+                    $$b_n = \frac{2}{L_0}\int_0^{L_0} y(x,0)\sin(k_n x)\,\mathrm{d}x = \frac{2A_0 L_0^2}{x_0(L_0 - x_0)
+                    \pi^2 n^2} \sin\left(\frac{n\pi x_0}{L_0}\right)$$
                 </div>
             </div>
 
@@ -342,7 +344,7 @@
                     <label><input type="checkbox" id="chkRight" checked> <span style="color:#16a34a;">●</span>
                         右行波</label>
                     <label><input type="checkbox" id="chkSum" checked> <span style="color:#6b7280;">●</span>
-                        叠加验证</label>
+                        yL+yR 叠加（≡ 驻波）</label>
                     <label><input type="checkbox" id="chkTension" checked> <span style="color:#ea580c;">●</span> 张力
                         T<sub>y</sub></label>
                 </div>
@@ -420,7 +422,7 @@
             { label: '驻波 y', color: '#1e40af', dash: '' },
             { label: '左行波 yL', color: '#dc2626', dash: '6,3' },
             { label: '右行波 yR', color: '#16a34a', dash: '6,3' },
-            { label: 'yL+yR (验证)', color: '#6b7280', dash: '3,3' },
+            { label: 'yL+yR 叠加（≡ 驻波）', color: '#6b7280', dash: '3,3' },
             { label: '张力 Ty', color: '#ea580c', dash: '' }
         ];
 
@@ -583,7 +585,8 @@
             return y;
         }
 
-        // 张力竖直分量: Ty(x,t) = -T₀/2 · Σ bn·kn·[cos(kn·x+ωn·t) + cos(kn·x−ωn·t)]
+        // 张力竖直分量: Ty(x,t) = T₀/2 · Σ bn·kn·[cos(kn·x+ωn·t) + cos(kn·x−ωn·t)]
+        // 由小角度近似 Ty = T₀ · ∂y/∂x 展开后利用积化和差得到
         function tensionTy(x, t, bn) {
             let ty = 0;
             const V = Math.sqrt(T0 / mu0);
@@ -592,7 +595,7 @@
                 const wn = V * kn;
                 ty += bn[n - 1] * kn * (Math.cos(kn * x + wn * t) + Math.cos(kn * x - wn * t));
             }
-            return -0.5 * T0 * ty;
+            return 0.5 * T0 * ty;
         }
 
         // ==================== 绘图 (SVG) ====================
