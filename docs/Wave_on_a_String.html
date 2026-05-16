@@ -252,21 +252,22 @@
 
         <div class="content">
             <div class="info">
-                <p><strong>真实的物理模型是：</strong>一根两端固定的琴弦，初始时刻\(t=0\)，静止释放（初始速度为零），初始位形为三角波：在\(x=x_0\)处的横向位移为\(A_0\)，两端（\(x=0\)和\(x=L_0\)）固定为零，其余各点位移由线性插值确定。
+                <p><strong>真实的物理模型是：</strong>一根两端固定的琴弦，初始时刻\(t=0\)，在\(x=x_0\)处往上拨动琴弦至位移\(y(x_0, 0)=A_0\)处，静止释放。
                 </p>
                 <p><strong>近似条件是：</strong></p>
                 <ol>
                     <li>小振幅假设：振幅\(A_0\)远小于弦长\(L_0\)</li>
                     <li>忽略琴弦的伸长</li>
-                    <li>将琴弦上的张力近似为琴弦的静止预张力\(T_0\)</li>
-                    <li>将琴弦的线密度近似为琴弦静止时的线密度\(\mu_0\)</li>
+                    <li>将琴弦上的张力\(T(x,t)\)近似为琴弦的静止预张力\(T_0\)</li>
+                    <li>将琴弦的线密度\(\mu(x,t)\)近似为琴弦静止时的线密度\(\mu_0\)</li>
+                    <li>初始位形近似为三角波：在\(x=x_0\)处的位移为\(A_0\)，两端（\(x=0\)和\(x=L_0\)）固定为零，其余各点位移由线性插值确定</li>
                     <li>忽略所有阻力和能量损耗</li>
                 </ol>
                 <p><strong>解得：</strong></p>
                 <p>a. 满足所有边界条件和初始条件（初始三角波）的琴弦振动方程\(y(x,t)\)为:</p>
                 <div class="math-equation">
                     $$
-                    \begin{aligned} y(x, t) & =X(x) T(t) \\
+                    \begin{aligned} y(x, t) & = \sum_{n=1}^{\infty}X_n(x) T_n(t) \\
                     & =\underbrace{\sum_{n=1}^{\infty}\left(b_{n} \sin \left(k_{n} x\right) \cos \left(\omega_{n}
                     t\right)\right)}_{\text {驻波 }} \\
                     & =\frac{1}{2} \sum_{n=1}^{\infty}\left(b_{n}\left(\underbrace{\sin \left(k_{n} x+\omega_{n}
@@ -287,7 +288,7 @@
                     $$k_n = \frac{n\pi}{L_0} \hspace{1cm} \omega_n = \sqrt{\frac{T_0}{\mu_0}} \cdot k_n$$
                 </div>
                 <div class="math-equation">
-                    $$b_n = \frac{2}{L_0}\int_0^{L_0} y(x,0)\sin(k_n x)\,\mathrm{d}x = \frac{2A_0 L_0^2}{x_0(L_0 - x_0)
+                    $$b_n = \frac{2A_0 L_0^2}{x_0(L_0 - x_0)
                     \pi^2 n^2} \sin\left(\frac{n\pi x_0}{L_0}\right)$$
                 </div>
             </div>
@@ -344,9 +345,9 @@
                     <label><input type="checkbox" id="chkRight" checked> <span style="color:#16a34a;">●</span>
                         右行波</label>
                     <label><input type="checkbox" id="chkSum" checked> <span style="color:#6b7280;">●</span>
-                        yL+yR 叠加（≡ 驻波）</label>
+                        \(y_L+y_R\) </label>
                     <label><input type="checkbox" id="chkTension" checked> <span style="color:#ea580c;">●</span> 张力
-                        T<sub>y</sub></label>
+                        \(T_y\)</label>
                 </div>
 
                 <div class="wave-info">
@@ -422,7 +423,7 @@
             { label: '驻波 y', color: '#1e40af', dash: '' },
             { label: '左行波 yL', color: '#dc2626', dash: '6,3' },
             { label: '右行波 yR', color: '#16a34a', dash: '6,3' },
-            { label: 'yL+yR 叠加（≡ 驻波）', color: '#6b7280', dash: '3,3' },
+            { label: 'yL+yR', color: '#6b7280', dash: '3,3' },
             { label: '张力 Ty', color: '#ea580c', dash: '' }
         ];
 
@@ -441,7 +442,6 @@
 
             const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.setAttribute('x', '30');
-            // FIX: dominant-baseline to center text on the line
             text.setAttribute('y', String(yPos + 4));
             text.setAttribute('font-size', '12');
             text.setAttribute('fill', '#374151');
@@ -518,7 +518,6 @@
             values.T0.textContent = T0.toFixed(0);
             values.mu0.textContent = mu0.toFixed(3);
             values.N.textContent = N_terms;
-            // FIX: display speed correctly using toExponential(1) on the current value
             values.speed.textContent = speed.toExponential(1);
         }
 
@@ -690,7 +689,6 @@
                     if (Math.abs(arrowLen) < 0.5) continue; // 太短不画
 
                     const x1 = d.px;
-                    // FIX: arrow base starts at the actual string position (not the equilibrium axis)
                     const y1 = d.py_string;
                     const x2 = d.px;
                     const y2 = d.py_string + arrowLen;
