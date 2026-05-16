@@ -25,6 +25,7 @@
             box-shadow: 0 10px 10px rgba(0, 0, 0, 0.075);
             overflow: hidden;
         }
+
         /* 这是一个 HTML 的 <header> 标签，用于定义页面或区域的页眉部分。 */
         header {
             background: #3177e7;
@@ -89,6 +90,7 @@
             justify-content: space-evenly;
             width: 100%;
         }
+
         /* 这是一个 HTML 标签 */
         label {
             display: inline-block;
@@ -97,6 +99,7 @@
             font-size: 12px;
             text-align: left;
         }
+
         /* 这是一个 CSS 属性选择器，用于选中所有 type 属性值为 "range" 的 <input> 元素，也就是 HTML 中的滑块控件（range slider）*/
         input[type="range"] {
             flex: 1;
@@ -266,7 +269,7 @@
                     <li>忽略琴弦的伸长</li>
                     <li>将琴弦上的张力\(T(x,t)\)近似为琴弦的静止预张力\(T_0\)</li>
                     <li>将琴弦的线密度\(\mu(x,t)\)近似为琴弦静止时的线密度\(\mu_0\)</li>
-                    <li>初始位形近似为三角波：在\(x=x_0\)处的位移为\(A_0\)，两端（\(x=0\)和\(x=L_0\)）固定为零，其余各点位移由线性插值确定</li>
+                    <li>初始位形近似为三角波：在\(x=x_0\)处的位移为\(A_0\)，两端（\(x=0\)和\(x=L_0\)）固定为零，其余各点由线性插值确定</li>
                     <li>忽略所有阻力和能量损耗</li>
                 </ol>
                 <p><strong>解得：</strong></p>
@@ -283,11 +286,10 @@
                     $$
                 </div>
 
-                <p>b. 张力的竖直分量\(T_y(x,t)\)为（由小角度近似\(T_y = T_0\,\partial y/\partial x\)导出）：</p>
+                <p>b. 张力的竖直分量\(T_y(x,t)\)为：</p>
                 <div class="math-equation">
                     $$T_y(x,t) = \frac{T_0}{2} \sum_{n=1}^{\infty} \left\{ b_n k_n \left[\cos(k_n x + \omega_n t)
-                    +
-                    \cos(k_n x - \omega_n t)\right] \right\}$$
+                    + \cos(k_n x - \omega_n t)\right] \right\}$$
                 </div>
                 <p>c. 相关的中间参数计算公式为：</p>
                 <div class="math-equation">
@@ -340,6 +342,7 @@
                 <div class="slider-group">
                     <label>Speed (动画速度):</label>
                     <input type="range" id="speed" min="0.0001" max="0.001" step="0.0001" value="0.0001">
+                    <!-- html 的range类型无法解析科学计数法，但是span元素却可以解析科学计数法？ -->
                     <span class="value" id="speed_val">1.0e-4</span>
                 </div>
 
@@ -357,7 +360,7 @@
                 </div>
 
                 <div class="wave-info">
-                    <span>波速 V = <strong id="waveSpeed">—</strong> m/s</span>
+                    <span>波速 V = <strong id="waveSpeed">-</strong> m/s</span>
                     <span>基频 f₁ = <strong id="fundFreq">—</strong> Hz</span>
                     <span>角频率 ω₁ = <strong id="angFreq">—</strong> rad/s</span>
                 </div>
