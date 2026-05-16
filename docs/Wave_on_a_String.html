@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>琴弦振动可视化</title>
     <style>
+        /* 这是 HTML 的 <body> 标签。 */
         body {
             font-family: KaiTi, system-ui, sans-serif;
             margin: 20px 10px;
@@ -15,6 +16,7 @@
             line-height: 1.6;
         }
 
+        /* .container 是一个 CSS 类选择器 */
         .container {
             max-width: 1100px;
             margin: 20px auto;
@@ -23,7 +25,7 @@
             box-shadow: 0 10px 10px rgba(0, 0, 0, 0.075);
             overflow: hidden;
         }
-
+        /* 这是一个 HTML 的 <header> 标签，用于定义页面或区域的页眉部分。 */
         header {
             background: #3177e7;
             color: white;
@@ -87,7 +89,7 @@
             justify-content: space-evenly;
             width: 100%;
         }
-
+        /* 这是一个 HTML 标签 */
         label {
             display: inline-block;
             width: 120px;
@@ -95,7 +97,7 @@
             font-size: 12px;
             text-align: left;
         }
-
+        /* 这是一个 CSS 属性选择器，用于选中所有 type 属性值为 "range" 的 <input> 元素，也就是 HTML 中的滑块控件（range slider）*/
         input[type="range"] {
             flex: 1;
             accent-color: #3b82f6;
@@ -117,16 +119,17 @@
 
         .checkbox-group {
             display: flex;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 5px;
-            margin: 10px 0;
+            margin: 10px 0px;
             padding: 10px;
+            gap: 5px;
             background: #f8fafc;
             border-radius: 10px;
             border: 1px solid #e2e8f0;
         }
 
+        /*这是 后代选择器，表示：选中所有位于 .checkbox-group 内部（任意层级）的 <label> 元素。*/
         .checkbox-group label {
             display: inline-flex;
             align-items: center;
@@ -140,6 +143,7 @@
             transition: background 0.15s;
         }
 
+        /*这是 后代选择器 + 伪类*/
         .checkbox-group label:hover {
             background: #e2e8f0;
         }
@@ -157,7 +161,7 @@
             align-items: center;
             gap: 16px;
             margin: 10px 0;
-            padding: 8px 16px;
+            padding: 8px;
             background: #f0f9ff;
             border-radius: 10px;
             border: 1px solid #bae6fd;
@@ -188,11 +192,13 @@
             transition: all 0.2s ease;
         }
 
+        /* #playBtn 是一个id选择器 */
         #playBtn {
-            background: #1e40af;
+            background: #0467e8;
             color: white;
         }
 
+        /* 这是一个 CSS 选择器，结合了 ID 选择器 和 伪类选择器 */
         #playBtn:hover {
             transform: translateY(-2px);
         }
@@ -279,7 +285,7 @@
 
                 <p>b. 张力的竖直分量\(T_y(x,t)\)为（由小角度近似\(T_y = T_0\,\partial y/\partial x\)导出）：</p>
                 <div class="math-equation">
-                    $$T_y(x,t) = \frac{T_0}{2} \cdot \sum_{n=1}^{\infty} \left\{ b_n k_n \left[\cos(k_n x + \omega_n t)
+                    $$T_y(x,t) = \frac{T_0}{2} \sum_{n=1}^{\infty} \left\{ b_n k_n \left[\cos(k_n x + \omega_n t)
                     +
                     \cos(k_n x - \omega_n t)\right] \right\}$$
                 </div>
