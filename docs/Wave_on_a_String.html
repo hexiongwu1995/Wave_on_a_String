@@ -218,10 +218,6 @@
 
             </div>
 
-            <div style="margin: 20px 0px; text-align: center;">
-                <canvas id="canvas" width="1000" height="300"></canvas>
-            </div>
-
             <div class="controls">
                 <div class="slider-group">
                     <label>A₀ (振幅, m):</label>
@@ -270,6 +266,10 @@
                     <button id="resetBtn">重置时间</button>
                     <span class="time-display" id="timeDisplay">t = 0.0000 s</span>
                 </div>
+            </div>
+
+            <div style="margin: 20px 0px; text-align: center;">
+                <canvas id="canvas" width="1000" height="300"></canvas>
             </div>
 
         </div>
@@ -438,15 +438,15 @@
 
         // ==================== 按钮事件 ====================
         document.getElementById('playBtn').addEventListener('click', () => {
-                isPlaying = !isPlaying;
-                document.getElementById('playBtn').textContent = isPlaying ? '暂停' : '播放';
-                if (isPlaying) lastTime = Date.now(); // 重置 lastTime
-            });
+            isPlaying = !isPlaying;
+            document.getElementById('playBtn').textContent = isPlaying ? '暂停' : '播放';
+            if (isPlaying) lastTime = Date.now(); // 重置 lastTime
+        });
 
         document.getElementById('resetBtn').addEventListener('click', () => {
-                t = 0;
-                draw(); // 立即重绘以更新时间显示
-            });
+            t = 0;
+            draw(); // 立即重绘以更新时间显示
+        });
 
         // ==================== 初始化 ====================
         function init() {
