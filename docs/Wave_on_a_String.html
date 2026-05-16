@@ -266,7 +266,7 @@
                 </div>
 
                 <div class="button-group">
-                    <button id="playBtn">暂停</button>
+                    <button id="playBtn">播放</button>
                     <button id="resetBtn">重置时间</button>
                     <span class="time-display" id="timeDisplay">t = 0.0000 s</span>
                 </div>
@@ -286,7 +286,7 @@
         let N_terms = 20;
         let speed = 5e-4; // 单位为 s/s
         let t = 0;
-        let isPlaying = true;
+        let isPlaying = false;
         let lastTime = Date.now();
         // 返回当前时间戳（以毫秒为单位，从 1970 年 1 月 1 日起计算的 Unix 时间戳，例如当前可能为 1,778,832,647,089 左右）。
 
@@ -414,6 +414,8 @@
                 t += speed * delta / 1000; // t的单位为 s
             }
             draw();
+            // 浏览器在下一帧渲染前调用 animate() 函数
+            // 形成无限循环，持续动画
             requestAnimationFrame(animate);
         }
 
@@ -436,13 +438,15 @@
 
         // ==================== 按钮事件 ====================
         document.getElementById('playBtn').addEventListener('click', () => {
-            isPlaying = !isPlaying;
-            document.getElementById('playBtn').textContent = isPlaying ? '暂停' : '播放';
-        });
+                isPlaying = !isPlaying;
+                document.getElementById('playBtn').textContent = isPlaying ? '暂停' : '播放';
+                if (isPlaying) lastTime = Date.now(); // 重置 lastTime
+            });
 
         document.getElementById('resetBtn').addEventListener('click', () => {
-            t = 0;
-        });
+                t = 0;
+                draw(); // 立即重绘以更新时间显示
+            });
 
         // ==================== 初始化 ====================
         function init() {
