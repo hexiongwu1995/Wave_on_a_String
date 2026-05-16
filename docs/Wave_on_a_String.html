@@ -330,11 +330,8 @@
 
                 <div class="slider-group">
                     <label>Speed (动画速度):</label>
-                    <!-- FIX 1: HTML range min/max/step must use plain decimal notation, not scientific notation -->
-                    <!-- FIX 2: default value changed to 0.05 so animation is visibly smooth at startup  -->
                     <input type="range" id="speed" min="0.0001" max="0.001" step="0.0001" value="0.0001">
-                    <!-- FIX 3: default display corrected from wrong "5e-7" to match actual initial speed -->
-                    <span class="value" id="speed_val">5.0e-4</span>
+                    <span class="value" id="speed_val">1.0e-4</span>
                 </div>
 
                 <div class="checkbox-group">
@@ -380,8 +377,6 @@
         let T0 = 80;
         let mu0 = 0.01;
         let N_terms = 20;
-        // FIX: initial speed set to 0.05 (unit: simulation-seconds per real-second)
-        // so that one period (~0.013 s physical) completes in ~0.26 real seconds — clearly visible
         let speed = 0.0001;
         let t = 0;
         let isPlaying = false;
@@ -402,8 +397,6 @@
         // ==================== DOM 元素 ====================
         const svg = document.getElementById('svgCanvas');
 
-        // 创建 SVG 结构（一次创建，后续只更新属性）
-        // 外层 group 做坐标变换：平移至 (PAD_L, SVG_H/2) 并翻转 y 轴（物理 y 轴向上 = SVG y 轴向下取反）
         const rootG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         rootG.setAttribute('transform', `translate(${CX}, ${CY}) scale(1, -1)`);
         svg.appendChild(rootG);
@@ -419,8 +412,6 @@
         axisLine.setAttribute('stroke-dasharray', '6,3');
         rootG.appendChild(axisLine);
 
-        // FIX: 图例直接附加到 svg（不在 rootG 内），避免因 rootG 的 scale(1,-1) 导致文字倒置
-        // 图例位置：右上角，纯 SVG 坐标（y 向下为正）
         const legendG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         legendG.setAttribute('transform', `translate(${SVG_W - 180}, ${PAD_T - 10})`);
         svg.appendChild(legendG);
@@ -593,7 +584,6 @@
         }
 
         // 张力竖直分量: Ty(x,t) = -T₀/2 · Σ bn·kn·[cos(kn·x+ωn·t) + cos(kn·x−ωn·t)]
-        // Note: this equals T₀ · ∂y/∂x (with a leading negative sign per problem definition)
         function tensionTy(x, t, bn) {
             let ty = 0;
             const V = Math.sqrt(T0 / mu0);
@@ -659,8 +649,6 @@
 
                 if (showTension) {
                     const ty = tensionTy(x_phys, t, bn);
-                    // FIX: record the actual string position (py_stand) so arrows originate from the string,
-                    //       not from the equilibrium axis (y=0).
                     tensionData.push({ px, py_string: py_stand, ty });
                 }
             }
