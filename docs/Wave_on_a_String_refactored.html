@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>琴弦振动可视化</title>
+    <style>
+        body {
+            font-family: KaiTi, system-ui, sans-serif;
+            margin: 20px 10px;
+            padding: 0;
+            background: white;
+            color: black;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 10px rgba(0,0,0,0.075);
+            overflow: hidden;
+        }
+        header {
+            background: #3177e7;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+        .subtitle { margin: 8px; font-size: 16px; }
+        .content { margin: 10px; padding: 0; font-size: 14px; color: black; text-align: left; }
+        .info {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #f1f2f59b;
+            border-radius: 16px;
+            border-left: 4px solid #3b82f6;
+            box-shadow: 0 10px 10px #cbd5e1;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .math-equation { font-size: 10px; text-align: center; }
+        .controls {
+            background: #f1f2f59b;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 10px #cbd5e1;
+        }
+        .slider-group {
+            display: flex;
+            align-items: center;
+            margin: 20px 5px;
+            flex-wrap: nowrap;
+            gap: 10px;
+            justify-content: space-evenly;
+            width: 100%;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            font-weight: 500;
+            font-size: 12px;
+            text-align: left;
+        }
+        input[type="range"] { flex: 1; accent-color: #3b82f6; }
+        .value {
+            display: inline-block;
+            width: 60px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            background: white;
+            padding: 5px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            text-align: left;
+            box-shadow: inset 0 5px 5px #e5e7eb;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            gap: 5px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        .checkbox-group label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            width: auto;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.15s;
+        }
+        .checkbox-group label:hover { background: #e2e8f0; }
+        .checkbox-group input[type="checkbox"] {
+            width: 16px; height: 16px;
+            accent-color: #3b82f6; cursor: pointer;
+        }
+        .wave-info {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+            margin: 10px 0;
+            padding: 8px;
+            background: #f0f9ff;
+            border-radius: 10px;
+            border: 1px solid #bae6fd;
+            font-size: 13px;
+            font-weight: 500;
+            color: #0369a1;
+        }
+        .wave-info span { white-space: nowrap; }
+        .button-group {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: nowrap;
+        }
+        button {
+            padding: 10px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #playBtn { background: #0467e8; color: white; }
+        #playBtn:hover, #resetBtn:hover { transform: translateY(-2px); }
+        #resetBtn { background: #64748b; color: white; }
+        .time-display {
+            font-size: 12px;
+            font-weight: 500;
+            color: #1e40af;
+            background: white;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+        }
+        .svg-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 20px 0;
+            border: 3px solid #cbd5e1;
+            border-radius: 16px;
+            background: #f1f2f59b;
+            box-shadow: 0 10px 10px #cbd5e1;
+            display: block;
+            overflow: hidden;
+        }
+        .svg-container svg { display: block; width: 100%; height: auto; }
+        .legend-text { font-size: 12px; font-weight: 500; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+<div class="container">
+    <header>
+        <h1>琴弦振动可视化</h1>
+        <p class="subtitle">基于波动方程的弦振动实时模拟</p>
+    </header>
+
+    <div class="content">
+        <div class="info">
+            <p><strong>真实的物理模型是：</strong>一根两端固定的琴弦，初始时刻\(t=0\)，在\(x=x_0\)处往上拨动琴弦至位移\(y(x_0, 0)=A_0\)处，静止释放。</p>
+            <p><strong>近似条件是：</strong></p>
+            <ol>
+                <li>小振幅假设：振幅\(A_0\)远小于弦长\(L_0\)</li>
+                <li>忽略琴弦的伸长</li>
+                <li>将琴弦上的张力\(T(x,t)\)近似为琴弦的静止预张力\(T_0\)</li>
+                <li>将琴弦的线密度\(\mu(x,t)\)近似为琴弦静止时的线密度\(\mu_0\)</li>
+                <li>初始位形近似为三角波：在\(x=x_0\)处的位移为\(A_0\)，两端（\(x=0\)和\(x=L_0\)）固定为零，其余各点由线性插值确定</li>
+                <li>忽略所有阻力和能量损耗</li>
+            </ol>
+            <p><strong>解得：</strong></p>
+            <p>a. 满足所有边界条件和初始条件（初始三角波）的琴弦振动方程\(y(x,t)\)为:</p>
+            <div class="math-equation">
+                $$\begin{aligned} y(x, t) & = \sum_{n=1}^{\infty}X_n(x) T_n(t) \\
+                & =\underbrace{\sum_{n=1}^{\infty}\left(b_{n} \sin \left(k_{n} x\right) \cos \left(\omega_{n} t\right)\right)}_{\text{驻波}} \\
+                & =\frac{1}{2} \sum_{n=1}^{\infty}\left(b_{n}\left(\underbrace{\sin \left(k_{n} x+\omega_{n} t\right)}_{\text{左行波}}+\underbrace{\sin \left(k_{n} x-\omega_{n} t\right)}_{\text{右行波}}\right)\right)
+                \end{aligned}$$
+            </div>
+            <p>b. 张力的竖直分量\(T_y(x,t)\)为：</p>
+            <div class="math-equation">
+                $$T_y(x,t) = \frac{T_0}{2} \sum_{n=1}^{\infty} \left\{ b_n k_n \left[\cos(k_n x + \omega_n t) + \cos(k_n x - \omega_n t)\right] \right\}$$
+            </div>
+            <p>c. 相关的中间参数计算公式为：</p>
+            <div class="math-equation">
+                $$k_n = \frac{n\pi}{L_0} \hspace{1cm} \omega_n = \sqrt{\frac{T_0}{\mu_0}} \cdot k_n$$
+            </div>
+            <div class="math-equation">
+                $$b_n = \frac{2A_0 L_0^2}{x_0(L_0 - x_0) \pi^2 n^2} \sin\left(\frac{n\pi x_0}{L_0}\right)$$
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="slider-group">
+                <label>A₀ (振幅, m):</label>
+                <input type="range" id="A0" min="0.005" max="0.02" step="0.001" value="0.01">
+                <span class="value" id="A0_val">0.010</span>
+            </div>
+            <div class="slider-group">
+                <label>L₀ (弦长, m):</label>
+                <input type="range" id="L0" min="0.2" max="1.0" step="0.01" value="0.6">
+                <span class="value" id="L0_val">0.60</span>
+            </div>
+            <div class="slider-group">
+                <label>x₀/L₀ (拨弦位置):</label>
+                <input type="range" id="xrel" min="0.1" max="0.9" step="0.01" value="0.3">
+                <span class="value" id="xrel_val">0.30</span>
+            </div>
+            <div class="slider-group">
+                <label>T₀ (预张力, N):</label>
+                <input type="range" id="T0" min="70" max="100" step="1" value="80">
+                <span class="value" id="T0_val">80</span>
+            </div>
+            <div class="slider-group">
+                <label>μ₀ (线密度, kg/m):</label>
+                <input type="range" id="mu0" min="0.004" max="0.012" step="0.001" value="0.01">
+                <span class="value" id="mu0_val">0.010</span>
+            </div>
+            <div class="slider-group">
+                <label>N (截断项数):</label>
+                <input type="range" id="N" min="1" max="50" step="1" value="20">
+                <span class="value" id="N_val">20</span>
+            </div>
+            <div class="slider-group">
+                <label>Speed (动画速度):</label>
+                <input type="range" id="speed" min="0.0001" max="0.001" step="0.0001" value="0.0001">
+                <span class="value" id="speed_val">1.0e-4</span>
+            </div>
+
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="chkStanding" checked> <span style="color:#1e40af;">●</span> 驻波</label>
+                <label><input type="checkbox" id="chkLeft"     checked> <span style="color:#dc2626;">●</span> 左行波</label>
+                <label><input type="checkbox" id="chkRight"    checked> <span style="color:#16a34a;">●</span> 右行波</label>
+                <label><input type="checkbox" id="chkSum"      checked> <span style="color:#6b7280;">●</span> \(y_L+y_R\)</label>
+                <label><input type="checkbox" id="chkTension"  checked> <span style="color:#ea580c;">●</span> 张力 \(T_y\)</label>
+            </div>
+
+            <div class="wave-info">
+                <span>波速 V = <strong id="waveSpeed">-</strong> m/s</span>
+                <span>基频 f₁ = <strong id="fundFreq">—</strong> Hz</span>
+                <span>角频率 ω₁ = <strong id="angFreq">—</strong> rad/s</span>
+            </div>
+
+            <div class="button-group">
+                <button id="playBtn">播放</button>
+                <button id="resetBtn">重置时间</button>
+                <span class="time-display" id="timeDisplay">t = 0.0000 s</span>
+            </div>
+        </div>
+
+        <div class="svg-container">
+            <!--
+                SVG 画布：1000×420，坐标原点在左边缘垂直中点。
+                rootG 使用 translate+scale(1,-1) 将 y 轴翻转为"向上为正"。
+                静态元素（坐标轴、图例、polyline）直接写在 SVG 中，无需 JS 创建。
+                仅张力箭头（tensionG）因数量和位置动态变化，保留 JS 更新。
+            -->
+            <svg id="svgCanvas" viewBox="0 0 1000 420" width="1000" height="420"
+                 preserveAspectRatio="xMidYMid meet">
+
+                <!-- rootG: 原点 = (20, 210), y 轴翻转 -->
+                <g id="rootG" transform="translate(20,210) scale(1,-1)">
+
+                    <!-- 平衡位置参考线（x 轴） -->
+                    <line x1="0" y1="0" x2="960" y2="0"
+                          stroke="gray" stroke-width="2" stroke-dasharray="6,3"/>
+
+                    <!-- 各分量 polyline（points 由 JS 每帧更新） -->
+                    <polyline id="polyStanding" fill="none" stroke="#1e40af"  stroke-width="3"   stroke-linejoin="round" stroke-linecap="round"/>
+                    <polyline id="polyLeft"     fill="none" stroke="#dc2626"  stroke-width="2"   stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,3"/>
+                    <polyline id="polyRight"    fill="none" stroke="#16a34a"  stroke-width="2"   stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="6,3"/>
+                    <polyline id="polySum"      fill="none" stroke="#6b7280"  stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="3,3"/>
+
+                    <!-- 张力箭头容器（动态内容由 JS 管理） -->
+                    <g id="tensionG"></g>
+                </g>
+
+                <!-- 图例（SVG 原始坐标，无需翻转）：右上角 -->
+                <g transform="translate(820,50)" font-size="12" fill="#374151" class="legend-text">
+                    <line x1="0" y1="0"  x2="24" y2="0"  stroke="#1e40af" stroke-width="2"/>
+                    <text x="30" y="4">驻波 y</text>
+                    <line x1="0" y1="20" x2="24" y2="20" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,3"/>
+                    <text x="30" y="24">左行波 yL</text>
+                    <line x1="0" y1="40" x2="24" y2="40" stroke="#16a34a" stroke-width="2" stroke-dasharray="6,3"/>
+                    <text x="30" y="44">右行波 yR</text>
+                    <line x1="0" y1="60" x2="24" y2="60" stroke="#6b7280" stroke-width="2" stroke-dasharray="3,3"/>
+                    <text x="30" y="64">yL+yR</text>
+                    <line x1="0" y1="80" x2="24" y2="80" stroke="#ea580c" stroke-width="2"/>
+                    <text x="30" y="84">张力 Ty</text>
+                </g>
+            </svg>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// ==================== 物理参数 ====================
+let A0 = 0.01, L0 = 0.6, xrel = 0.3;
+let T0 = 80, mu0 = 0.01, N_terms = 20;
+let speed = 0.0001, t = 0;
+let isPlaying = false, lastTime = 0;
+
+// ==================== SVG 常量 ====================
+const PLOT_W = 960;   // SVG_W(1000) - PAD_L(20) - PAD_R(20)
+const PLOT_H = 300;   // SVG_H(420) - PAD_T(60)*2
+
+// ==================== DOM 元素缓存 ====================
+const polyStanding = document.getElementById('polyStanding');
+const polyLeft     = document.getElementById('polyLeft');
+const polyRight    = document.getElementById('polyRight');
+const polySum      = document.getElementById('polySum');
+const tensionG     = document.getElementById('tensionG');
+const timeDisplay  = document.getElementById('timeDisplay');
+
+// 张力箭头元素池（复用，避免每帧 createElementNS）
+// 最多 MAX_ARROWS 个箭头，每个箭头由 1 条 line + 1 个 polygon 组成
+const MAX_ARROWS = 30;
+const arrowLines = [], arrowHeads = [];
+(function buildArrowPool() {
+    const NS = 'http://www.w3.org/2000/svg';
+    for (let i = 0; i < MAX_ARROWS; i++) {
+        const ln = document.createElementNS(NS, 'line');
+        ln.setAttribute('stroke', '#ea580c');
+        ln.setAttribute('stroke-width', '2');
+        ln.setAttribute('stroke-opacity', '0.7');
+        ln.setAttribute('display', 'none');
+        tensionG.appendChild(ln);
+        arrowLines.push(ln);
+
+        const ph = document.createElementNS(NS, 'polygon');
+        ph.setAttribute('fill', '#ea580c');
+        ph.setAttribute('fill-opacity', '0.7');
+        ph.setAttribute('display', 'none');
+        tensionG.appendChild(ph);
+        arrowHeads.push(ph);
+    }
+})();
+
+// ==================== 更新显示 ====================
+const sliderDefs = [
+    { id: 'A0',    valId: 'A0_val',    fmt: v => v.toFixed(3) },
+    { id: 'L0',    valId: 'L0_val',    fmt: v => v.toFixed(2) },
+    { id: 'xrel',  valId: 'xrel_val',  fmt: v => v.toFixed(2) },
+    { id: 'T0',    valId: 'T0_val',    fmt: v => v.toFixed(0) },
+    { id: 'mu0',   valId: 'mu0_val',   fmt: v => v.toFixed(3) },
+    { id: 'N',     valId: 'N_val',     fmt: v => String(v)    },
+    { id: 'speed', valId: 'speed_val', fmt: v => v.toExponential(1) }
+];
+
+function updateSliderDisplays() {
+    document.getElementById('A0_val').textContent    = A0.toFixed(3);
+    document.getElementById('L0_val').textContent    = L0.toFixed(2);
+    document.getElementById('xrel_val').textContent  = xrel.toFixed(2);
+    document.getElementById('T0_val').textContent    = T0.toFixed(0);
+    document.getElementById('mu0_val').textContent   = mu0.toFixed(3);
+    document.getElementById('N_val').textContent     = N_terms;
+    document.getElementById('speed_val').textContent = speed.toExponential(1);
+}
+
+function updateWaveInfo() {
+    const V  = Math.sqrt(T0 / mu0);
+    const f1 = V / (2 * L0);
+    document.getElementById('waveSpeed').textContent = V.toFixed(3);
+    document.getElementById('fundFreq').textContent  = f1.toFixed(2);
+    document.getElementById('angFreq').textContent   = (2 * Math.PI * f1).toFixed(2);
+}
+
+// ==================== 核心计算（单次循环，合并四路输出）====================
+// 对每个空间点 x，一次性算出所有模态的贡献，同时填充四条曲线和张力数据。
+// 原实现对 300 个点分别调用 4 个函数，每函数各自循环 N 次 → 4×300×N 次三角函数求值。
+// 重构后：一次循环内同时累加驻波/左行波/右行波/张力 → 1×300×N 次。
+function computeAllCurves() {
+    const STEPS = 300;
+    const x0 = xrel * L0;
+    const V  = Math.sqrt(T0 / mu0);
+
+    // 预计算 Fourier 系数与模态参数（仅与参数有关，与 x/t 无关）
+    const bn = new Float64Array(N_terms);
+    const kn = new Float64Array(N_terms);
+    const wn = new Float64Array(N_terms);
+    const denom = x0 * (L0 - x0) * Math.PI * Math.PI;
+    for (let n = 1; n <= N_terms; n++) {
+        const k = n * Math.PI / L0;
+        kn[n-1] = k;
+        wn[n-1] = V * k;
+        bn[n-1] = (2 * A0 * L0 * L0 / (denom * n * n)) * Math.sin(k * x0);
+    }
+
+    const yScale     = (PLOT_H / 2) / A0;
+    const showStand  = document.getElementById('chkStanding').checked;
+    const showLeft   = document.getElementById('chkLeft').checked;
+    const showRight  = document.getElementById('chkRight').checked;
+    const showSum    = document.getElementById('chkSum').checked;
+    const showTens   = document.getElementById('chkTension').checked;
+
+    const ptsStand = showStand ? [] : null;
+    const ptsLeft  = showLeft  ? [] : null;
+    const ptsRight = showRight ? [] : null;
+    const ptsSum   = showSum   ? [] : null;
+    // tensionData 只需保存驻波 y（用于箭头基点）和 Ty 值
+    const tensionData = showTens ? [] : null;
+
+    for (let i = 0; i <= STEPS; i++) {
+        const x   = (i / STEPS) * L0;
+        const px  = (i / STEPS) * PLOT_W;
+
+        let yS = 0, yL = 0, yR = 0, ty = 0;
+
+        for (let j = 0; j < N_terms; j++) {
+            const k  = kn[j], w  = wn[j], b  = bn[j];
+            const kx = k * x, wt = w * t;
+            const sinKx = Math.sin(kx);
+            const cosPlus  = Math.cos(kx + wt);   // cos(kx + ωt)
+            const cosMinus = Math.cos(kx - wt);   // cos(kx - ωt)
+            // sin(kx + ωt) = sin(kx)cos(ωt) + cos(kx)sin(ωt)  → 利用已有量展开
+            // sin(kx - ωt) = sin(kx)cos(ωt) - cos(kx)sin(ωt)
+            // 但直接调用 Math.sin 更清晰，三角函数计算量相同
+            const sinPlus  = Math.sin(kx + wt);
+            const sinMinus = Math.sin(kx - wt);
+
+            // 驻波: bn·sin(kx)·cos(ωt) = ½·bn·(sin(kx+ωt)+sin(kx-ωt))
+            yS += b * sinKx * Math.cos(wt);
+            yL += 0.5 * b * sinPlus;
+            yR += 0.5 * b * sinMinus;
+            ty += b * k * (cosPlus + cosMinus);
+        }
+
+        const pyS = yS * yScale;
+        const pxStr = px.toFixed(2);
+
+        if (ptsStand) ptsStand.push(`${pxStr},${pyS.toFixed(2)}`);
+        if (ptsLeft)  ptsLeft .push(`${pxStr},${(yL * yScale).toFixed(2)}`);
+        if (ptsRight) ptsRight.push(`${pxStr},${(yR * yScale).toFixed(2)}`);
+        if (ptsSum)   ptsSum  .push(`${pxStr},${((yL + yR) * yScale).toFixed(2)}`);
+        if (tensionData) tensionData.push({ px, py_string: pyS, ty: 0.5 * T0 * ty });
+    }
+
+    return { ptsStand, ptsLeft, ptsRight, ptsSum, tensionData, showStand, showLeft, showRight, showSum, showTens };
+}
+
+// ==================== 绘图 ====================
+function draw() {
+    const { ptsStand, ptsLeft, ptsRight, ptsSum, tensionData,
+            showStand, showLeft, showRight, showSum, showTens } = computeAllCurves();
+
+    // 更新 polyline points（空字符串 = 不可见但保留元素）
+    polyStanding.setAttribute('points', showStand ? ptsStand.join(' ') : '');
+    polyLeft    .setAttribute('points', showLeft  ? ptsLeft .join(' ') : '');
+    polyRight   .setAttribute('points', showRight ? ptsRight.join(' ') : '');
+    polySum     .setAttribute('points', showSum   ? ptsSum  .join(' ') : '');
+
+    // 张力箭头：复用对象池，隐藏多余元素
+    let arrowCount = 0;
+    if (showTens && tensionData.length > 0) {
+        let maxTy = 0;
+        for (const d of tensionData) { const a = Math.abs(d.ty); if (a > maxTy) maxTy = a; }
+
+        const arrowMaxPx = PLOT_H / 4;
+        const arrowScale = maxTy > 0 ? arrowMaxPx / maxTy : 0;
+        const step = Math.max(1, Math.floor(tensionData.length / 20));
+        const headSize = 6;
+
+        for (let i = 0; i < tensionData.length && arrowCount < MAX_ARROWS; i += step) {
+            const d = tensionData[i];
+            const arrowLen = d.ty * arrowScale;
+            if (Math.abs(arrowLen) < 0.5) continue;
+
+            const x1 = d.px, y1 = d.py_string;
+            const x2 = x1,   y2 = y1 + arrowLen;
+
+            const ln = arrowLines[arrowCount];
+            ln.setAttribute('x1', x1.toFixed(2)); ln.setAttribute('y1', y1.toFixed(2));
+            ln.setAttribute('x2', x2.toFixed(2)); ln.setAttribute('y2', y2.toFixed(2));
+            ln.removeAttribute('display');
+
+            // 箭头头方向角
+            const angle  = arrowLen > 0 ? Math.PI / 2 : -Math.PI / 2;
+            const hx1 = x2 + headSize * Math.cos(angle + 2.4);
+            const hy1 = y2 + headSize * Math.sin(angle + 2.4);
+            const hx2 = x2 + headSize * Math.cos(angle - 2.4);
+            const hy2 = y2 + headSize * Math.sin(angle - 2.4);
+
+            const ph = arrowHeads[arrowCount];
+            ph.setAttribute('points',
+                `${x2.toFixed(2)},${y2.toFixed(2)} ${hx1.toFixed(2)},${hy1.toFixed(2)} ${hx2.toFixed(2)},${hy2.toFixed(2)}`);
+            ph.removeAttribute('display');
+
+            arrowCount++;
+        }
+    }
+    // 隐藏池中未使用的箭头
+    for (let i = arrowCount; i < MAX_ARROWS; i++) {
+        arrowLines[i].setAttribute('display', 'none');
+        arrowHeads[i].setAttribute('display', 'none');
+    }
+
+    timeDisplay.textContent = `t = ${t.toFixed(4)} s`;
+    updateWaveInfo();
+}
+
+// ==================== 动画循环 ====================
+function animate(now) {
+    if (isPlaying) {
+        t += speed * (now - lastTime) / 1000;
+    }
+    lastTime = now;
+    draw();
+    requestAnimationFrame(animate);
+}
+
+// ==================== 事件绑定 ====================
+// 滑块
+document.getElementById('A0')   .addEventListener('input', function() { A0      = parseFloat(this.value); updateSliderDisplays(); });
+document.getElementById('L0')   .addEventListener('input', function() { L0      = parseFloat(this.value); updateSliderDisplays(); });
+document.getElementById('xrel') .addEventListener('input', function() { xrel    = parseFloat(this.value); updateSliderDisplays(); });
+document.getElementById('T0')   .addEventListener('input', function() { T0      = parseFloat(this.value); updateSliderDisplays(); });
+document.getElementById('mu0')  .addEventListener('input', function() { mu0     = parseFloat(this.value); updateSliderDisplays(); });
+document.getElementById('N')    .addEventListener('input', function() { N_terms = parseInt(this.value);   updateSliderDisplays(); });
+document.getElementById('speed').addEventListener('input', function() { speed   = parseFloat(this.value); updateSliderDisplays(); });
+
+// 复选框（draw 已在 animate 中每帧调用，无需额外触发）
+['chkStanding','chkLeft','chkRight','chkSum','chkTension'].forEach(id =>
+    document.getElementById(id).addEventListener('change', draw)
+);
+
+// 播放/暂停
+document.getElementById('playBtn').addEventListener('click', function() {
+    isPlaying = !isPlaying;
+    this.textContent = isPlaying ? '暂停' : '播放';
+    if (isPlaying) lastTime = performance.now();
+});
+
+// 重置
+document.getElementById('resetBtn').addEventListener('click', () => { t = 0; draw(); });
+
+// ==================== 初始化 ====================
+updateSliderDisplays();
+updateWaveInfo();
+requestAnimationFrame(animate);
+</script>
+
+</body>
+</html>
