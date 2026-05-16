@@ -322,7 +322,7 @@
                     <label>Speed (动画速度):</label>
                     <!-- FIX 1: HTML range min/max/step must use plain decimal notation, not scientific notation -->
                     <!-- FIX 2: default value changed to 0.05 so animation is visibly smooth at startup  -->
-                    <input type="range" id="speed" min="0.0005" max="0.01" step="0.0005" value="0.0005">
+                    <input type="range" id="speed" min="0.0001" max="0.001" step="0.0001" value="0.0001">
                     <!-- FIX 3: default display corrected from wrong "5e-7" to match actual initial speed -->
                     <span class="value" id="speed_val">5.0e-4</span>
                 </div>
@@ -372,7 +372,7 @@
         let N_terms = 20;
         // FIX: initial speed set to 0.05 (unit: simulation-seconds per real-second)
         // so that one period (~0.013 s physical) completes in ~0.26 real seconds — clearly visible
-        let speed = 0.0005;
+        let speed = 0.0001;
         let t = 0;
         let isPlaying = false;
         let lastTime = Date.now();
