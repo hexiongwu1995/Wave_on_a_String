@@ -3,15 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>琴弦振动可视化</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
             font-family: KaiTi, system-ui, sans-serif;
-            margin: 20px 10px;
-            padding: 0;
+            margin: 0;
+            padding: 10px 8px;
             background: white;
             color: black;
             line-height: 1.6;
@@ -19,7 +18,7 @@
 
         .container {
             max-width: 1100px;
-            margin: 20px auto;
+            margin: 0 auto;
             background: white;
             border-radius: 16px;
             box-shadow: 0 10px 10px rgba(0, 0, 0, 0.075);
@@ -29,36 +28,34 @@
         header {
             background: #3177e7;
             color: white;
-            padding: 20px;
+            padding: 18px 15px;
             text-align: center;
         }
 
         h1 {
             margin: 0;
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 600;
-            letter-spacing: 2px;
         }
 
         .subtitle {
-            margin: 8px 0 0;
-            font-size: 16px;
+            margin: 6px 0 0;
+            font-size: 15px;
         }
 
         .content {
-            margin: 10px;
-            padding: 10px;
+            margin: 12px 8px;
+            padding: 8px;
         }
 
         .info {
-            margin-top: 20px;
-            padding: 15px 20px;
+            margin: 18px 0;
+            padding: 15px 18px;
             background: #f1f2f59b;
             border-radius: 16px;
             border-left: 4px solid #3b82f6;
-            box-shadow: 0 10px 10px #cbd5e1;
+            box-shadow: 0 8px 10px #cbd5e1;
             font-size: 14px;
-            line-height: 1.6;
         }
 
         .math-equation {
@@ -69,7 +66,7 @@
 
         .controls {
             background: #f8fafc;
-            margin: 20px 0;
+            margin: 18px 0;
             padding: 15px;
             border-radius: 16px;
             border: 1px solid #e5e7eb;
@@ -79,14 +76,15 @@
             display: flex;
             align-items: center;
             margin: 12px 0;
-            gap: 12px;
+            gap: 10px;
         }
 
         label {
             display: inline-block;
-            width: 130px;
+            width: 125px;
             font-weight: 500;
             font-size: 13px;
+            flex-shrink: 0;
         }
 
         input[type="range"] {
@@ -95,15 +93,16 @@
         }
 
         .value {
-            width: 70px;
+            width: 68px;
             font-size: 13px;
             font-weight: 600;
             color: #64748b;
             background: white;
-            padding: 6px 8px;
+            padding: 6px 6px;
             border-radius: 6px;
             border: 1px solid #cbd5e1;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .checkbox-group {
@@ -120,7 +119,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 500;
             cursor: pointer;
         }
@@ -128,7 +127,7 @@
         .wave-info {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 18px;
             margin: 15px 0;
             padding: 10px 15px;
             background: #f0f9ff;
@@ -138,15 +137,16 @@
         }
 
         .button-group {
-            margin-top: 15px;
+            margin-top: 12px;
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-wrap: wrap;
         }
 
         button {
-            padding: 10px 16px;
-            font-size: 13px;
+            padding: 10px 18px;
+            font-size: 14px;
             font-weight: 500;
             border: none;
             border-radius: 8px;
@@ -164,7 +164,7 @@
         }
 
         .time-display {
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 500;
             color: #1e40af;
             background: white;
@@ -174,17 +174,27 @@
         }
 
         #canvasContainer {
-            margin: 20px auto;
+            margin: 15px auto;
             text-align: center;
             border: 3px solid #cbd5e1;
             border-radius: 16px;
             background: #f8fafc;
-            padding: 15px;
-            box-shadow: 0 10px 15px #cbd5e1;
+            padding: 10px;
+            box-shadow: 0 8px 12px #cbd5e1;
+            max-width: 100%;
+            overflow: hidden;
         }
 
-        .legend-text {
-            font-size: 12px;
+        @media (max-width: 600px) {
+            .slider-group label {
+                width: 110px;
+                font-size: 12.5px;
+            }
+
+            .value {
+                width: 60px;
+                font-size: 12.5px;
+            }
         }
     </style>
 </head>
@@ -194,7 +204,7 @@
     <div class="container">
         <header>
             <h1>琴弦振动可视化</h1>
-            <p class="subtitle">基于波动方程的弦振动实时模拟（p5.js 重构版）</p>
+            <p class="subtitle">基于波动方程的弦振动实时模拟（p5.js 移动优化版）</p>
         </header>
 
         <div class="content">
@@ -277,8 +287,8 @@
 
                 <div class="slider-group">
                     <label>动画速度:</label>
-                    <input type="range" id="speed" min="0.0001" max="0.001" step="0.0001" value="0.0001">
-                    <span class="value" id="speed_val">2.0e-4</span>
+                    <input type="range" id="speed" min="0.00005" max="0.001" step="0.00005" value="0.00025">
+                    <span class="value" id="speed_val">2.5e-4</span>
                 </div>
 
                 <div class="checkbox-group">
@@ -312,110 +322,117 @@
     </div>
 
     <script>
-        // ==================== 全局参数（易懂风格） ====================
-        let A0 = 0.01;      // 振幅 (m)
-        let L0 = 0.6;       // 弦长 (m)
-        let xrel = 0.3;     // 拨弦相对位置
-        let T0 = 80;        // 预张力 (N)
-        let mu0 = 0.01;     // 线密度 (kg/m)
-        let N_terms = 20;   // 傅里叶级数截断项数
-        let simSpeed = 0.0001; // 仿真时间速度
+        // ==================== 全局参数 ====================
+        let A0 = 0.01;
+        let L0 = 0.6;
+        let xrel = 0.3;
+        let T0 = 80;
+        let mu0 = 0.01;
+        let N_terms = 20;
+        let simSpeed = 0.00025;
 
-        let t = 0;          // 当前仿真时间
+        let t = 0;
         let isPlaying = false;
         let lastTime = 0;
 
-        // p5 画布尺寸（可调整）
-        const CANVAS_W = 1000;
-        const CANVAS_H = 420;
-        const PLOT_LEFT = 80;   // 留出左侧Y轴空间
-        const PLOT_RIGHT = 80;  // 留出右侧Y轴空间
-        const PLOT_TOP = 60;
-        const PLOT_BOTTOM = 60;
-        const PLOT_W = CANVAS_W - PLOT_LEFT - PLOT_RIGHT;
-        const PLOT_H = CANVAS_H - PLOT_TOP - PLOT_BOTTOM;
+        let canvasW = 900;
+        let canvasH = 420;
 
-        let bn = [];        // 傅里叶系数数组
+        let PLOT_LEFT = 70;
+        let PLOT_RIGHT = 70;
+        let PLOT_TOP = 55;
+        let PLOT_BOTTOM = 65;
+        let PLOT_W, PLOT_H;
 
-        // ==================== p5.js 主程序 ====================
+        let bn = [];
+
+        // ==================== p5.js ====================
         function setup() {
-            let canvas = createCanvas(CANVAS_W, CANVAS_H);
+            updateCanvasSize();
+            let canvas = createCanvas(canvasW, canvasH);
             canvas.parent('p5canvas');
-            frameRate(60);
-            updateCoefficients();   // 初始化系数
+            updateCoefficients();
+        }
+
+        function updateCanvasSize() {
+            const maxW = Math.min(window.innerWidth - 30, 920);
+            canvasW = maxW;
+            canvasH = Math.floor(canvasW * 0.48);   // 保持合理宽高比
+            PLOT_LEFT = Math.max(65, canvasW * 0.07);
+            PLOT_RIGHT = Math.max(65, canvasW * 0.07);
+            PLOT_TOP = Math.max(50, canvasH * 0.13);
+            PLOT_BOTTOM = Math.max(60, canvasH * 0.15);
+            PLOT_W = canvasW - PLOT_LEFT - PLOT_RIGHT;
+            PLOT_H = canvasH - PLOT_TOP - PLOT_BOTTOM;
+        }
+
+        function windowResized() {
+            updateCanvasSize();
+            resizeCanvas(canvasW, canvasH);
         }
 
         function draw() {
-            background(248, 250, 252);  // 浅色背景
+            background(248, 250, 252);
 
-            // 更新仿真时间
             if (isPlaying) {
                 let now = millis();
-                let delta = (now - lastTime) / 1000; // 秒
-                t += simSpeed * delta;          // 速度调节
+                let delta = (now - lastTime) / 1000;
+                t += simSpeed * delta * 55;   // 速度适配
                 lastTime = now;
             }
 
-            // 计算并绘制
             drawAxesAndLabels();
             drawWaves();
             drawTensionArrows();
 
-            // 更新界面显示
             updateTimeDisplay();
             updateWaveInfo();
         }
 
-        // ==================== 坐标轴 + 刻度（左右对称Y轴） ====================
         function drawAxesAndLabels() {
             push();
             translate(PLOT_LEFT, PLOT_TOP + PLOT_H / 2);
 
-            // X轴（平衡位置）
-            stroke(100);
-            strokeWeight(2);
-            line(0, 0, PLOT_W, 0);
+            stroke(90);
+            strokeWeight(2.5);
+            line(0, 0, PLOT_W, 0);                    // X轴
+            line(0, -PLOT_H / 2, 0, PLOT_H / 2);          // 左Y轴
+            line(PLOT_W, -PLOT_H / 2, PLOT_W, PLOT_H / 2); // 右Y轴
 
-            // 左右Y轴
-            line(0, -PLOT_H / 2, 0, PLOT_H / 2);
-            line(PLOT_W, -PLOT_H / 2, PLOT_W, PLOT_H / 2);
-
-            // X轴刻度标注
-            fill(50);
+            // 刻度文字
+            fill(45);
             noStroke();
             textAlign(CENTER, TOP);
             textSize(12);
-            text("0", 0, 15);
-            text(L0.toFixed(2) + " m", PLOT_W, 15);
+            text("0", 0, 18);
+            text(L0.toFixed(2), PLOT_W, 18);
 
-            // Y轴刻度标注（左右对称）
             textAlign(RIGHT, CENTER);
-            text(A0.toFixed(3), -8, -PLOT_H / 2 + 5);
-            text("0", -8, 4);
-            text((-A0).toFixed(3), -8, PLOT_H / 2 - 5);
+            text(A0.toFixed(3), -10, -PLOT_H / 2 + 6);
+            text("0", -10, 5);
+            text((-A0).toFixed(3), -10, PLOT_H / 2 - 6);
 
             textAlign(LEFT, CENTER);
-            text(A0.toFixed(3), PLOT_W + 8, -PLOT_H / 2 + 5);
-            text("0", PLOT_W + 8, 4);
-            text((-A0).toFixed(3), PLOT_W + 8, PLOT_H / 2 - 5);
+            text(A0.toFixed(3), PLOT_W + 10, -PLOT_H / 2 + 6);
+            text("0", PLOT_W + 10, 5);
+            text((-A0).toFixed(3), PLOT_W + 10, PLOT_H / 2 - 6);
 
-            // 坐标轴名称
             textAlign(CENTER, CENTER);
-            text("x (m)", PLOT_W / 2, PLOT_H / 2 + 35);
+            textSize(13);
+            text("x (m)", PLOT_W / 2, PLOT_H / 2 + 38);
+
             push();
             rotate(-HALF_PI);
-            text("y (m)", -PLOT_H / 2, -PLOT_W - 45);
+            text("y (m)", -PLOT_H / 2, -PLOT_W - 48);
             pop();
 
             pop();
         }
 
-        // ==================== 计算傅里叶系数 ====================
         function updateCoefficients() {
             bn = [];
             const x0 = xrel * L0;
             const denom = x0 * (L0 - x0) * Math.PI * Math.PI;
-
             for (let n = 1; n <= N_terms; n++) {
                 let coeff = (2 * A0 * L0 * L0) / (denom * n * n);
                 coeff *= Math.sin(n * Math.PI * x0 / L0);
@@ -423,7 +440,6 @@
             }
         }
 
-        // ==================== 波函数计算 ====================
         function waveStanding(x) {
             let y = 0;
             const V = Math.sqrt(T0 / mu0);
@@ -468,10 +484,9 @@
             return 0.5 * T0 * ty;
         }
 
-        // ==================== 绘制各波形 ====================
         function drawWaves() {
-            const steps = 300;
-            const yScale = (PLOT_H / 2) / A0;   // 物理单位 → 像素
+            const steps = 280;
+            const yScale = (PLOT_H / 2) / A0;
 
             const showStanding = document.getElementById('chkStanding').checked;
             const showLeft = document.getElementById('chkLeft').checked;
@@ -481,28 +496,23 @@
             push();
             translate(PLOT_LEFT, PLOT_TOP + PLOT_H / 2);
 
-            // 辅助函数：绘制单条曲线
             function drawCurve(ys, color, weight, dashed = false) {
                 stroke(color);
                 strokeWeight(weight);
-                if (dashed) {
-                    drawingContext.setLineDash([6, 4]);
-                } else {
-                    drawingContext.setLineDash([]);
-                }
+                if (dashed) drawingContext.setLineDash([5, 4]);
+                else drawingContext.setLineDash([]);
                 noFill();
                 beginShape();
                 for (let i = 0; i <= steps; i++) {
                     const x_phys = (i / steps) * L0;
                     const px = (x_phys / L0) * PLOT_W;
-                    const py = -ys[i] * yScale;   // y轴向上
+                    const py = -ys[i] * yScale;
                     vertex(px, py);
                 }
                 endShape();
             }
 
             let yStanding = [], yL = [], yR = [];
-
             for (let i = 0; i <= steps; i++) {
                 const x = (i / steps) * L0;
                 yStanding.push(waveStanding(x));
@@ -515,60 +525,56 @@
             if (showRight) drawCurve(yR, '#16a34a', 2.2, true);
             if (showSum) {
                 let ySum = yL.map((val, idx) => val + yR[idx]);
-                drawCurve(ySum, '#6b7280', 2, true);
+                drawCurve(ySum, '#6b7280', 2.2, true);
             }
 
             pop();
         }
 
-        // ==================== 绘制张力箭头 ====================
         function drawTensionArrows() {
             if (!document.getElementById('chkTension').checked) return;
 
-            const steps = 280;
+            const steps = 260;
             const yScale = (PLOT_H / 2) / A0;
             let maxTy = 0;
-            let tensionData = [];
+            let data = [];
 
-            for (let i = 0; i <= steps; i++) {
+            for (let i = 0; i <= steps; i += 2) {
                 const x = (i / steps) * L0;
                 const ty = tensionTy(x);
-                const yString = waveStanding(x);
-                tensionData.push({ x, yString, ty });
-                maxTy = Math.max(maxTy, Math.abs(ty));
+                const yStr = waveStanding(x);
+                data.push({ x, yStr, ty });
+                if (Math.abs(ty) > maxTy) maxTy = Math.abs(ty);
             }
 
-            if (maxTy === 0) return;
+            if (maxTy < 0.001) return;
 
-            const arrowScale = (PLOT_H / 5) / maxTy;   // 最大箭头长度限制
+            const arrowScale = (PLOT_H * 0.22) / maxTy;
 
             push();
             translate(PLOT_LEFT, PLOT_TOP + PLOT_H / 2);
 
-            for (let i = 0; i < tensionData.length; i += 14) {   // 稀疏采样
-                const d = tensionData[i];
+            for (let i = 0; i < data.length; i += 12) {
+                const d = data[i];
                 const px = (d.x / L0) * PLOT_W;
-                const py = -d.yString * yScale;
-                const arrowLen = -d.ty * arrowScale;   // 注意y方向
+                const py = -d.yStr * yScale;
+                const len = -d.ty * arrowScale;
 
-                if (Math.abs(arrowLen) < 3) continue;
+                if (Math.abs(len) < 4) continue;
 
-                // 箭头线
                 stroke('#ea580c');
-                strokeWeight(2.2);
-                line(px, py, px, py + arrowLen);
+                strokeWeight(2);
+                line(px, py, px, py + len);
 
-                // 箭头头
-                const headSize = 7;
-                const dir = arrowLen > 0 ? 1 : -1;
-                triangle(px, py + arrowLen,
-                    px - headSize / 2, py + arrowLen - dir * headSize,
-                    px + headSize / 2, py + arrowLen - dir * headSize);
+                const hs = 7;
+                const dir = len > 0 ? 1 : -1;
+                triangle(px, py + len,
+                    px - hs / 2, py + len - dir * hs,
+                    px + hs / 2, py + len - dir * hs);
             }
             pop();
         }
 
-        // ==================== 更新显示信息 ====================
         function updateTimeDisplay() {
             document.getElementById('timeDisplay').textContent = `t = ${t.toFixed(4)} s`;
         }
@@ -577,77 +583,48 @@
             const V = Math.sqrt(T0 / mu0);
             const f1 = V / (2 * L0);
             const w1 = 2 * Math.PI * f1;
-
             document.getElementById('waveSpeed').textContent = V.toFixed(3);
             document.getElementById('fundFreq').textContent = f1.toFixed(2);
             document.getElementById('angFreq').textContent = w1.toFixed(1);
         }
 
-        // ==================== 滑块与按钮事件 ====================
         function bindControls() {
-            const sliders = {
-                A0: document.getElementById('A0'),
-                L0: document.getElementById('L0'),
-                xrel: document.getElementById('xrel'),
-                T0: document.getElementById('T0'),
-                mu0: document.getElementById('mu0'),
-                N: document.getElementById('N'),
-                speed: document.getElementById('speed')
-            };
-
-            const values = {
-                A0: document.getElementById('A0_val'),
-                L0: document.getElementById('L0_val'),
-                xrel: document.getElementById('xrel_val'),
-                T0: document.getElementById('T0_val'),
-                mu0: document.getElementById('mu0_val'),
-                N: document.getElementById('N_val'),
-                speed: document.getElementById('speed_val')
-            };
+            const sliders = { A0: 'A0', L0: 'L0', xrel: 'xrel', T0: 'T0', mu0: 'mu0', N: 'N', speed: 'speed' };
 
             Object.keys(sliders).forEach(key => {
-                sliders[key].addEventListener('input', () => {
-                    if (key === 'A0') A0 = parseFloat(sliders.A0.value);
-                    if (key === 'L0') L0 = parseFloat(sliders.L0.value);
-                    if (key === 'xrel') xrel = parseFloat(sliders.xrel.value);
-                    if (key === 'T0') T0 = parseFloat(sliders.T0.value);
-                    if (key === 'mu0') mu0 = parseFloat(sliders.mu0.value);
-                    if (key === 'N') N_terms = parseInt(sliders.N.value);
-                    if (key === 'speed') simSpeed = parseFloat(sliders.speed.value);
+                const el = document.getElementById(key);
+                el.addEventListener('input', () => {
+                    if (key === 'A0') A0 = parseFloat(el.value);
+                    else if (key === 'L0') L0 = parseFloat(el.value);
+                    else if (key === 'xrel') xrel = parseFloat(el.value);
+                    else if (key === 'T0') T0 = parseFloat(el.value);
+                    else if (key === 'mu0') mu0 = parseFloat(el.value);
+                    else if (key === 'N') N_terms = parseInt(el.value);
+                    else if (key === 'speed') simSpeed = parseFloat(el.value);
 
-                    // 更新显示
-                    values.A0.textContent = A0.toFixed(3);
-                    values.L0.textContent = L0.toFixed(2);
-                    values.xrel.textContent = xrel.toFixed(2);
-                    values.T0.textContent = T0.toFixed(0);
-                    values.mu0.textContent = mu0.toFixed(3);
-                    values.N.textContent = N_terms;
-                    values.speed.textContent = simSpeed.toExponential(1);
+                    document.getElementById(key + '_val').textContent =
+                        (key === 'speed') ? simSpeed.toExponential(1) :
+                            (key === 'A0') ? A0.toFixed(3) :
+                                (key === 'L0') ? L0.toFixed(2) :
+                                    (key === 'xrel') ? xrel.toFixed(2) :
+                                        (key === 'T0') ? T0.toFixed(0) :
+                                            (key === 'mu0') ? mu0.toFixed(3) : N_terms;
 
-                    updateCoefficients();   // 参数变化后重新计算系数
+                    if (key !== 'speed') updateCoefficients();
                 });
             });
 
-            // 复选框
-            ['chkStanding', 'chkLeft', 'chkRight', 'chkSum', 'chkTension'].forEach(id => {
-                document.getElementById(id).addEventListener('change', () => { });
-            });
-
-            // 按钮
             document.getElementById('playBtn').addEventListener('click', () => {
                 isPlaying = !isPlaying;
                 document.getElementById('playBtn').textContent = isPlaying ? '暂停' : '播放';
                 if (isPlaying) lastTime = millis();
             });
 
-            document.getElementById('resetBtn').addEventListener('click', () => {
-                t = 0;
-            });
+            document.getElementById('resetBtn').addEventListener('click', () => { t = 0; });
         }
 
-        // ==================== 初始化 ====================
         window.onload = function () {
-            // 更新初始滑块显示
+            // 初始化显示值
             document.getElementById('A0_val').textContent = A0.toFixed(3);
             document.getElementById('L0_val').textContent = L0.toFixed(2);
             document.getElementById('xrel_val').textContent = xrel.toFixed(2);
