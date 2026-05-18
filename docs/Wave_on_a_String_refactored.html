@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>琴弦振动可视化</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.0.0/math.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
@@ -78,7 +79,7 @@
         .slider-group {
             display: flex;
             align-items: center;
-            margin: 12px 0;
+            margin: 10px;
             gap: 12px;
         }
 
@@ -174,17 +175,14 @@
         }
 
         #canvasContainer {
+            display: flex;
             margin: 20px auto;
             text-align: center;
             border: 3px solid #cbd5e1;
             border-radius: 16px;
             background: #f8fafc;
-            padding: 15px;
+            padding: 5px;
             box-shadow: 0 10px 15px #cbd5e1;
-        }
-
-        .legend-text {
-            font-size: 12px;
         }
     </style>
 </head>
@@ -278,7 +276,7 @@
                 <div class="slider-group">
                     <label>动画速度:</label>
                     <input type="range" id="speed" min="0.0001" max="0.001" step="0.0001" value="0.0001">
-                    <span class="value" id="speed_val">2.0e-4</span>
+                    <span class="value" id="speed_val">1.0e-4</span>
                 </div>
 
                 <div class="checkbox-group">
@@ -313,12 +311,12 @@
 
     <script>
         // ==================== 全局参数（易懂风格） ====================
-        let A0 = 0.01;      // 振幅 (m)
-        let L0 = 0.6;       // 弦长 (m)
-        let xrel = 0.3;     // 拨弦相对位置
-        let T0 = 80;        // 预张力 (N)
-        let mu0 = 0.01;     // 线密度 (kg/m)
-        let N_terms = 20;   // 傅里叶级数截断项数
+        let A0 = 0.01;
+        let L0 = 0.6;
+        let xrel = 0.3;
+        let T0 = 80;
+        let mu0 = 0.01;
+        let N_terms = 20;
         let simSpeed = 0.0001; // 仿真时间速度
 
         let t = 0;          // 当前仿真时间
@@ -328,38 +326,43 @@
         // p5 画布尺寸（可调整）
         const CANVAS_W = 1000;
         const CANVAS_H = 420;
-        const PLOT_LEFT = 80;   // 留出左侧Y轴空间
-        const PLOT_RIGHT = 80;  // 留出右侧Y轴空间
+        const PLOT_LEFT = 80;
+        const PLOT_RIGHT = 80;
         const PLOT_TOP = 60;
         const PLOT_BOTTOM = 60;
         const PLOT_W = CANVAS_W - PLOT_LEFT - PLOT_RIGHT;
         const PLOT_H = CANVAS_H - PLOT_TOP - PLOT_BOTTOM;
 
-        let bn = [];        // 傅里叶系数数组
-
         // ==================== p5.js 主程序 ====================
         function setup() {
             let canvas = createCanvas(CANVAS_W, CANVAS_H);
             canvas.parent('p5canvas');
-            frameRate(60);
+            // frameRate(60);
             updateCoefficients();   // 初始化系数
         }
+
 
         function draw() {
             background(248, 250, 252);  // 浅色背景
 
-            // 更新仿真时间
+            // 帧率无关的仿真时间推进机制
             if (isPlaying) {
                 let now = millis();
-                let delta = (now - lastTime) / 1000; // 秒
-                t += simSpeed * delta;          // 速度调节
+                let delta = (now - lastTime) / 1000;
+                t += simSpeed * delta;
                 lastTime = now;
             }
 
+            // 预计算所有波形（每帧仅计算一次）
+            const yStanding = waveStandingBatch();
+            const yL = waveLeftBatch();
+            const yR = waveRightBatch();
+            const yTy = tensionTyBatch();
+
             // 计算并绘制
             drawAxesAndLabels();
-            drawWaves();
-            drawTensionArrows();
+            drawWaves(yStanding, yL, yR);
+            drawTensionArrows(yStanding, yTy);
 
             // 更新界面显示
             updateTimeDisplay();
@@ -368,11 +371,12 @@
 
         // ==================== 坐标轴 + 刻度（左右对称Y轴） ====================
         function drawAxesAndLabels() {
+            // 保存当前的绘图状态（包括坐标变换、颜色、描边样式等）到栈中
             push();
             translate(PLOT_LEFT, PLOT_TOP + PLOT_H / 2);
 
             // X轴（平衡位置）
-            stroke(100);
+            stroke(100, 100, 100);
             strokeWeight(2);
             line(0, 0, PLOT_W, 0);
 
@@ -381,98 +385,119 @@
             line(PLOT_W, -PLOT_H / 2, PLOT_W, PLOT_H / 2);
 
             // X轴刻度标注
-            fill(50);
+            fill(50, 50, 50);
             noStroke();
-            textAlign(CENTER, TOP);
+            textAlign(CENTER, CENTER);
             textSize(12);
-            text("0", 0, 15);
-            text(L0.toFixed(2) + " m", PLOT_W, 15);
+            text("0", -10, 0);
+            text(L0.toFixed(2), PLOT_W + 20, 0);
 
             // Y轴刻度标注（左右对称）
-            textAlign(RIGHT, CENTER);
-            text(A0.toFixed(3), -8, -PLOT_H / 2 + 5);
-            text("0", -8, 4);
-            text((-A0).toFixed(3), -8, PLOT_H / 2 - 5);
-
-            textAlign(LEFT, CENTER);
-            text(A0.toFixed(3), PLOT_W + 8, -PLOT_H / 2 + 5);
-            text("0", PLOT_W + 8, 4);
-            text((-A0).toFixed(3), PLOT_W + 8, PLOT_H / 2 - 5);
+            textAlign(CENTER, CENTER);
+            text(A0.toFixed(3), -20, -PLOT_H / 2);
+            text((-A0).toFixed(3), -20, PLOT_H / 2);
 
             // 坐标轴名称
             textAlign(CENTER, CENTER);
-            text("x (m)", PLOT_W / 2, PLOT_H / 2 + 35);
-            push();
-            rotate(-HALF_PI);
-            text("y (m)", -PLOT_H / 2, -PLOT_W - 45);
+            text("x (m)", PLOT_W / 2, PLOT_H / 2);
+
+            text("y(m)", 0, -PLOT_H / 2 - 30);
+            // 恢复之前保存的绘图状态，回到 push() 调用时的状态
             pop();
 
-            pop();
         }
+        let kn = [];
+        let wn = [];
+        let bn = [];
+        let bn_kn = [];
+        let xGrid = [];
 
-        // ==================== 计算傅里叶系数 ====================
         function updateCoefficients() {
-            bn = [];
             const x0 = xrel * L0;
-            const denom = x0 * (L0 - x0) * Math.PI * Math.PI;
+            const V = Math.sqrt(T0 / mu0);
+            // 用纯 JS 数组构建 n = [1, 2, ..., N_terms]
+            const n = Array.from({ length: N_terms }, (_, i) => i + 1);
+            kn = n.map(v => v * Math.PI / L0);
+            wn = kn.map(v => v * V);
+            const prefactor = 2 * A0 * L0 * L0 / x0 / (L0 - x0) / Math.PI / Math.PI;
+            const sinTerm = n.map(v => Math.sin(v * Math.PI * x0 / L0));
+            bn = n.map((v, i) => prefactor / (v * v) * sinTerm[i]);
+            bn_kn = bn.map((v, i) => v * kn[i]);
 
-            for (let n = 1; n <= N_terms; n++) {
-                let coeff = (2 * A0 * L0 * L0) / (denom * n * n);
-                coeff *= Math.sin(n * Math.PI * x0 / L0);
-                bn.push(coeff);
-            }
+            // 预计算 x 网格（包含端点 0 和 L0，共 steps+1 个点）
+            const steps = 300;
+            xGrid = Array.from({ length: steps + 1 }, (_, i) => (i / steps) * L0);
         }
 
-        // ==================== 波函数计算 ====================
-        function waveStanding(x) {
-            let y = 0;
-            const V = Math.sqrt(T0 / mu0);
-            for (let n = 1; n <= N_terms; n++) {
-                const kn = n * Math.PI / L0;
-                const wn = V * kn;
-                y += bn[n - 1] * Math.sin(kn * x) * Math.cos(wn * t);
-            }
-            return y;
+        // 批量驻波：一次算出所有 x 点的 y 值
+        function waveStandingBatch() {
+            // 构造外积矩阵: kn ⊗ xGrid → [N_terms × 301]
+            // math.js 中: 列向量 kn [N×1] × 行向量 xGrid [1×M] = [N×M]
+            const kn_col = math.reshape(kn, [kn.length, 1]);        // [N_terms, 1]
+            const x_row = math.reshape(xGrid, [1, xGrid.length]);  // [1, 301]
+
+            const kx = math.multiply(kn_col, x_row);                 // [N_terms, 301]
+            // math.js v13: math.sin(Matrix) 不支持，需用 math.map
+            const sin_kx = math.map(kx, math.sin);                   // [N_terms, 301]
+
+            // wn * t → [N_terms], 扩展为 [N_terms, 1]
+            const wt = math.reshape(math.dotMultiply(wn, t), [kn.length, 1]);
+            const cos_wt = math.map(wt, math.cos);                   // [N_terms, 1]
+
+            // 逐列相乘: bn[n] * sin(kn*x) * cos(wn*t)
+            const bn_col = math.reshape(bn, [bn.length, 1]);
+            const result = math.dotMultiply(bn_col, math.dotMultiply(sin_kx, cos_wt));
+
+            // 沿 n 轴求和 → [301]
+            return math.squeeze(math.sum(result, 0));
         }
 
-        function waveLeft(x) {
-            let y = 0;
-            const V = Math.sqrt(T0 / mu0);
-            for (let n = 1; n <= N_terms; n++) {
-                const kn = n * Math.PI / L0;
-                const wn = V * kn;
-                y += 0.5 * bn[n - 1] * Math.sin(kn * x + wn * t);
-            }
-            return y;
+        // 批量左行波
+        function waveLeftBatch() {
+            const kn_col = math.reshape(kn, [kn.length, 1]);
+            const x_row = math.reshape(xGrid, [1, xGrid.length]);
+            const wt_col = math.reshape(math.dotMultiply(wn, t), [kn.length, 1]);
+
+            const kx_plus_wt = math.add(math.multiply(kn_col, x_row), wt_col);
+            const sin_term = math.map(kx_plus_wt, math.sin);
+            const bn_col = math.reshape(bn, [bn.length, 1]);
+
+            return math.dotMultiply(0.5, math.squeeze(math.sum(math.dotMultiply(bn_col, sin_term), 0)));
         }
 
-        function waveRight(x) {
-            let y = 0;
-            const V = Math.sqrt(T0 / mu0);
-            for (let n = 1; n <= N_terms; n++) {
-                const kn = n * Math.PI / L0;
-                const wn = V * kn;
-                y += 0.5 * bn[n - 1] * Math.sin(kn * x - wn * t);
-            }
-            return y;
+        // 批量右行波
+        function waveRightBatch() {
+            const kn_col = math.reshape(kn, [kn.length, 1]);
+            const x_row = math.reshape(xGrid, [1, xGrid.length]);
+            const wt_col = math.reshape(math.dotMultiply(wn, t), [kn.length, 1]);
+
+            const kx_minus_wt = math.subtract(math.multiply(kn_col, x_row), wt_col);
+            const sin_term = math.map(kx_minus_wt, math.sin);
+            const bn_col = math.reshape(bn, [bn.length, 1]);
+
+            return math.dotMultiply(0.5, math.squeeze(math.sum(math.dotMultiply(bn_col, sin_term), 0)));
         }
 
-        function tensionTy(x) {
-            let ty = 0;
-            const V = Math.sqrt(T0 / mu0);
-            for (let n = 1; n <= N_terms; n++) {
-                const kn = n * Math.PI / L0;
-                const wn = V * kn;
-                ty += bn[n - 1] * kn * (Math.cos(kn * x + wn * t) + Math.cos(kn * x - wn * t));
-            }
-            return 0.5 * T0 * ty;
+        // 批量张力 Ty
+        function tensionTyBatch() {
+            const kn_col = math.reshape(kn, [kn.length, 1]);
+            const x_row = math.reshape(xGrid, [1, xGrid.length]);
+            const wt_col = math.reshape(math.dotMultiply(wn, t), [kn.length, 1]);
+
+            const kx = math.multiply(kn_col, x_row);
+            const cos1 = math.map(math.add(kx, wt_col), math.cos);
+            const cos2 = math.map(math.subtract(kx, wt_col), math.cos);
+            const cos_sum = math.add(cos1, cos2);
+
+            const bnkn_col = math.reshape(bn_kn, [bn_kn.length, 1]);
+            return math.dotMultiply(T0 / 2, math.squeeze(math.sum(math.dotMultiply(bnkn_col, cos_sum), 0)));
         }
 
         // ==================== 绘制各波形 ====================
-        function drawWaves() {
-            const steps = 300;
-            const yScale = (PLOT_H / 2) / A0;   // 物理单位 → 像素
+        function drawWaves(yStanding, yL, yR) {
+            const yScale = (PLOT_H / 2) / A0;
 
+            // 每帧从 DOM 读取复选框状态
             const showStanding = document.getElementById('chkStanding').checked;
             const showLeft = document.getElementById('chkLeft').checked;
             const showRight = document.getElementById('chkRight').checked;
@@ -481,40 +506,26 @@
             push();
             translate(PLOT_LEFT, PLOT_TOP + PLOT_H / 2);
 
-            // 辅助函数：绘制单条曲线
             function drawCurve(ys, color, weight, dashed = false) {
+                if (!ys) return;
                 stroke(color);
                 strokeWeight(weight);
-                if (dashed) {
-                    drawingContext.setLineDash([6, 4]);
-                } else {
-                    drawingContext.setLineDash([]);
-                }
+                drawingContext.setLineDash(dashed ? [6, 4] : []);
                 noFill();
                 beginShape();
-                for (let i = 0; i <= steps; i++) {
-                    const x_phys = (i / steps) * L0;
-                    const px = (x_phys / L0) * PLOT_W;
-                    const py = -ys[i] * yScale;   // y轴向上
+                for (let i = 0; i < ys.length; i++) {
+                    const px = (i / (ys.length - 1)) * PLOT_W;
+                    const py = -ys[i] * yScale;
                     vertex(px, py);
                 }
                 endShape();
             }
 
-            let yStanding = [], yL = [], yR = [];
-
-            for (let i = 0; i <= steps; i++) {
-                const x = (i / steps) * L0;
-                yStanding.push(waveStanding(x));
-                yL.push(waveLeft(x));
-                yR.push(waveRight(x));
-            }
-
             if (showStanding) drawCurve(yStanding, '#1e40af', 3.5);
             if (showLeft) drawCurve(yL, '#dc2626', 2.2, true);
             if (showRight) drawCurve(yR, '#16a34a', 2.2, true);
-            if (showSum) {
-                let ySum = yL.map((val, idx) => val + yR[idx]);
+            if (showSum && yL && yR) {
+                const ySum = math.add(yL, yR);  // math.js 向量加法
                 drawCurve(ySum, '#6b7280', 2, true);
             }
 
@@ -522,20 +533,14 @@
         }
 
         // ==================== 绘制张力箭头 ====================
-        function drawTensionArrows() {
+        function drawTensionArrows(yStanding, tyBatch) {
             if (!document.getElementById('chkTension').checked) return;
 
-            const steps = 280;
             const yScale = (PLOT_H / 2) / A0;
-            let maxTy = 0;
-            let tensionData = [];
 
-            for (let i = 0; i <= steps; i++) {
-                const x = (i / steps) * L0;
-                const ty = tensionTy(x);
-                const yString = waveStanding(x);
-                tensionData.push({ x, yString, ty });
-                maxTy = Math.max(maxTy, Math.abs(ty));
+            let maxTy = 0;
+            for (let i = 0; i < tyBatch.length; i++) {
+                maxTy = Math.max(maxTy, Math.abs(tyBatch[i]));
             }
 
             if (maxTy === 0) return;
@@ -545,11 +550,11 @@
             push();
             translate(PLOT_LEFT, PLOT_TOP + PLOT_H / 2);
 
-            for (let i = 0; i < tensionData.length; i += 14) {   // 稀疏采样
-                const d = tensionData[i];
-                const px = (d.x / L0) * PLOT_W;
-                const py = -d.yString * yScale;
-                const arrowLen = -d.ty * arrowScale;   // 注意y方向
+            const sampleStep = 14;   // 稀疏采样步长
+            for (let i = 0; i < yStanding.length; i += sampleStep) {
+                const px = (i / (yStanding.length - 1)) * PLOT_W;
+                const py = -yStanding[i] * yScale;
+                const arrowLen = -tyBatch[i] * arrowScale;   // 注意y方向
 
                 if (Math.abs(arrowLen) < 3) continue;
 
