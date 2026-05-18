@@ -251,8 +251,8 @@
 
                 <div class="slider-group">
                     <label>x₀/L₀ (拨弦位置):</label>
-                    <input type="range" id="xrel" min="0.1" max="0.9" step="0.01" value="0.3">
-                    <span class="value" id="xrel_val">0.30</span>
+                    <input type="range" id="xrel" min="0.1" max="0.9" step="0.01" value="0.2">
+                    <span class="value" id="xrel_val">0.20</span>
                 </div>
 
                 <div class="slider-group">
@@ -313,7 +313,7 @@
         // ==================== 全局参数（易懂风格） ====================
         let A0 = 0.01;
         let L0 = 0.6;
-        let xrel = 0.3;
+        let xrel = 0.2;
         let T0 = 80;
         let mu0 = 0.01;
         let N_terms = 20;
@@ -326,8 +326,8 @@
         // p5 画布尺寸（可调整）
         const CANVAS_W = 1000;
         const CANVAS_H = 420;
-        const PLOT_LEFT = 80;
-        const PLOT_RIGHT = 80;
+        const PLOT_LEFT = 50;
+        const PLOT_RIGHT = 50;
         const PLOT_TOP = 60;
         const PLOT_BOTTOM = 60;
         const PLOT_W = CANVAS_W - PLOT_LEFT - PLOT_RIGHT;
@@ -337,7 +337,6 @@
         function setup() {
             let canvas = createCanvas(CANVAS_W, CANVAS_H);
             canvas.parent('p5canvas');
-            // frameRate(60);
             updateCoefficients();   // 初始化系数
         }
 
@@ -348,7 +347,7 @@
             // 帧率无关的仿真时间推进机制
             if (isPlaying) {
                 let now = millis();
-                let delta = (now - lastTime) / 1000;
+                let delta = (now - lastTime) / 1000;  // 帧时间间隔，即draw函数调用的真实时间间隔；
                 t += simSpeed * delta;
                 lastTime = now;
             }
@@ -404,7 +403,6 @@
             text("y(m)", 0, -PLOT_H / 2 - 30);
             // 恢复之前保存的绘图状态，回到 push() 调用时的状态
             pop();
-
         }
         let kn = [];
         let wn = [];
