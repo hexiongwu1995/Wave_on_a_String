@@ -337,12 +337,12 @@
         function setup() {
             let canvas = createCanvas(CANVAS_W, CANVAS_H);
             canvas.parent('p5canvas');
-            updateCoefficients();   // 初始化系数
+            updateCoefficients();  
         }
 
 
         function draw() {
-            background(248, 250, 252);  // 浅色背景
+            background(248, 250, 252);  
 
             // 帧率无关的仿真时间推进机制
             if (isPlaying) {
@@ -413,7 +413,6 @@
         function updateCoefficients() {
             const x0 = xrel * L0;
             const V = Math.sqrt(T0 / mu0);
-            // 用纯 JS 数组构建 n = [1, 2, ..., N_terms]
             const n = Array.from({ length: N_terms }, (_, i) => i + 1);
             kn = n.map(v => v * Math.PI / L0);
             wn = kn.map(v => v * V);
@@ -429,24 +428,21 @@
 
         // 批量驻波：一次算出所有 x 点的 y 值
         function waveStandingBatch() {
-            // 构造外积矩阵: kn ⊗ xGrid → [N_terms × 301]
-            // math.js 中: 列向量 kn [N×1] × 行向量 xGrid [1×M] = [N×M]
-            const kn_col = math.reshape(kn, [kn.length, 1]);        // [N_terms, 1]
-            const x_row = math.reshape(xGrid, [1, xGrid.length]);  // [1, 301]
+            const kn_col = math.reshape(kn, [kn.length, 1]);       
+            const x_row = math.reshape(xGrid, [1, xGrid.length]); 
 
-            const kx = math.multiply(kn_col, x_row);                 // [N_terms, 301]
-            // math.js v13: math.sin(Matrix) 不支持，需用 math.map
-            const sin_kx = math.map(kx, math.sin);                   // [N_terms, 301]
+            const kx = math.multiply(kn_col, x_row);       
 
-            // wn * t → [N_terms], 扩展为 [N_terms, 1]
+            const sin_kx = math.map(kx, math.sin);    
+
+
             const wt = math.reshape(math.dotMultiply(wn, t), [kn.length, 1]);
-            const cos_wt = math.map(wt, math.cos);                   // [N_terms, 1]
+            const cos_wt = math.map(wt, math.cos);  
 
-            // 逐列相乘: bn[n] * sin(kn*x) * cos(wn*t)
+
             const bn_col = math.reshape(bn, [bn.length, 1]);
             const result = math.dotMultiply(bn_col, math.dotMultiply(sin_kx, cos_wt));
 
-            // 沿 n 轴求和 → [301]
             return math.squeeze(math.sum(result, 0));
         }
 
@@ -552,7 +548,7 @@
             for (let i = 0; i < yStanding.length; i += sampleStep) {
                 const px = (i / (yStanding.length - 1)) * PLOT_W;
                 const py = -yStanding[i] * yScale;
-                const arrowLen = -tyBatch[i] * arrowScale;   // 注意y方向
+                const arrowLen = -tyBatch[i] * arrowScale; 
 
                 if (Math.abs(arrowLen) < 3) continue;
 
