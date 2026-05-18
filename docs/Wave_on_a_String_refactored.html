@@ -425,7 +425,7 @@
             bn_kn = bn.map((v, i) => v * kn[i]);
 
             // 预计算 x 网格（包含端点 0 和 L0，共 steps+1 个点）
-            const steps = 300;
+            const steps = 100;
             xGrid = Array.from({ length: steps + 1 }, (_, i) => (i / steps) * L0);
         }
 
@@ -550,7 +550,7 @@
             push();
             translate(PLOT_LEFT, PLOT_TOP + PLOT_H / 2);
 
-            const sampleStep = 14;   // 稀疏采样步长
+            const sampleStep = 5;   // 稀疏采样步长
             for (let i = 0; i < yStanding.length; i += sampleStep) {
                 const px = (i / (yStanding.length - 1)) * PLOT_W;
                 const py = -yStanding[i] * yScale;
