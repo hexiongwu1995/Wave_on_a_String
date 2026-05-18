@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>琴弦振动可视化</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/13.0.0/math.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         body {
@@ -310,20 +309,20 @@
     </div>
 
     <script>
-        // ==================== 全局参数（易懂风格） ====================
+        // ==================== 物理参数 ====================
         let A0 = 0.01;
         let L0 = 0.6;
         let xrel = 0.2;
         let T0 = 80;
         let mu0 = 0.01;
         let N_terms = 20;
-        let simSpeed = 0.0001; // 仿真时间速度
+        let simSpeed = 0.0001;
 
-        let t = 0;          // 当前仿真时间
+        let t = 0;
         let isPlaying = false;
         let lastTime = 0;
 
-        // p5 画布尺寸（可调整）
+        // ==================== 画布布局常量 ====================
         const CANVAS_W = 1000;
         const CANVAS_H = 420;
         const PLOT_LEFT = 50;
@@ -332,321 +331,257 @@
         const PLOT_BOTTOM = 60;
         const PLOT_W = CANVAS_W - PLOT_LEFT - PLOT_RIGHT;
         const PLOT_H = CANVAS_H - PLOT_TOP - PLOT_BOTTOM;
+        const X_STEPS = 100;
+
+        // ==================== 预计算缓存 ====================
+        // 以下数组在参数改变时由 updateCoefficients() 统一重建，每帧复用
+        let kn = [];
+        let wn = [];
+        let bn = [];
+        let bn_kn = [];
+        let sinTable = [];
+        let cosTable = [];
+        let xGrid = [];
+
+        // ==================== 复选框引用缓存（避免每帧查询 DOM） ====================
+        let chkStanding, chkLeft, chkRight, chkSum, chkTension;
+
+        // ==================== 系数与查找表更新 ====================
+        function updateCoefficients() {
+            const x0 = xrel * L0;
+            const V = Math.sqrt(T0 / mu0);
+
+
+            const ns = Array.from({ length: N_terms }, (_, i) => i + 1);
+
+            kn = ns.map(n => n * Math.PI / L0);
+            wn = kn.map(k => k * V);
+
+            const prefactor = 2 * A0 * L0 * L0 / (x0 * (L0 - x0) * Math.PI * Math.PI);
+            bn = ns.map((n, i) => prefactor / (n * n) * Math.sin(n * Math.PI * x0 / L0));
+            bn_kn = bn.map((b, i) => b * kn[i]);
+
+
+            xGrid = Array.from({ length: X_STEPS + 1 }, (_, i) => (i / X_STEPS) * L0);
+
+            sinTable = kn.map((k, n) => xGrid.map(x => bn[n] * Math.sin(k * x)));
+            cosTable = kn.map((k, n) => xGrid.map(x => bn_kn[n] * Math.cos(k * x)));
+        }
+
+        // ==================== 每帧的时间系数（长度均为 N_terms 的数组） ====================
+
+        function timeCoefStanding() {
+            return wn.map(w => Math.cos(w * t));
+        }
+
+        function timeCoefLeft() {
+            return wn.map(w => ({ cosWT: Math.cos(w * t), sinWT: Math.sin(w * t) }));
+        }
+
+
+        // ==================== 波形计算：每个函数 = 一行点积求和 ====================
+
+        function waveStanding(cosWT) {
+            return xGrid.map((_, i) =>
+                sinTable.reduce((sum, row, n) => sum + row[i] * cosWT[n], 0)
+            );
+        }
+
+
+        function waveLeft(timeCoefs) {
+            return xGrid.map((x, i) =>
+                0.5 * kn.reduce((sum, k, n) => {
+                    const { cosWT, sinWT } = timeCoefs[n];
+                    return sum + sinTable[n][i] * cosWT + bn[n] * Math.cos(k * x) * sinWT;
+                }, 0)
+            );
+        }
+
+        function waveRight(timeCoefs) {
+            return xGrid.map((x, i) =>
+                0.5 * kn.reduce((sum, k, n) => {
+                    const { cosWT, sinWT } = timeCoefs[n];
+                    return sum + sinTable[n][i] * cosWT - bn[n] * Math.cos(k * x) * sinWT;
+                }, 0)
+            );
+        }
+
+        function waveSum(yL, yR) {
+            return yL.map((v, i) => v + yR[i]);
+        }
+
+        function tensionTy(cosWT) {
+            return xGrid.map((_, i) =>
+                T0 * cosTable.reduce((sum, row, n) => sum + row[i] * cosWT[n], 0)
+            );
+        }
 
         // ==================== p5.js 主程序 ====================
         function setup() {
             let canvas = createCanvas(CANVAS_W, CANVAS_H);
             canvas.parent('p5canvas');
-            updateCoefficients();  
+            frameRate(10);
+            updateCoefficients();
         }
 
-
         function draw() {
-            background(248, 250, 252);  
+            background(248, 250, 252);
 
-            // 帧率无关的仿真时间推进机制
             if (isPlaying) {
-                let now = millis();
-                let delta = (now - lastTime) / 1000;  // 帧时间间隔，即draw函数调用的真实时间间隔；
-                t += simSpeed * delta;
+                const now = millis();
+                t += simSpeed * (now - lastTime) / 1000;
                 lastTime = now;
             }
 
-            // 预计算所有波形（每帧仅计算一次）
-            const yStanding = waveStandingBatch();
-            const yL = waveLeftBatch();
-            const yR = waveRightBatch();
-            const yTy = tensionTyBatch();
+            const cosWT = timeCoefStanding();
+            const leftCoefs = timeCoefLeft();
 
-            // 计算并绘制
+
+            const yStanding = waveStanding(cosWT);
+            const yL = waveLeft(leftCoefs);
+            const yR = waveRight(leftCoefs);
+            const yTy = tensionTy(cosWT);
+
             drawAxesAndLabels();
             drawWaves(yStanding, yL, yR);
             drawTensionArrows(yStanding, yTy);
 
-            // 更新界面显示
-            updateTimeDisplay();
-            updateWaveInfo();
+
+            document.getElementById('timeDisplay').textContent = `t = ${t.toFixed(4)} s`;
         }
 
-        // ==================== 坐标轴 + 刻度（左右对称Y轴） ====================
+        // ==================== 坐标轴与刻度 ====================
         function drawAxesAndLabels() {
-            // 保存当前的绘图状态（包括坐标变换、颜色、描边样式等）到栈中
             push();
             translate(PLOT_LEFT, PLOT_TOP + PLOT_H / 2);
 
-            // X轴（平衡位置）
-            stroke(100, 100, 100);
+            stroke(100);
             strokeWeight(2);
             line(0, 0, PLOT_W, 0);
-
-            // 左右Y轴
             line(0, -PLOT_H / 2, 0, PLOT_H / 2);
             line(PLOT_W, -PLOT_H / 2, PLOT_W, PLOT_H / 2);
 
-            // X轴刻度标注
-            fill(50, 50, 50);
+            fill(50);
             noStroke();
             textAlign(CENTER, CENTER);
             textSize(12);
             text("0", -10, 0);
             text(L0.toFixed(2), PLOT_W + 20, 0);
-
-            // Y轴刻度标注（左右对称）
-            textAlign(CENTER, CENTER);
             text(A0.toFixed(3), -20, -PLOT_H / 2);
-            text((-A0).toFixed(3), -20, PLOT_H / 2);
-
-            // 坐标轴名称
-            textAlign(CENTER, CENTER);
+            text(-A0.toFixed(3), -20, PLOT_H / 2);
             text("x (m)", PLOT_W / 2, PLOT_H / 2);
-
-            text("y(m)", 0, -PLOT_H / 2 - 30);
-            // 恢复之前保存的绘图状态，回到 push() 调用时的状态
+            text("y (m)", 0, -PLOT_H / 2 - 30);
             pop();
         }
-        let kn = [];
-        let wn = [];
-        let bn = [];
-        let bn_kn = [];
-        let xGrid = [];
 
-        function updateCoefficients() {
-            const x0 = xrel * L0;
-            const V = Math.sqrt(T0 / mu0);
-            const n = Array.from({ length: N_terms }, (_, i) => i + 1);
-            kn = n.map(v => v * Math.PI / L0);
-            wn = kn.map(v => v * V);
-            const prefactor = 2 * A0 * L0 * L0 / x0 / (L0 - x0) / Math.PI / Math.PI;
-            const sinTerm = n.map(v => Math.sin(v * Math.PI * x0 / L0));
-            bn = n.map((v, i) => prefactor / (v * v) * sinTerm[i]);
-            bn_kn = bn.map((v, i) => v * kn[i]);
-
-            // 预计算 x 网格（包含端点 0 和 L0，共 steps+1 个点）
-            const steps = 100;
-            xGrid = Array.from({ length: steps + 1 }, (_, i) => (i / steps) * L0);
-        }
-
-        // 批量驻波：一次算出所有 x 点的 y 值
-        function waveStandingBatch() {
-            const kn_col = math.reshape(kn, [kn.length, 1]);       
-            const x_row = math.reshape(xGrid, [1, xGrid.length]); 
-
-            const kx = math.multiply(kn_col, x_row);       
-
-            const sin_kx = math.map(kx, math.sin);    
-
-
-            const wt = math.reshape(math.dotMultiply(wn, t), [kn.length, 1]);
-            const cos_wt = math.map(wt, math.cos);  
-
-
-            const bn_col = math.reshape(bn, [bn.length, 1]);
-            const result = math.dotMultiply(bn_col, math.dotMultiply(sin_kx, cos_wt));
-
-            return math.squeeze(math.sum(result, 0));
-        }
-
-        // 批量左行波
-        function waveLeftBatch() {
-            const kn_col = math.reshape(kn, [kn.length, 1]);
-            const x_row = math.reshape(xGrid, [1, xGrid.length]);
-            const wt_col = math.reshape(math.dotMultiply(wn, t), [kn.length, 1]);
-
-            const kx_plus_wt = math.add(math.multiply(kn_col, x_row), wt_col);
-            const sin_term = math.map(kx_plus_wt, math.sin);
-            const bn_col = math.reshape(bn, [bn.length, 1]);
-
-            return math.dotMultiply(0.5, math.squeeze(math.sum(math.dotMultiply(bn_col, sin_term), 0)));
-        }
-
-        // 批量右行波
-        function waveRightBatch() {
-            const kn_col = math.reshape(kn, [kn.length, 1]);
-            const x_row = math.reshape(xGrid, [1, xGrid.length]);
-            const wt_col = math.reshape(math.dotMultiply(wn, t), [kn.length, 1]);
-
-            const kx_minus_wt = math.subtract(math.multiply(kn_col, x_row), wt_col);
-            const sin_term = math.map(kx_minus_wt, math.sin);
-            const bn_col = math.reshape(bn, [bn.length, 1]);
-
-            return math.dotMultiply(0.5, math.squeeze(math.sum(math.dotMultiply(bn_col, sin_term), 0)));
-        }
-
-        // 批量张力 Ty
-        function tensionTyBatch() {
-            const kn_col = math.reshape(kn, [kn.length, 1]);
-            const x_row = math.reshape(xGrid, [1, xGrid.length]);
-            const wt_col = math.reshape(math.dotMultiply(wn, t), [kn.length, 1]);
-
-            const kx = math.multiply(kn_col, x_row);
-            const cos1 = math.map(math.add(kx, wt_col), math.cos);
-            const cos2 = math.map(math.subtract(kx, wt_col), math.cos);
-            const cos_sum = math.add(cos1, cos2);
-
-            const bnkn_col = math.reshape(bn_kn, [bn_kn.length, 1]);
-            return math.dotMultiply(T0 / 2, math.squeeze(math.sum(math.dotMultiply(bnkn_col, cos_sum), 0)));
-        }
-
-        // ==================== 绘制各波形 ====================
+        // ==================== 绘制波形曲线 ====================
         function drawWaves(yStanding, yL, yR) {
             const yScale = (PLOT_H / 2) / A0;
-
-            // 每帧从 DOM 读取复选框状态
-            const showStanding = document.getElementById('chkStanding').checked;
-            const showLeft = document.getElementById('chkLeft').checked;
-            const showRight = document.getElementById('chkRight').checked;
-            const showSum = document.getElementById('chkSum').checked;
 
             push();
             translate(PLOT_LEFT, PLOT_TOP + PLOT_H / 2);
 
             function drawCurve(ys, color, weight, dashed = false) {
-                if (!ys) return;
                 stroke(color);
                 strokeWeight(weight);
                 drawingContext.setLineDash(dashed ? [6, 4] : []);
                 noFill();
                 beginShape();
-                for (let i = 0; i < ys.length; i++) {
-                    const px = (i / (ys.length - 1)) * PLOT_W;
-                    const py = -ys[i] * yScale;
-                    vertex(px, py);
-                }
+                ys.forEach((y, i) => vertex((i / (ys.length - 1)) * PLOT_W, -y * yScale));
                 endShape();
             }
 
-            if (showStanding) drawCurve(yStanding, '#1e40af', 3.5);
-            if (showLeft) drawCurve(yL, '#dc2626', 2.2, true);
-            if (showRight) drawCurve(yR, '#16a34a', 2.2, true);
-            if (showSum && yL && yR) {
-                const ySum = math.add(yL, yR);  // math.js 向量加法
-                drawCurve(ySum, '#6b7280', 2, true);
-            }
+            if (chkStanding.checked) drawCurve(yStanding, '#1e40af', 3.5);
+            if (chkLeft.checked) drawCurve(yL, '#dc2626', 2.2, true);
+            if (chkRight.checked) drawCurve(yR, '#16a34a', 2.2, true);
+            if (chkSum.checked) drawCurve(waveSum(yL, yR), '#6b7280', 2, true);
 
             pop();
         }
 
         // ==================== 绘制张力箭头 ====================
         function drawTensionArrows(yStanding, tyBatch) {
-            if (!document.getElementById('chkTension').checked) return;
+            if (!chkTension.checked) return;
 
             const yScale = (PLOT_H / 2) / A0;
-
-            let maxTy = 0;
-            for (let i = 0; i < tyBatch.length; i++) {
-                maxTy = Math.max(maxTy, Math.abs(tyBatch[i]));
-            }
-
+            const maxTy = tyBatch.reduce((m, v) => Math.max(m, Math.abs(v)), 0);
             if (maxTy === 0) return;
-
-            const arrowScale = (PLOT_H / 5) / maxTy;   // 最大箭头长度限制
+            const arrowScale = (PLOT_H / 5) / maxTy;
 
             push();
             translate(PLOT_LEFT, PLOT_TOP + PLOT_H / 2);
+            stroke('#ea580c');
+            strokeWeight(2.2);
+            fill('#ea580c');
 
-            const sampleStep = 5;   // 稀疏采样步长
-            for (let i = 0; i < yStanding.length; i += sampleStep) {
+            // 每隔 5 个网格点画一根箭头
+            yStanding.forEach((y, i) => {
+                if (i % 5 !== 0) return;
                 const px = (i / (yStanding.length - 1)) * PLOT_W;
-                const py = -yStanding[i] * yScale;
-                const arrowLen = -tyBatch[i] * arrowScale; 
+                const py = -y * yScale;
+                const arrowLen = -tyBatch[i] * arrowScale;
+                if (Math.abs(arrowLen) < 3) return;
 
-                if (Math.abs(arrowLen) < 3) continue;
-
-                // 箭头线
-                stroke('#ea580c');
-                strokeWeight(2.2);
                 line(px, py, px, py + arrowLen);
 
-                // 箭头头
-                const headSize = 7;
                 const dir = arrowLen > 0 ? 1 : -1;
-                triangle(px, py + arrowLen,
+                const headSize = 7;
+                triangle(
+                    px, py + arrowLen,
                     px - headSize / 2, py + arrowLen - dir * headSize,
-                    px + headSize / 2, py + arrowLen - dir * headSize);
-            }
+                    px + headSize / 2, py + arrowLen - dir * headSize
+                );
+            });
             pop();
-        }
-
-        // ==================== 更新显示信息 ====================
-        function updateTimeDisplay() {
-            document.getElementById('timeDisplay').textContent = `t = ${t.toFixed(4)} s`;
-        }
-
-        function updateWaveInfo() {
-            const V = Math.sqrt(T0 / mu0);
-            const f1 = V / (2 * L0);
-            const w1 = 2 * Math.PI * f1;
-
-            document.getElementById('waveSpeed').textContent = V.toFixed(3);
-            document.getElementById('fundFreq').textContent = f1.toFixed(2);
-            document.getElementById('angFreq').textContent = w1.toFixed(1);
         }
 
         // ==================== 滑块与按钮事件 ====================
         function bindControls() {
-            const sliders = {
-                A0: document.getElementById('A0'),
-                L0: document.getElementById('L0'),
-                xrel: document.getElementById('xrel'),
-                T0: document.getElementById('T0'),
-                mu0: document.getElementById('mu0'),
-                N: document.getElementById('N'),
-                speed: document.getElementById('speed')
+            chkStanding = document.getElementById('chkStanding');
+            chkLeft = document.getElementById('chkLeft');
+            chkRight = document.getElementById('chkRight');
+            chkSum = document.getElementById('chkSum');
+            chkTension = document.getElementById('chkTension');
+
+            const sliderConfig = {
+                A0: { set: v => A0 = v, fmt: v => v.toFixed(3), needsCoeff: true },
+                L0: { set: v => L0 = v, fmt: v => v.toFixed(2), needsCoeff: true },
+                xrel: { set: v => xrel = v, fmt: v => v.toFixed(2), needsCoeff: true },
+                T0: { set: v => T0 = v, fmt: v => v.toFixed(0), needsCoeff: true },
+                mu0: { set: v => mu0 = v, fmt: v => v.toFixed(3), needsCoeff: true },
+                N: { set: v => N_terms = parseInt(v), fmt: v => String(parseInt(v)), needsCoeff: true },
+                speed: { set: v => simSpeed = v, fmt: v => v.toExponential(1), needsCoeff: false }
             };
 
-            const values = {
-                A0: document.getElementById('A0_val'),
-                L0: document.getElementById('L0_val'),
-                xrel: document.getElementById('xrel_val'),
-                T0: document.getElementById('T0_val'),
-                mu0: document.getElementById('mu0_val'),
-                N: document.getElementById('N_val'),
-                speed: document.getElementById('speed_val')
-            };
+            Object.entries(sliderConfig).forEach(([id, cfg]) => {
+                const input = document.getElementById(id);
+                const label = document.getElementById(id + '_val');
+                input.addEventListener('input', () => {
+                    const v = parseFloat(input.value);
+                    cfg.set(v);
+                    label.textContent = cfg.fmt(v);
+                    if (cfg.needsCoeff) updateCoefficients();
 
-            Object.keys(sliders).forEach(key => {
-                sliders[key].addEventListener('input', () => {
-                    if (key === 'A0') A0 = parseFloat(sliders.A0.value);
-                    if (key === 'L0') L0 = parseFloat(sliders.L0.value);
-                    if (key === 'xrel') xrel = parseFloat(sliders.xrel.value);
-                    if (key === 'T0') T0 = parseFloat(sliders.T0.value);
-                    if (key === 'mu0') mu0 = parseFloat(sliders.mu0.value);
-                    if (key === 'N') N_terms = parseInt(sliders.N.value);
-                    if (key === 'speed') simSpeed = parseFloat(sliders.speed.value);
-
-                    // 更新显示
-                    values.A0.textContent = A0.toFixed(3);
-                    values.L0.textContent = L0.toFixed(2);
-                    values.xrel.textContent = xrel.toFixed(2);
-                    values.T0.textContent = T0.toFixed(0);
-                    values.mu0.textContent = mu0.toFixed(3);
-                    values.N.textContent = N_terms;
-                    values.speed.textContent = simSpeed.toExponential(1);
-
-                    updateCoefficients();   // 参数变化后重新计算系数
+                    const V = Math.sqrt(T0 / mu0);
+                    const f1 = V / (2 * L0);
+                    document.getElementById('waveSpeed').textContent = V.toFixed(3);
+                    document.getElementById('fundFreq').textContent = f1.toFixed(2);
+                    document.getElementById('angFreq').textContent = (2 * Math.PI * f1).toFixed(1);
                 });
             });
 
-            // 复选框
-            ['chkStanding', 'chkLeft', 'chkRight', 'chkSum', 'chkTension'].forEach(id => {
-                document.getElementById(id).addEventListener('change', () => { });
-            });
-
-            // 按钮
             document.getElementById('playBtn').addEventListener('click', () => {
                 isPlaying = !isPlaying;
                 document.getElementById('playBtn').textContent = isPlaying ? '暂停' : '播放';
                 if (isPlaying) lastTime = millis();
             });
 
-            document.getElementById('resetBtn').addEventListener('click', () => {
-                t = 0;
-            });
+            document.getElementById('resetBtn').addEventListener('click', () => { t = 0; });
         }
 
         // ==================== 初始化 ====================
         window.onload = function () {
-            // 更新初始滑块显示
+
             document.getElementById('A0_val').textContent = A0.toFixed(3);
             document.getElementById('L0_val').textContent = L0.toFixed(2);
             document.getElementById('xrel_val').textContent = xrel.toFixed(2);
@@ -655,8 +590,13 @@
             document.getElementById('N_val').textContent = N_terms;
             document.getElementById('speed_val').textContent = simSpeed.toExponential(1);
 
+            const V = Math.sqrt(T0 / mu0);
+            const f1 = V / (2 * L0);
+            document.getElementById('waveSpeed').textContent = V.toFixed(3);
+            document.getElementById('fundFreq').textContent = f1.toFixed(2);
+            document.getElementById('angFreq').textContent = (2 * Math.PI * f1).toFixed(1);
+
             bindControls();
-            updateWaveInfo();
         };
     </script>
 
