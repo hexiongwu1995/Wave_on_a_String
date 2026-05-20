@@ -229,13 +229,32 @@
                     $$T_y(x,t) = \frac{T_0}{2} \sum_{n=1}^{\infty} \left\{ b_n k_n \left[\cos(k_n x + \omega_n t)
                     + \cos(k_n x - \omega_n t)\right] \right\}$$
                 </div>
+
                 <p>c. 相关的中间参数计算公式为：</p>
                 <div class="math-equation">
                     $$k_n = \frac{n\pi}{L_0} \hspace{1cm} \omega_n = \sqrt{\frac{T_0}{\mu_0}} \cdot k_n$$
                 </div>
+
                 <div class="math-equation">
                     $$b_n = \frac{2A_0 L_0^2}{x_0(L_0 - x_0)
                     \pi^2 n^2} \sin\left(\frac{n\pi x_0}{L_0}\right)$$
+                </div>
+
+                <p>d. 求解张力竖直分量\(T_y(x,t)\)的最大值：</p>
+                <div class="math-equation">
+                    $$
+                    \begin{aligned}
+                    T_y(x,t) &= T(x,t) * sin(\theta) \\ & \approx T(x,t) * tan(\theta) \\ & \approx T(x,t) * \frac{dy}{dx}
+                    \end{aligned}
+                    $$
+                </div>
+
+                <div class="math-equation">
+                    $$
+                    \begin{aligned}
+                    \max \left(\left|T_y(x,t)\right| \right) & \approx T_0 * \max \left(\frac{A_0}{x_0} , \quad \frac{A_0}{L_0 - x_0} \right) 
+                    \end{aligned}
+                    $$
                 </div>
             </div>
 
@@ -313,7 +332,7 @@
         let A0 = 0.01, L0 = 0.6, xrel = 0.1, T0 = 80, mu0 = 0.01;
         let N_terms = 50, simSpeed = 0.0001, segs = 100;
         let simTime = 0, lastFrameMillis = 0, isPlaying = false;
-        let V, x0, kn = [], wn = [], bn = [];
+        let V, x0, tyMax, kn = [], wn = [], bn = [];
 
         // 画布尺寸（响应式）
         let canvasW, canvasH;
@@ -356,6 +375,7 @@
                 let sinVal = Math.sin(n * Math.PI * x0 / L0);
                 bn.push((2 * A0 * L0 * L0) / (x0 * (L0 - x0) * Math.PI * Math.PI * n * n) * sinVal);
             }
+            tyMax = T0 * Math.max(A0/x0, A0/(L0 - x0));
         }
 
         // 驻波位移 y(x,t) 
@@ -387,7 +407,7 @@
             canvasH = canvasW * 0.5;
         }
 
-        let graphBuffer; 
+        let graphBuffer;
 
         function setup() {
             computeCanvasSize();
@@ -474,7 +494,6 @@
             if (document.getElementById('chkTension').checked) {
                 // 计算 Ty 数据并找最大值
                 let tyData = pts.map(p => Ty(p.physX, simTime));
-                let tyMax = Math.max(...tyData.map(Math.abs), 1e-10);
                 let Ty_Visual_Scale = 4;
                 stroke(237, 134, 79);
                 strokeWeight(1)
