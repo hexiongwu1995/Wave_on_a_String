@@ -218,7 +218,7 @@
 
 $ T_2 sin(beta) - T_1 sin(alpha) = mu_0 Delta x (partial^2 y)/(partial t^2) $<y-component>
 
-#abstract(title:"等式右侧是否需要带负号？")[
+#abstract(title: "等式右侧是否需要带负号？")[
   上述等式@y-component  是根据牛顿第二定律 $F = m a$，分别在等式两侧代入定义表达式后得到，不需要考虑符号。
   右侧的表达式$(partial^2 y)/(partial t^2)$ 就是加速度的定义，不需要额外添加符号。
 ]
@@ -285,7 +285,7 @@ $ (partial^2 y)/(partial x^2) = mu_0/T_x dot (partial^2 y)/(partial t^2) $<wave_
   方程 @Eq-Space 对应的是空间部分，方程 @Eq-Time 对应的是时间部分。
   $ (d^2 X)/(d x^2) - C X =0 $<Eq-Space>
 
-  $ (d^2 T)/(d t^2) - C dot c^2 dot T = 0  #h(1cm) "其中：" c = sqrt(T_0/mu_0) $<Eq-Time>
+  $ (d^2 T)/(d t^2) - C dot c^2 dot T = 0 #h(1cm) "其中：" c = sqrt(T_0/mu_0) $<Eq-Time>
 ]
 
 == 微分方程组的边界条件
@@ -346,10 +346,12 @@ $ cases(y(L_0, t) = X(L_0)T(t) =0, T(t) "为非零解") #h(1cm) arrow.r.double.l
 $ X_n (x) =C_(2, n) sin(k_n x) #h(1cm) "其中：" k_n = (n pi)/L_0 $<Particular_Solution_of_Space_Differential_Equation>
 
 
-由于空间解还需要满足初始时刻(t=0时刻)的三角波条件，因此，需要取三角级数以拟合三角波的形状，即：
+#strike[由于空间解还需要满足初始时刻t=0的三角波条件，因此，需要取三角级数以拟合三角波的形状，即：]
 
 #abstract(title: [空间微分方程的解])[
-  $ X(x) = sum_(n=1)^(infinity) C_(2, n) sin((n pi)/L_0 x) $<Solution_of_Space_Differential_Equation>
+  $
+    cancel(X(x) = sum_(n=1)^(infinity) C_(2, n) sin(k_n x) #h(1cm) "其中：" k_n = (n pi)/L_0, cross: #true)
+  $<Solution_of_Space_Differential_Equation>
 ]
 
 
@@ -372,11 +374,11 @@ $<Initial_Triangle_Wave>
 
 == 求解时间微分方程
 
-对于时间微分方程 @Eq-Time ，相应的特征方程为：$r^2 - T_0/mu_0 C=0$，代入 $C= -k_n^2, #h(1em) k_n= (n pi)/L_0$，解得：
+对于时间微分方程 @Eq-Time ，相应的特征方程为：$r^2 - c^2 dot C=0$，代入 $C= -k_n^2, #h(1em) k_n= (n pi)/L_0$，解得：
 
 $ r_(1,2)= plus.minus i dot c dot k_n $
 
-则时间微分方程的通解为：
+则时间微分方程的特解为：
 
 $ T_n (t)= D_(1, n) cos(omega_n t) + D_(2, n) sin(omega_n t) #h(1cm) "其中：" omega_n = c dot k_n $
 
