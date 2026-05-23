@@ -61,18 +61,19 @@
 = 真实物理模型
 
 + 如@Schematic_Diagram_of_wave_on_a_string 所示，一根琴弦的两端被固定，弦长为$L(t)$，琴弦的线密度为$mu(x, t)$，弦上张力为$T(x,t)$。
-+ 初始时刻$t=0$，将琴弦的位置$x_0$处向上拉伸至一个高度$A$，然后立刻释放琴弦。
++ 初始时刻$t=0$，将琴弦的位置$x_0$处向上拉伸至一个高度$A_0$，然后立刻释放琴弦。
 + 目标是求解琴弦的振动方程$y(x,t)$和琴弦张力的竖直分量$T_y (x,t)$。
 
 = 模型假设
 + 不考虑空气阻力、弦的内阻力和其它任何形式所造成的能量耗散。
-+ 小振幅假设：将初始振幅A限定在较小的范围，比如：$A/(L_0) < 0.5%$
++ 小振幅假设：将初始振幅$A_0$限定在较小的范围，比如：$A_0 /(L_0) < 0.5%$
 + 当弦振动时，弦上各个位置处的受力和形变始终在随时间变化，因此，弦长$L(t)$是时间t的函数，琴弦上的张力$T(x,t)$是位置x和时间t的函数。
 + 在求解琴弦张力的竖直分量时，需要做两个近似：
   - 忽略琴弦的伸长，将$L(t)$近似为$L_0$
   - 将琴弦上的张力$T(x,t)$近似为静止时的琴弦预张力$T_0$
 + 由实际观察可知，当琴弦振动时，波峰或波谷处的琴弦受拉伸力最大，拉伸形变会造成该位置处的线密度最小。
 + 当振幅较小时（小振幅假设），将琴弦上任意位置$x$处的线密度$mu(x, t)$近似为琴弦静止时的线密度$mu_0$。
+
 
 
 
@@ -211,12 +212,16 @@
 
 即：$T_2 cos(beta) - T_1 cos(alpha) =0$ <x-component>
 
-记：$T_x = T_1 cos(alpha) = T_2 cos(beta)$ <x-constant>
+记：$ T_x = T_1 cos(alpha) = T_2 cos(beta) $ <x-constant>
 
 这段微元在$y$方向的受力情况为：
 
 $ T_2 sin(beta) - T_1 sin(alpha) = mu_0 Delta x (partial^2 y)/(partial t^2) $<y-component>
 
+#abstract(title:"等式右侧是否需要带负号？")[
+  上述等式@y-component  是根据牛顿第二定律 $F = m a$，分别在等式两侧代入定义表达式后得到，不需要考虑符号。
+  右侧的表达式$(partial^2 y)/(partial t^2)$ 就是加速度的定义，不需要额外添加符号。
+]
 
 在等式 @y-component 两端同时除以 $T_x$得：
 
@@ -247,15 +252,14 @@ $ (partial^2 y)/(partial x^2) = mu_0/T_x dot (partial^2 y)/(partial t^2) $<wave_
 
 #abstract(title: [波动方程])[
   $
-    (partial^2 y)/(partial t^2) &= T_0/mu_0 dot (partial^2 y)/(partial x^2) #linebreak() &= c^2 (partial^2 y)/(partial x^2) #h(1cm) inline(c= sqrt(T_0/mu_0) "是波速")
+    (partial^2 y)/(partial x^2) &= mu_0/T_0 dot (partial^2 y)/(partial t^2) #linebreak() &= 1/c^2 (partial^2 y)/(partial t^2) #h(1cm) inline(c= sqrt(T_0/mu_0) "是波速")
   $<Wave_Equation>]
-
-
 
 
 这是一个二阶线性偏微分方程，尝试使用分离变量法求解：
 
 假设函数$y(x,t)$可以写成这种分离变量的形式：$ y(x,t) = X(x) dot T(t) $<seperation_of_variables>
+
 
 注意：这里的$T(t)$指的不是张力T随时间t变化的函数，而是关于单一自变量-时间t的未知函数。
 
@@ -265,9 +269,9 @@ $ (partial^2 y)/(partial x^2) = mu_0/T_x dot (partial^2 y)/(partial t^2) $<wave_
 
 同理可得：$(partial^2 y)/(partial t^2) = X(x) dot (d^2 T)/(d t^2)$
 
-代入 @Wave_Equation 得：$ T(t) (d^2 X)/(d x^2) = mu_0/T_0 dot X(x) (d^2 T)/(d t^2) $
+代入 @Wave_Equation 得：$ T(t) (d^2 X)/(d x^2) = 1/c^2 dot X(x) (d^2 T)/(d t^2) $
 
-等式两端同除 @seperation_of_variables 得：$ 1/X dot (d^2 X)/(d x^2) = mu_0/T_0 dot 1/T (d^2 T)/(d t^2) $
+等式两端同除 @seperation_of_variables 得：$ 1/X dot (d^2 X)/(d x^2) = 1/c^2 dot 1/T (d^2 T)/(d t^2) $
 
 由于等式左侧仅与自变量x有关，等式右侧仅与自变量t有关。因此，等式两侧必定都等于同一个常数C。令等式两侧都等于常数C可得如下微分方程组。
 
@@ -281,7 +285,7 @@ $ (partial^2 y)/(partial x^2) = mu_0/T_x dot (partial^2 y)/(partial t^2) $<wave_
   方程 @Eq-Space 对应的是空间部分，方程 @Eq-Time 对应的是时间部分。
   $ (d^2 X)/(d x^2) - C X =0 $<Eq-Space>
 
-  $ (d^2 T)/(d t^2) - C dot T_0/mu_0 dot T = 0 $<Eq-Time>
+  $ (d^2 T)/(d t^2) - C dot c^2 dot T = 0  #h(1cm) "其中：" c = sqrt(T_0/mu_0) $<Eq-Time>
 ]
 
 == 微分方程组的边界条件
@@ -362,7 +366,7 @@ $<Initial_Condition_velocity>
 
 #set math.cases(reverse: false)
 $
-  y(x,0)= X(x) T(0)= cases(A/x_0 x #h(3.7cm) 0<= x<= x_0, A/(L_0 - x_0) (L_0 - x) #h(1.9cm) x_0 < x <= L_0)
+  y(x,0)= X(x) T(0)= cases(A_0/x_0 x #h(3.7cm) 0<= x<= x_0, A_0/(L_0 - x_0) (L_0 - x) #h(1.9cm) x_0 < x <= L_0)
 $<Initial_Triangle_Wave>
 
 
@@ -370,11 +374,11 @@ $<Initial_Triangle_Wave>
 
 对于时间微分方程 @Eq-Time ，相应的特征方程为：$r^2 - T_0/mu_0 C=0$，代入 $C= -k_n^2, #h(1em) k_n= (n pi)/L_0$，解得：
 
-$ r_(1,2)= plus.minus i dot sqrt(T_0/mu_0) dot k_n $
+$ r_(1,2)= plus.minus i dot c dot k_n $
 
 则时间微分方程的通解为：
 
-$ T_n (t)= D_(1, n) cos(omega_n t) + D_(2, n) sin(omega_n t) #h(1cm) "其中：" omega_n = sqrt(T_0/mu_0) dot k_n $
+$ T_n (t)= D_(1, n) cos(omega_n t) + D_(2, n) sin(omega_n t) #h(1cm) "其中：" omega_n = c dot k_n $
 
 对时间t求导得：
 
@@ -382,7 +386,7 @@ $ (d T_n )/(d t) = D_(2, n) omega_n cos(omega_n t) - D_(1, n) omega_n sin(omega_
 
 代入初始速度条件 @Initial_Condition_velocity ，解得：$D_(2, n) =0$
 
-因此：$ T_n (t) = D_(1, n) cos(omega_n t) #h(1cm) "其中：" omega_n = sqrt(T_0/mu_0) dot k_n #h(1cm) k_n= (n pi)/L_0 $
+因此：$ T_n (t) = D_(1, n) cos(omega_n t) #h(1cm) "其中：" omega_n = c dot k_n #h(1cm) k_n= (n pi)/L_0 $
 
 为了确定系数 $D_(1, n)$和$C_(2, n)$，需要先构造完整解形式。
 
@@ -456,7 +460,7 @@ $ b_n = (2 A L_0^2)/(x_0(L_0 - x_0) pi^2 n^2) sin((n pi x_0)/L_0) #h(1cm) n in N
 
 $ k_n = (n pi)/L_0 $
 
-$ omega_n = sqrt(T_0/mu_0) dot k_n $
+$ omega_n = c dot k_n $
 
 
 注意到：$k_n lambda_n = 2 pi$， $omega_n T_n = 2 pi$ （这里的$T_n$代表时间周期）
@@ -655,5 +659,9 @@ $ c_(n) = 1/T integral_(x_(0))^(x_(0)+ T) f(x) thin e^(- i frac(2 pi n x, T)) d 
 === 三角形式与复数形式的关系：
 
 $ c_(n) = frac(a_(n) - i b_(n), 2), quad c_(- n) = frac(a_(n) + i b_(n), 2), quad c_(0) = frac(a_(0), 2) $
+
+
+
+
 
 
