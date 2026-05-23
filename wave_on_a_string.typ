@@ -346,9 +346,10 @@ $ cases(y(L_0, t) = X(L_0)T(t) =0, T(t) "为非零解") #h(1cm) arrow.r.double.l
 $ X_n (x) =C_(2, n) sin(k_n x) #h(1cm) "其中：" k_n = (n pi)/L_0 $<Particular_Solution_of_Space_Differential_Equation>
 
 
-#strike[由于空间解还需要满足初始时刻t=0的三角波条件，因此，需要取三角级数以拟合三角波的形状，即：]
+
 
 #abstract(title: [空间微分方程的解])[
+  X(x)可以取下面这种通解形式，但是由这种通解形式构造出的完整解形式太复杂，不利于在代入初始三角波条件后求解系数。因此，需要先构造出特殊的完整解形式，然后代入初始的三角波条件求解系数。
   $
     cancel(X(x) = sum_(n=1)^(infinity) C_(2, n) sin(k_n x) #h(1cm) "其中：" k_n = (n pi)/L_0, cross: #true)
   $<Solution_of_Space_Differential_Equation>
@@ -394,11 +395,13 @@ $ (d T_n )/(d t) = D_(2, n) omega_n cos(omega_n t) - D_(1, n) omega_n sin(omega_
 
 == 构造完整解
 
-根据分离变量假设，
+由于每一个 $X_n (x) dot T_n (t) = C_(2,n) sin(k_n x) dot D_(1,n) cos(omega_n t)$ 都是波动方程 @Wave_Equation 的线性无关的特解，则可取 $y(x,t)$的通解形式为：
 
 $
-  y(x, t) & = X(x) T(t) #linebreak() & = sum_(n=1)^(infinity) (C_(2, n) D_(1, n) sin((n pi)/L_0 x) cos(omega_n t) )
+  y(x, t) & = sum_(n=1)^(infinity) X_n (x) T_n (t) #linebreak() & = sum_(n=1)^(infinity) (C_(2, n) D_(1, n) sin(k_n x) cos(omega_n t) ) #h(1cm)
 $
+
+其中：  $k_n = (n pi)/L_0 #h(1cm) omega_n = c dot k_n #h(1cm) n in NN^+$
 
 则：
 
@@ -407,10 +410,18 @@ $ y(x,0) = sum_(n=1)^(infinity) (C_(2, n) D_(1, n) sin((n pi)/L_0 x)) $
 结合等式 @Initial_Triangle_Wave 得：
 
 $
-  sum_(n=1)^(infinity) (C_(2, n) D_(1, n) sin((n pi x)/L_0)) = cases(A/x_0 x #h(3.7cm) 0<= x<= x_0, A/(L_0 - x_0) (L_0 - x) #h(1.9cm) x_0 < x <= L_0)
+  sum_(n=1)^(infinity) (C_(2, n) D_(1, n) sin((n pi x)/L_0)) = cases(A_0/x_0 x #h(3.7cm) 0<= x<= x_0, A_0/(L_0 - x_0) (L_0 - x) #h(1.9cm) x_0 < x <= L_0)
 $<Fourier_Series_Form>
 
-这是一个傅里叶级数展开的形式，可以由傅里叶级数的系数公式确定 $C_(2, n) D_(1, n)$的值。
+整理基函数的形式后得：
+
+$
+  sum_(n=1)^(infinity) (C_(2, n) D_(1, n) sin((2 pi n x)/(2 L_0))) = cases(A_0/x_0 x #h(3.7cm) 0<= x<= x_0, A_0/(L_0 - x_0) (L_0 - x) #h(1.9cm) x_0 < x <= L_0)
+$<Fourier_Series_Form_Alt>
+
+
+这是一个傅里叶级数展开的形式，其中：$cases(a_n =0 #h(2cm) n in NN, b_n = C_(2,n) D_(1,n) #h(1cm) n in NN^+)$
+，可以由傅里叶级数的系数公式确定 $C_(2, n) D_(1, n)$的值。
 
 对比傅里叶级数的展开形式可知：
 
@@ -661,6 +672,52 @@ $ c_(n) = 1/T integral_(x_(0))^(x_(0)+ T) f(x) thin e^(- i frac(2 pi n x, T)) d 
 === 三角形式与复数形式的关系：
 
 $ c_(n) = frac(a_(n) - i b_(n), 2), quad c_(- n) = frac(a_(n) + i b_(n), 2), quad c_(0) = frac(a_(0), 2) $
+
+
+= 傅里叶正弦级数
+
+== 定义
+
+若 $f(x)$ 定义在区间 $[0, L]$ 上，且满足狄利克雷条件，则 $f(x)$ 可以展开为**傅里叶正弦级数**（Fourier Sine Series）：
+
+$ f(x) tilde sum_(n = 1)^(infinity) b_(n) sin(frac(n pi x, L)) $ <Sine_Series>
+
+其中系数公式为：
+
+$ b_(n) = 2/L integral_(0)^(L) f(x) sin(frac(n pi x, L)) d x #h(1cm) n in NN^+ $ <Sine_Coefficient>
+
+== 物理意义
+
+傅里叶正弦级数对应的是将 $f(x)$ 先做**奇延拓**到 $[-L, L]$，再做周期为 $2L$ 的周期延拓后展开为完整傅里叶级数，恰好只保留正弦项（$a_n = 0$）。
+
+#abstract(title: [奇延拓])[
+  构造一个奇函数 $F(x)$，使其在 $(0, L]$ 上等于 $f(x)$，且在 $x=0$ 处 $F(0)=0$：
+
+  $ F(x) = cases(f(x) #h(3cm) & 0 < x <= L, -f(-x) #h(2cm) & -L <= x < 0, 0 #h(3cm) & x = 0) $
+
+  将 $F(x)$ 以 $2L$ 为周期延拓到整个实数轴，展开成完整傅里叶级数后，所有余弦项系数 $a_n$ 均为零，只剩下正弦项。
+]
+
+== 在本文中的应用
+
+在求解两端固定的弦振动问题时：
+
+- 空间特征函数为 $X_n (x) = sin(frac(n pi x, L_0))$，这就是傅里叶正弦级数的基函数。
+- 初始位移 $y(x,0)$ 在 $[0, L_0]$ 上展开为正弦级数，恰好对应了边界条件 $y(0,t)=y(L_0,t)=0$。
+- 系数 $b_n$ 由公式 @Sine_Coefficient 给出，即：
+
+$ b_n = 2/L_0 integral_(0)^(L_0) y(x,0) sin(frac(n pi x, L_0)) d x $
+
+这正是本文求解 $C_(2,n) D_(1,n)$ 时使用的公式。
+
+#abstract(title: [对比完整傅里叶级数])[
+  完整傅里叶级数的基函数为 $sin(frac(2 pi n x, T))$（周期 $T$），而傅里叶正弦级数的基函数为 $sin(frac(n pi x, L))$（半周期 $L$）。二者不可混淆：
+
+  - 完整傅里叶级数的周期为 $T$，频率为 $frac(2 pi n, T)$；
+  - 傅里叶正弦级数的"周期"为 $2L$（奇延拓后），半区间 $[0, L]$ 上的频率为 $frac(n pi, L)$。
+
+  在本文中，弦长 $L_0$ 对应的是半区间长度，基函数 $sin(frac(n pi x, L_0))$ 的频率为 $frac(n pi, L_0) = frac(2 pi n, 2 L_0)$，即完整傅里叶级数中周期 $T=2L_0$ 的情形。
+]
 
 
 
