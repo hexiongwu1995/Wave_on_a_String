@@ -307,6 +307,12 @@
                         简正模分解</label>
                 </div>
 
+                <div class="slider-group">
+                    <label>模态数</label>
+                    <input type="range" id="maxModes" min="1" max="10" step="1" value="2">
+                    <span class="value" id="maxModes_val">2</span>
+                </div>
+
                 <div class="checkbox-group">
                     <label><input type="checkbox" id="chkStanding" checked> <span style="color:#1e40af;">●</span>
                         驻波</label>
@@ -339,7 +345,7 @@
         // =============== 要求：动画内容需要适配移动端 ==============
         // 物理参数与状态
         let A0 = 0.01, L0 = 0.6, xrel = 0.1, T0 = 80, mu0 = 0.01;
-        let N_terms = 50, simSpeed = 0.0001, segs = 100;
+        let N_terms = 50, simSpeed = 0.0001, segs = 100, maxModes = 2;
         let simTime = 0, lastFrameMillis = 0, isPlaying = false;
         let V, x0, kn = [], wn = [], bn = [];
 
@@ -387,19 +393,19 @@
         }
 
         // 驻波位移 y(x,t) 
-        function waveY(physX, Sim_t) {
+        function waveY(physX, simTime) {
             let sum = 0;
             for (let n = 1; n <= N_terms; n++) {
-                sum += bn[n - 1] * Math.sin(kn[n - 1] * physX) * Math.cos(wn[n - 1] * Sim_t);
+                sum += bn[n - 1] * Math.sin(kn[n - 1] * physX) * Math.cos(wn[n - 1] * simTime);
             }
             return sum;
         }
 
         // 回复力 fy(x,t)
-        function fy(physX, Sim_t) {
+        function fy(physX, simTime) {
             let sum = 0;
             for (let n = 1; n <= N_terms; n++) {
-                sum += bn[n - 1] * kn[n - 1] * kn[n - 1] * Math.sin(kn[n - 1] * physX) * Math.cos(wn[n - 1] * Sim_t);
+                sum += bn[n - 1] * kn[n - 1] * kn[n - 1] * Math.sin(kn[n - 1] * physX) * Math.cos(wn[n - 1] * simTime);
             }
             return (- T0) * sum;
         }
@@ -458,17 +464,27 @@
             pg.circle(canvasW - PAD.right, zeroY, 8);
         }
 
+        // 简正模叠加位移 y(x, t, N) 
+        function totalY(physX, simTime, ModesNum) {
+            let sum = 0;
+            for (let n = 1; n <= ModesNum; n++) {
+                sum += bn[n - 1] * Math.sin(kn[n - 1] * physX) * Math.cos(wn[n - 1] * simTime);
+            }
+            return sum;
+        }
+
+
         function drawNormalModes() {
             let pw = canvasW - PAD.left - PAD.right;
             let ph = canvasH - PAD.top - PAD.bottom;
             let yScale = A0 * 2.5;
             let zeroY = PAD.top + ph / 2;
 
-            // 1. 先计算叠加位移（与 waveY 相同）
+            // 1. 简正模叠加坐标点（物理坐标和画布坐标）
             let pts = [];
             for (let i = 0; i <= segs; i++) {
                 let physX = (i / segs) * L0;
-                let physY = waveY(physX, simTime);
+                let physY = totalY(physX, simTime, maxModes);
                 let px = PAD.left + (physX / L0) * pw;
                 let py = zeroY - (physY / yScale) * (ph / 2);
                 pts.push({ px, py });
@@ -476,7 +492,6 @@
 
             // 2. 绘制各阶简正模（彩色细线）
             const colors = ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
-            let maxModes = Math.min(N_terms, 6); // 最多画6条，否则太拥挤
             for (let n = 1; n <= maxModes; n++) {
                 stroke(colors[(n - 1) % colors.length]);
                 strokeWeight(1);
@@ -492,8 +507,8 @@
                 endShape();
             }
 
-            // 3. 绘制叠加结果（蓝色粗线）
-            stroke(30, 64, 175);
+            // 3. 绘制叠加结果（粗线）
+            stroke(200);
             strokeWeight(3);
             noFill();
             beginShape();
@@ -516,27 +531,7 @@
             }
         }
 
-        let displayMode = 'standing'; // 'standing' | 'normalModes'
-
-        function draw() {
-
-            background(250, 250, 255);
-            image(graphBuffer, 0, 0);
-
-            // 动画推进（使用 millis() 手动计时）
-            if (isPlaying) {
-                let now = millis();
-                let dt = (now - lastFrameMillis) / 1000;  // 单位：秒
-                lastFrameMillis = now;
-                simTime += simSpeed * dt;
-            }
-
-            // 根据模式绘制
-            if (displayMode === 'standing') {
-                drawStandingWave();   // 现有的驻波+回复力代码
-            } else {
-                drawNormalModes();    // 简正模绘制
-            }
+        function drawStandingWave() {
 
             // 绘图区尺寸
             let pw = canvasW - PAD.left - PAD.right;
@@ -577,6 +572,33 @@
                     arrowLine(pts[i].px, pts[i].py, pts[i].px, pts[i].py - fy_len, 5);
                 }
             }
+        }
+
+        let displayMode = 'standing'; // 'standing' | 'normalModes'
+
+        function draw() {
+
+            background(250, 250, 255);
+            image(graphBuffer, 0, 0);
+
+            // 动画推进（使用 millis() 手动计时）
+            if (isPlaying) {
+                let now = millis();
+                let dt = (now - lastFrameMillis) / 1000;  // 单位：秒
+                lastFrameMillis = now;
+                simTime += simSpeed * dt;
+            }
+
+            // 根据模式绘制
+            if (displayMode === 'standing') {
+                document.getElementById('chkStanding').checked = true;
+                document.getElementById('chkRestoring').checked = true;
+                drawStandingWave();   // 驻波+回复力
+            } else {
+                document.getElementById('chkStanding').checked = false;
+                document.getElementById('chkRestoring').checked = false;
+                drawNormalModes();    // 简正模绘制
+            }
 
             // 更新时间显示
             document.getElementById('timeDisplay').textContent = 't = ' + simTime.toFixed(4) + ' s';
@@ -585,7 +607,8 @@
         document.querySelectorAll('input[name="displayMode"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 displayMode = e.target.value;
-                redraw(); // 立即刷新画面
+
+                redraw();
             });
         });
 
@@ -599,6 +622,7 @@
             document.getElementById('mu0_val').textContent = mu0.toFixed(3);
             document.getElementById('N_val').textContent = N_terms;
             document.getElementById('speed_val').textContent = simSpeed.toExponential(1);
+            document.getElementById('maxModes_val').textContent = maxModes;
             document.getElementById('waveSpeed').textContent = V.toFixed(2);
             document.getElementById('fundFreq').textContent = (V / (2 * L0)).toFixed(2);
             document.getElementById('angFreq').textContent = (V * Math.PI / L0).toFixed(2);
@@ -612,12 +636,13 @@
             mu0 = parseFloat(document.getElementById('mu0').value);
             N_terms = parseInt(document.getElementById('N').value);
             simSpeed = parseFloat(document.getElementById('speed').value);
+            maxModes = parseInt(document.getElementById('maxModes').value);
             recalcParams();
             updateDOM();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const sliderIds = ['A0', 'L0', 'xrel', 'T0', 'mu0', 'N', 'speed'];
+            const sliderIds = ['A0', 'L0', 'xrel', 'T0', 'mu0', 'N', 'speed', 'maxModes'];
             for (let id of sliderIds) {
                 document.getElementById(id).addEventListener('input', readSliders);
             }
