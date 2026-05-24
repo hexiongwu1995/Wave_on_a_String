@@ -227,7 +227,7 @@
                     <li>忽略所有阻力和能量损耗</li>
                 </ol>
                 <p><strong>解得：</strong></p>
-                <p>a. 满足所有边界条件和初始条件（初始三角波）的琴弦振动方程\(y(x,t)\)为:</p>
+                <p>a. 满足所有边界条件和初始条件（初始三角波）的波动解\(y(x,t)\)为:</p>
                 <div class="math-equation">
                     $$
                     \begin{aligned} y(x, t) & = \sum_{n=1}^{\infty}X_n(x) T_n(t) \\
@@ -264,7 +264,7 @@
                     $$b_n = \frac{2A_0 L_0^2}{x_0(L_0 - x_0)
                     \pi^2 n^2} \sin\left(k_n x_0\right)$$
                 </div>
-                <p>d.各阶简正模分解：彩色细线为前 N 阶简正模的独立振动，粗线为各阶简正模的叠加结果。</p>
+                <p>d.波动解的各阶简正模分解：彩色细线为前 N 阶简正模的独立振动，粗线为各阶简正模的叠加结果。</p>
                 <div class="math-equation">
                     $$
                     y(x,t,n) = b_n[n-1] \cdot \sin (k_n[n-1] \cdot x) \cos(\omega_n[n-1] \cdot t)
@@ -510,7 +510,7 @@
             fill(30, 64, 175);
             noStroke();
             textSize(14);
-            text('简正模分解', PAD.left + 10, PAD.top + 20);
+            text('波动解的各阶简正模分解', PAD.left + 10, PAD.top + 20);
 
             // 1. 简正模叠加坐标点（物理坐标和画布坐标）
             let pts = [];
