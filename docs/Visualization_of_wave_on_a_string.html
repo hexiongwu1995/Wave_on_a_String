@@ -264,7 +264,7 @@
                     $$b_n = \frac{2A_0 L_0^2}{x_0(L_0 - x_0)
                     \pi^2 n^2} \sin\left(k_n x_0\right)$$
                 </div>
-                <p><strong>d.各阶简正模分解：</strong>彩色细线为前 N 阶简正模的独立振动，蓝色粗线为所有简正模的叠加结果。</p>
+                <p>d.各阶简正模分解：彩色细线为前 N 阶简正模的独立振动，粗线为各阶简正模的叠加结果。</p>
                 <div class="math-equation">
                     $$
                     y(x,t,n) = b_n[n-1] \cdot \sin (k_n[n-1] \cdot x) \cos(\omega_n[n-1] \cdot t)
@@ -330,8 +330,8 @@
 
                 <div class="slider-group" id="maxModesGroup">
                     <label>模态数</label>
-                    <input type="range" id="maxModes" min="1" max="10" step="1" value="2">
-                    <span class="value" id="maxModes_val">2</span>
+                    <input type="range" id="maxModes" min="1" max="10" step="1" value="3">
+                    <span class="value" id="maxModes_val">3</span>
                 </div>
 
                 <div class="checkbox-group" id="standingControls">
@@ -372,7 +372,7 @@
         // =============== 要求：动画内容需要适配移动端 ==============
         // 物理参数与状态
         let A0 = 0.01, L0 = 0.6, xrel = 0.1, T0 = 80, mu0 = 0.01;
-        let N_terms = 50, simSpeed = 0.0001, segs = 100, maxModes = 2;
+        let N_terms = 50, simSpeed = 0.0001, segs = 100, maxModes = 3;
         let simTime = 0, lastFrameMillis = 0, isPlaying = false;
         let V, x0, kn = [], wn = [], bn = [];
 
