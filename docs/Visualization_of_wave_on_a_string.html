@@ -229,9 +229,11 @@
                 <div class="math-equation">
                     $$
                     \begin{aligned}
-                    f_y(x,t) & \approx T_0 \frac{\partial^2 y}{\partial x^2} \\  
-                    & = - T_0 \sum_{n = 1}^{\infty}  {\underbrace{b_n k_n^2 \cdot \sin(k_n x) \cos(\omega_n t)}_{\text{驻波形式}} } \\  
-                    & = - \frac{T_0}{2} \sum_{n = 1}^{\infty} {b_n k_n^2 [\underbrace{\sin(k_n x + \omega_n t)}_{\text{左行波}} + \underbrace{\sin(k_n x - \omega_n
+                    f_y(x,t) & \approx T_0 \frac{\partial^2 y}{\partial x^2} \\
+                    & = - T_0 \sum_{n = 1}^{\infty} {\underbrace{b_n k_n^2 \cdot \sin(k_n x) \cos(\omega_n
+                    t)}_{\text{驻波形式}} } \\
+                    & = - \frac{T_0}{2} \sum_{n = 1}^{\infty} {b_n k_n^2 [\underbrace{\sin(k_n x + \omega_n
+                    t)}_{\text{左行波}} + \underbrace{\sin(k_n x - \omega_n
                     t)}_{\text{右行波}}] }
                     \end{aligned}
                     $$
@@ -239,14 +241,20 @@
 
                 <p>c. 相关的中间参数计算公式为：</p>
                 <div class="math-equation">
-                    $$ V = \sqrt{\frac{T_0}{\mu_0}} \hspace{1cm}  k_n = \frac{n\pi}{L_0} \hspace{1cm} \omega_n = V \cdot k_n$$
+                    $$ V = \sqrt{\frac{T_0}{\mu_0}} \hspace{1cm} k_n = \frac{n\pi}{L_0} \hspace{1cm} \omega_n = V \cdot
+                    k_n$$
                 </div>
 
                 <div class="math-equation">
                     $$b_n = \frac{2A_0 L_0^2}{x_0(L_0 - x_0)
                     \pi^2 n^2} \sin\left(k_n x_0\right)$$
                 </div>
-
+                <p><strong>d.各阶简正模分解：</strong>彩色细线为前 N 阶简正模的独立振动，蓝色粗线为所有简正模的叠加结果。</p>
+                <div class="math-equation">
+                    $$
+                    y(x,t,n) = b_n[n-1] \cdot \sin (k_n[n-1] \cdot x) \cos(\omega_n[n-1] \cdot t)
+                    $$
+                </div>
             </div>
 
             <div class="controls">
@@ -293,9 +301,17 @@
                 </div>
 
                 <div class="checkbox-group">
+                    <label><input type="radio" name="displayMode" value="standing" checked>
+                        驻波 + 回复力</label>
+                    <label><input type="radio" name="displayMode" value="normalModes">
+                        简正模分解</label>
+                </div>
+
+                <div class="checkbox-group">
                     <label><input type="checkbox" id="chkStanding" checked> <span style="color:#1e40af;">●</span>
                         驻波</label>
-                    <label><input type="checkbox" id="chkRestoring" checked> <span style="color:#ea580c;">●</span> 回复力</label>
+                    <label><input type="checkbox" id="chkRestoring" checked> <span style="color:#ea580c;">●</span>
+                        回复力</label>
                 </div>
 
                 <div class="wave-info">
@@ -312,6 +328,9 @@
             </div>
 
             <div id="p5canvas">
+            </div>
+            <div id="NormalModes">
+
             </div>
         </div>
     </div>
@@ -362,7 +381,7 @@
             for (let n = 1; n <= N_terms; n++) {
                 kn.push(n * Math.PI / L0);
                 wn.push(V * kn[n - 1]);
-                let sinVal = Math.sin(kn[n-1]* x0);
+                let sinVal = Math.sin(kn[n - 1] * x0);
                 bn.push((2 * A0 * L0 * L0) / (x0 * (L0 - x0) * Math.PI * Math.PI * n * n) * sinVal);
             }
         }
@@ -380,7 +399,7 @@
         function fy(physX, Sim_t) {
             let sum = 0;
             for (let n = 1; n <= N_terms; n++) {
-                sum += bn[n - 1] * kn[n - 1] * kn[n-1] * Math.sin(kn[n - 1] * physX) * Math.cos(wn[n - 1] * Sim_t);
+                sum += bn[n - 1] * kn[n - 1] * kn[n - 1] * Math.sin(kn[n - 1] * physX) * Math.cos(wn[n - 1] * Sim_t);
             }
             return (- T0) * sum;
         }
@@ -439,6 +458,66 @@
             pg.circle(canvasW - PAD.right, zeroY, 8);
         }
 
+        function drawNormalModes() {
+            let pw = canvasW - PAD.left - PAD.right;
+            let ph = canvasH - PAD.top - PAD.bottom;
+            let yScale = A0 * 2.5;
+            let zeroY = PAD.top + ph / 2;
+
+            // 1. 先计算叠加位移（与 waveY 相同）
+            let pts = [];
+            for (let i = 0; i <= segs; i++) {
+                let physX = (i / segs) * L0;
+                let physY = waveY(physX, simTime);
+                let px = PAD.left + (physX / L0) * pw;
+                let py = zeroY - (physY / yScale) * (ph / 2);
+                pts.push({ px, py });
+            }
+
+            // 2. 绘制各阶简正模（彩色细线）
+            const colors = ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
+            let maxModes = Math.min(N_terms, 6); // 最多画6条，否则太拥挤
+            for (let n = 1; n <= maxModes; n++) {
+                stroke(colors[(n - 1) % colors.length]);
+                strokeWeight(1);
+                noFill();
+                beginShape();
+                for (let i = 0; i <= segs; i++) {
+                    let physX = (i / segs) * L0;
+                    let modeY = bn[n - 1] * Math.sin(kn[n - 1] * physX) * Math.cos(wn[n - 1] * simTime);
+                    let px = PAD.left + (physX / L0) * pw;
+                    let py = zeroY - (modeY / yScale) * (ph / 2);
+                    vertex(px, py);
+                }
+                endShape();
+            }
+
+            // 3. 绘制叠加结果（蓝色粗线）
+            stroke(30, 64, 175);
+            strokeWeight(3);
+            noFill();
+            beginShape();
+            for (let p of pts) vertex(p.px, p.py);
+            endShape();
+        }
+
+        function drawLegend(maxModes) {
+            let legendX = canvasW - 150;
+            let legendY = PAD.top + 10;
+            const colors = ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
+            for (let n = 1; n <= maxModes; n++) {
+                stroke(colors[n - 1]);
+                strokeWeight(2);
+                line(legendX, legendY + n * 16, legendX + 20, legendY + n * 16);
+                noStroke();
+                fill(50);
+                textSize(11);
+                text(`n = ${n}`, legendX + 24, legendY + n * 16 + 4);
+            }
+        }
+
+        let displayMode = 'standing'; // 'standing' | 'normalModes'
+
         function draw() {
 
             background(250, 250, 255);
@@ -450,6 +529,13 @@
                 let dt = (now - lastFrameMillis) / 1000;  // 单位：秒
                 lastFrameMillis = now;
                 simTime += simSpeed * dt;
+            }
+
+            // 根据模式绘制
+            if (displayMode === 'standing') {
+                drawStandingWave();   // 现有的驻波+回复力代码
+            } else {
+                drawNormalModes();    // 简正模绘制
             }
 
             // 绘图区尺寸
@@ -495,6 +581,13 @@
             // 更新时间显示
             document.getElementById('timeDisplay').textContent = 't = ' + simTime.toFixed(4) + ' s';
         }
+
+        document.querySelectorAll('input[name="displayMode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                displayMode = e.target.value;
+                redraw(); // 立即刷新画面
+            });
+        });
 
         // DOM 控件绑定
         function updateDOM() {
@@ -550,6 +643,9 @@
 
             updateDOM();
         });
+
+
+
     </script>
 
 </body>
