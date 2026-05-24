@@ -225,38 +225,28 @@
                     $$
                 </div>
 
-                <p>b. 张力的竖直分量\(T_y(x,t)\)为：</p>
+                <p>b. 琴弦单位长度上的回复力\(f_y(x,t)\)为：</p>
                 <div class="math-equation">
-                    $$T_y(x,t) = \frac{T_0}{2} \sum_{n=1}^{\infty} \left\{ b_n k_n \left[\cos(k_n x + \omega_n t)
-                    + \cos(k_n x - \omega_n t)\right] \right\}$$
+                    $$
+                    \begin{aligned}
+                    f_y(x,t) & \approx T_0 \frac{\partial^2 y}{\partial x^2} \\  
+                    & = - T_0 \sum_{n = 1}^{\infty}  {\underbrace{b_n k_n^2 \cdot \sin(k_n x) \cos(\omega_n t)}_{\text{驻波形式}} } \\  
+                    & = - \frac{T_0}{2} \sum_{n = 1}^{\infty} {b_n k_n^2 [\underbrace{\sin(k_n x + \omega_n t)}_{\text{左行波}} + \underbrace{\sin(k_n x - \omega_n
+                    t)}_{\text{右行波}}] }
+                    \end{aligned}
+                    $$
                 </div>
 
                 <p>c. 相关的中间参数计算公式为：</p>
                 <div class="math-equation">
-                    $$k_n = \frac{n\pi}{L_0} \hspace{1cm} \omega_n = \sqrt{\frac{T_0}{\mu_0}} \cdot k_n$$
+                    $$ V = \sqrt{\frac{T_0}{\mu_0}} \hspace{1cm}  k_n = \frac{n\pi}{L_0} \hspace{1cm} \omega_n = V \cdot k_n$$
                 </div>
 
                 <div class="math-equation">
                     $$b_n = \frac{2A_0 L_0^2}{x_0(L_0 - x_0)
-                    \pi^2 n^2} \sin\left(\frac{n\pi x_0}{L_0}\right)$$
+                    \pi^2 n^2} \sin\left(k_n x_0\right)$$
                 </div>
 
-                <p>d. 求解张力竖直分量\(T_y(x,t)\)的最大值：</p>
-                <div class="math-equation">
-                    $$
-                    \begin{aligned}
-                    T_y(x,t) &= T(x,t) * sin(\theta) \\ & \approx T(x,t) * tan(\theta) \\ & \approx T(x,t) * \frac{dy}{dx}
-                    \end{aligned}
-                    $$
-                </div>
-
-                <div class="math-equation">
-                    $$
-                    \begin{aligned}
-                    \max \left(\left|T_y(x,t)\right| \right) & \approx T_0 * \max \left(\frac{A_0}{x_0} , \quad \frac{A_0}{L_0 - x_0} \right) 
-                    \end{aligned}
-                    $$
-                </div>
             </div>
 
             <div class="controls">
@@ -305,8 +295,7 @@
                 <div class="checkbox-group">
                     <label><input type="checkbox" id="chkStanding" checked> <span style="color:#1e40af;">●</span>
                         驻波</label>
-                    <label><input type="checkbox" id="chkTension" checked> <span style="color:#ea580c;">●</span> 张力
-                        Ty</label>
+                    <label><input type="checkbox" id="chkRestoring" checked> <span style="color:#ea580c;">●</span> 回复力</label>
                 </div>
 
                 <div class="wave-info">
@@ -333,7 +322,7 @@
         let A0 = 0.01, L0 = 0.6, xrel = 0.1, T0 = 80, mu0 = 0.01;
         let N_terms = 50, simSpeed = 0.0001, segs = 100;
         let simTime = 0, lastFrameMillis = 0, isPlaying = false;
-        let V, x0, tyMax, kn = [], wn = [], bn = [];
+        let V, x0, kn = [], wn = [], bn = [];
 
         // 画布尺寸（响应式）
         let canvasW, canvasH;
@@ -373,28 +362,27 @@
             for (let n = 1; n <= N_terms; n++) {
                 kn.push(n * Math.PI / L0);
                 wn.push(V * kn[n - 1]);
-                let sinVal = Math.sin(n * Math.PI * x0 / L0);
+                let sinVal = Math.sin(kn[n-1]* x0);
                 bn.push((2 * A0 * L0 * L0) / (x0 * (L0 - x0) * Math.PI * Math.PI * n * n) * sinVal);
             }
-            tyMax = T0 * Math.max(A0/x0, A0/(L0 - x0));
         }
 
         // 驻波位移 y(x,t) 
-        function waveY(physX, t) {
+        function waveY(physX, Sim_t) {
             let sum = 0;
             for (let n = 1; n <= N_terms; n++) {
-                sum += bn[n - 1] * Math.sin(kn[n - 1] * physX) * Math.cos(wn[n - 1] * t);
+                sum += bn[n - 1] * Math.sin(kn[n - 1] * physX) * Math.cos(wn[n - 1] * Sim_t);
             }
             return sum;
         }
 
-        // 张力竖直分量 Ty(x,t)
-        function Ty(physX, t) {
+        // 回复力 fy(x,t)
+        function fy(physX, Sim_t) {
             let sum = 0;
             for (let n = 1; n <= N_terms; n++) {
-                sum += bn[n - 1] * kn[n - 1] * (Math.cos(kn[n - 1] * physX + wn[n - 1] * t) + Math.cos(kn[n - 1] * physX - wn[n - 1] * t));
+                sum += bn[n - 1] * kn[n - 1] * kn[n-1] * Math.sin(kn[n - 1] * physX) * Math.cos(wn[n - 1] * Sim_t);
             }
-            return (T0 / 2) * sum;
+            return (- T0) * sum;
         }
 
         // 初始计算
@@ -437,7 +425,6 @@
             // 绘图区尺寸
             let pw = canvasW - PAD.left - PAD.right;
             let ph = canvasH - PAD.top - PAD.bottom;
-            let yScale = A0 * 2.5;
             let zeroY = PAD.top + ph / 2;
 
             // 水平参考线
@@ -491,16 +478,17 @@
                 endShape();
             }
 
-            // 画张力竖直分量 Ty
-            if (document.getElementById('chkTension').checked) {
-                // 计算 Ty 数据并找最大值
-                let tyData = pts.map(p => Ty(p.physX, simTime));
-                let Ty_Visual_Scale = 4;
+            // 绘制回复力 fy
+            if (document.getElementById('chkRestoring').checked) {
+                // 计算 fy 数据并找最大值
+                let fyData = pts.map(p => fy(p.physX, simTime));
+                let fyMax = Math.max(...fyData.map(p => Math.abs(p)))
+                let fy_Visual_Scale = 5;
                 stroke(237, 134, 79);
                 strokeWeight(1)
                 for (let i = 0; i < pts.length; i = i + 2) {
-                    let Ty_len = tyData[i] / tyMax * (ph / Ty_Visual_Scale);
-                    arrowLine(pts[i].px, pts[i].py, pts[i].px, pts[i].py - Ty_len, 5);
+                    let fy_len = fyData[i] / fyMax * (ph / fy_Visual_Scale);
+                    arrowLine(pts[i].px, pts[i].py, pts[i].px, pts[i].py - fy_len, 5);
                 }
             }
 
