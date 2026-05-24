@@ -32,22 +32,41 @@
         }
 
         header {
-            background: #3177e7;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
             color: white;
-            padding: 20px;
+            padding: 28px 20px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 60%);
+            pointer-events: none;
         }
 
         h1 {
             margin: 0;
-            font-size: 28px;
-            font-weight: 600;
-            letter-spacing: 2px;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+            position: relative;
         }
 
         .subtitle {
-            margin: 8px 0 0;
+            margin: 10px 0 0;
             font-size: 16px;
+            opacity: 0.92;
+            letter-spacing: 6px;
+            font-weight: 300;
+            position: relative;
         }
 
         .content {
@@ -506,11 +525,14 @@
             let ph = canvasH - PAD.top - PAD.bottom;
             let yScale = A0 * 2.5;
             let zeroY = PAD.top + ph / 2;
+
             // 标题
             fill(30, 64, 175);
             noStroke();
-            textSize(14);
+            textSize(16);
+            textStyle(BOLD);
             text('波动解的各阶简正模分解', PAD.left + 10, PAD.top + 20);
+            textStyle(NORMAL);
 
             // 1. 简正模叠加坐标点（物理坐标和画布坐标）
             let pts = [];
@@ -522,11 +544,13 @@
                 pts.push({ px, py });
             }
 
-            // 2. 绘制各阶简正模（彩色细线）
+            // 2. 绘制各阶简正模（彩色虚线）
             const colors = ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
+            const ctx = drawingContext; // p5.js 的 Canvas 2D context，用于设置虚线样式
             for (let n = 1; n <= maxModes; n++) {
                 stroke(colors[(n - 1) % colors.length]);
-                strokeWeight(1);
+                strokeWeight(1.5);
+                ctx.setLineDash([5, 5]);
                 noFill();
                 beginShape();
                 for (let i = 0; i <= segs; i++) {
@@ -539,8 +563,9 @@
                 endShape();
             }
 
-            // 3. 绘制叠加结果（粗线）
-            stroke(200);
+            // 3. 绘制叠加结果（蓝色实线）—— 实线、加粗，与虚线模式线形成视觉对比
+            ctx.setLineDash([]);
+            stroke(30, 64, 175);
             strokeWeight(3);
             noFill();
             beginShape();
@@ -553,10 +578,13 @@
             let legendX = canvasW - 150;
             let legendY = PAD.top + 10;
             const colors = ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
+            const ctx = drawingContext;
             for (let n = 1; n <= maxModes; n++) {
                 stroke(colors[n - 1]);
-                strokeWeight(2);
+                strokeWeight(1.5);
+                ctx.setLineDash([5, 5]);
                 line(legendX, legendY + n * 16, legendX + 20, legendY + n * 16);
+                ctx.setLineDash([]);
                 noStroke();
                 fill(50);
                 textSize(11);
@@ -575,8 +603,10 @@
             // 标题
             fill(30, 64, 175);
             noStroke();
-            textSize(14);
+            textSize(16);
+            textStyle(BOLD);
             text('琴弦振动的动画模拟', PAD.left + 10, PAD.top + 20);
+            textStyle(NORMAL);
 
             // 采样波形（物理坐标和画布坐标）
             let pts = [];
