@@ -231,8 +231,8 @@
                 <div class="math-equation">
                     $$
                     \begin{aligned} y(x, t) & = \sum_{n=1}^{\infty}X_n(x) T_n(t) \\
-                    & =\underbrace{\sum_{n=1}^{\infty}\left(b_{n} \sin \left(k_{n} x\right) \cos \left(\omega_{n}
-                    t\right)\right)}_{\text {驻波 }} \\
+                    & =\sum_{n=1}^{\infty}\left( \underbrace{ b_{n} \sin \left(k_{n} x\right) \cos \left(\omega_{n}
+                    t\right) }_{\text {驻波 }} \right) \\
                     & =\frac{1}{2} \sum_{n=1}^{\infty}\left(b_{n}\left(\underbrace{\sin \left(k_{n} x+\omega_{n}
                     t\right)}_{\text {左行波 }}+\underbrace{\sin \left(k_{n} x-\omega_{n} t\right)}_{\text {右行波
                     }}\right)\right)
@@ -506,6 +506,11 @@
             let ph = canvasH - PAD.top - PAD.bottom;
             let yScale = A0 * 2.5;
             let zeroY = PAD.top + ph / 2;
+            // 标题
+            fill(30, 64, 175);
+            noStroke();
+            textSize(14);
+            text('简正模分解', PAD.left + 10, PAD.top + 20);
 
             // 1. 简正模叠加坐标点（物理坐标和画布坐标）
             let pts = [];
@@ -541,6 +546,7 @@
             beginShape();
             for (let p of pts) vertex(p.px, p.py);
             endShape();
+            drawLegend(maxModes)
         }
 
         function drawLegend(maxModes) {
@@ -565,6 +571,12 @@
             let ph = canvasH - PAD.top - PAD.bottom;
             let yScale = A0 * 2.5;
             let zeroY = PAD.top + ph / 2;
+
+            // 标题
+            fill(30, 64, 175);
+            noStroke();
+            textSize(14);
+            text('琴弦振动的动画模拟', PAD.left + 10, PAD.top + 20);
 
             // 采样波形（物理坐标和画布坐标）
             let pts = [];
