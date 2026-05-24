@@ -38,7 +38,12 @@
   v(0.5em)
 }
 
-#set text(lang: "zh", font: ("Cambria Math", "KaiTi", "DengXian"), size: 10pt)
+#set text(
+  lang: "zh",
+  font: ("Cambria Math", "KaiTi", "DengXian", "New Computer Modern Sans", "Noto Sans Mono CJK SC", "SimSun"),
+  size: 10pt,
+)
+
 #show table: it => {
   set align(center)
   it
@@ -48,6 +53,7 @@
 
 #show math.equation: set block(breakable: false)
 
+#import "@preview/cetz:0.5.0"
 #import "@preview/gentle-clues:1.3.1": *
 #import "@preview/physica:0.9.8": *
 #import "@preview/numty:0.1.0" as nt
@@ -96,8 +102,6 @@
 #let s = 1e-5              // 动画速度系数，无量纲，参数滑块数据范围：(1e-6, 1.0)
 
 
-
-#import "@preview/cetz:0.5.0"
 
 #figure(caption: [弦上波的示意图])[
 
@@ -273,7 +277,7 @@ $ (partial^2 y)/(partial x^2) = mu_0/T_x dot (partial^2 y)/(partial t^2) $<wave_
 
 等式两端同除 @seperation_of_variables 得：$ 1/X dot (d^2 X)/(d x^2) = 1/c^2 dot 1/T (d^2 T)/(d t^2) $
 
-由于等式左侧仅与自变量x有关，等式右侧仅与自变量t有关。因此，等式两侧必定都等于同一个常数C。令等式两侧都等于常数C可得如下微分方程组。
+由于等式左侧仅与自变量x有关，等式右侧仅与自变量t有关。当 x 和 t 独立变化时，要使等式恒成立，两侧只能等于同一个常数C。令等式两侧都等于常数C可得如下微分方程组。
 
 #question(title: [这里是否需要考虑C是虚数或复数的情况？])[
   答：不需要考虑C是虚数或复数的情况，因为目标函数y(x,t)是一个实函数，而且，波动解的物理意义要求X(x)与T(t)都是实函数。因此，只需要考虑常数C为实数的情况。而且，即使强行引入复数情况，也无法同时满足实边界条件和实初值条件。
@@ -469,7 +473,7 @@ $ omega_n = c dot k_n $
 
 因此，$k_n$称为波数？？？ $omega_n$称为角频率，$c= sqrt(T_0/mu_0)$称为波速（相速度）。
 
-
+可以确认：$k_n$ 确实被称为波数（angular wave number），这是标准物理术语。
 
 
 
@@ -480,11 +484,11 @@ $ omega_n = c dot k_n $
   如弦上波模型的示意图 @Schematic_Diagram_of_wave_on_a_string 所示：
   - 取微元段右侧截面处受到的截面右侧弦的拉力作为张力$arrow(T)(x,t) = |T(x,t)| vec(cos theta, sin theta)$。
   - 根据这个定义，张力的竖直分量
-  
+
   $
     T_y (x,t) &= arrow(T)(x,t) dot hat(y) #linebreak() &= |T(x,t)| vec(cos theta, sin theta) dot vec(0, 1) #linebreak() &= |T(x,t)| sin theta
   $
-  
+
   - 张力的竖直分量的方向是否总与位移的方向相反？类似于弹簧的回复力？
   - 提供回复力的不是单点的 $T_y$ ，而是微元段两端 $T_y$ 的差值（净力）。所以净力确实与位移相反（回复力），但单点的 $T_y$ 不是这样。
 ]
@@ -519,7 +523,7 @@ $
 
 #abstract(title: [琴弦张力的竖直分量$T_y (x,t)$])[
   $
-    T_y (x,t) &= T_0/2 dot sum_(n=1)^(infinity) lr({ b_n k_n lr([ underbrace(cos(k_n x + omega_n t),"左行波") + underbrace(cos(k_n x - omega_n t),"右行波") ], size: #100%) }, size: #110%) #linebreak() &= T_0 dot sum_(n=1)^(infinity) lr({ underbrace(b_n k_n dot cos(k_n x) cos(omega_n t), "驻波形式") }, size: #100%) 
+    T_y (x,t) &= T_0/2 dot sum_(n=1)^(infinity) lr({ b_n k_n lr([ underbrace(cos(k_n x + omega_n t), "左行波") + underbrace(cos(k_n x - omega_n t), "右行波") ], size: #100%) }, size: #110%) #linebreak() &= T_0 dot sum_(n=1)^(infinity) lr({ underbrace(b_n k_n dot cos(k_n x) cos(omega_n t), "驻波形式") }, size: #100%)
   $
 ]
 
@@ -527,7 +531,7 @@ $
 
 = 琴弦上的回复力
 
-如弦上波模型的示意图 @Schematic_Diagram_of_wave_on_a_string 所示，琴弦微元段上的回复力：$ F_y &= T_2 sin beta - T_1 sin alpha #linebreak() &= T_x (tan beta - tan alpha) #linebreak() $
+如弦上波模型的示意图 @Schematic_Diagram_of_wave_on_a_string 所示，琴弦微元段上的回复力：$ F_y & = T_2 sin beta - T_1 sin alpha #linebreak() & = T_x (tan beta - tan alpha) #linebreak() $
 
 将 $T_x$ 近似为静止时的琴弦预张力$T_0$，则：
 
@@ -535,9 +539,8 @@ $
   F_y approx T_0 (partial^2 y)/(partial x^2) Delta x
 $
 
-#abstract(title:"琴弦单位长度上的回复力f_y")[
+琴弦单位长度上的回复力$f_y$
   $ f_y & = F_y / (Delta x) #linebreak() & approx T_0 (partial^2 y)/(partial x^2) $
-]
 
 
 对等式 @Complete_Solution 的行波形式求偏导得：
@@ -548,13 +551,17 @@ $
 
 继续求二阶偏导得：
 
-$ (partial^2 y)/(partial x^2) &= - 1/2 sum_(n=1)^(infinity) lr({ b_n k_n^2 lr([ sin(k_n x + omega_n t) + sin(k_n x - omega_n t) ], size: #150%) }, size: #110%) #linebreak() &= - sum_(n=1)^(infinity) lr({ b_n k_n^2 dot sin(k_n x) cos(omega_n t) }, size: #110%)  $
+$
+  (partial^2 y)/(partial x^2) &= - 1/2 sum_(n=1)^(infinity) lr({ b_n k_n^2 lr([ sin(k_n x + omega_n t) + sin(k_n x - omega_n t) ], size: #150%) }, size: #110%) #linebreak() &= - sum_(n=1)^(infinity) lr({ b_n k_n^2 dot sin(k_n x) cos(omega_n t) }, size: #110%)
+$
 
 
 则：
 
 #abstract(title: "琴弦单位长度上的回复力f_y")[
-  $ f_y & approx T_0 (partial^2 y)/(partial x^2) #linebreak() & = - T_0 sum_(n=1)^(infinity) lr({ underbrace(b_n k_n^2 dot sin(k_n x) cos(omega_n t), "驻波形式") }, size: #100%) #linebreak() &= - T_0/2 sum_(n=1)^(infinity) lr({ b_n k_n^2 lr([ underbrace(sin(k_n x + omega_n t),"左行波") + underbrace(sin(k_n x - omega_n t),"右行波") ], size: #100%) }, size: #100%) $
+  $
+    f_y & approx T_0 (partial^2 y)/(partial x^2) #linebreak() & = - T_0 sum_(n=1)^(infinity) lr({ underbrace(b_n k_n^2 dot sin(k_n x) cos(omega_n t), "驻波形式") }, size: #100%) #linebreak() &= - T_0/2 sum_(n=1)^(infinity) lr({ b_n k_n^2 lr([ underbrace(sin(k_n x + omega_n t), "左行波") + underbrace(sin(k_n x - omega_n t), "右行波") ], size: #100%) }, size: #100%)
+  $
 ]
 
 
@@ -654,7 +661,7 @@ $ integral_(x_(0))^(x_(0)+ T) cos frac(2 pi m x, T) sin frac(2 pi n x, T) d x = 
 假设 $f(x)$ 可以展开为：
 
 $
-  f(x) tilde.op frac(A_(0), 2) + sum_(n = 1)^(infinity)[ A_(n) cos(frac(2 pi n x, T)) + B_(n) sin(frac(2 pi n x, T)) ]
+  f(x) tilde frac(A_(0), 2) + sum_(n = 1)^(infinity)[ A_(n) cos(frac(2 pi n x, T)) + B_(n) sin(frac(2 pi n x, T)) ]
 $<Fourier_Series_Expansion>
 
 #abstract(title: [$n in NN^+$])[
