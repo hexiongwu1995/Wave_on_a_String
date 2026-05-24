@@ -75,37 +75,57 @@
         .controls {
             background: #f8fafc;
             margin: 20px 0;
-            padding: 15px;
+            padding: 20px;
             border-radius: 16px;
             border: 1px solid #e5e7eb;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        /* 分区标题 */
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e40af;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 4px;
+            margin: 8px 0 4px;
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
         }
 
         .slider-group {
             display: flex;
             align-items: center;
-            margin: 10px;
-            gap: 12px;
+            margin: 6px 0;
+            gap: 8px;
         }
 
         label {
             display: inline-block;
-            width: 130px;
+            min-width: 100px;
+            flex-shrink: 0;
             font-weight: 500;
             font-size: 13px;
         }
 
         input[type="range"] {
             flex: 1;
+            min-width: 0;
             accent-color: #3b82f6;
         }
 
         .value {
-            width: 70px;
+            width: 62px;
+            flex-shrink: 0;
             font-size: 13px;
             font-weight: 600;
             color: #64748b;
             background: white;
-            padding: 6px 8px;
+            padding: 4px 6px;
             border-radius: 6px;
             border: 1px solid #cbd5e1;
             text-align: center;
@@ -114,9 +134,9 @@
         .checkbox-group {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
-            margin: 15px 0;
-            padding: 12px;
+            gap: 8px;
+            margin: 8px 0;
+            padding: 10px;
             background: #f1f5f9;
             border-radius: 10px;
         }
@@ -128,13 +148,14 @@
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
+            min-width: auto;
         }
 
         .wave-info {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
-            margin: 15px 0;
+            margin: 8px 0;
             padding: 10px 15px;
             background: #f0f9ff;
             border-radius: 10px;
@@ -143,10 +164,10 @@
         }
 
         .button-group {
-            margin-top: 15px;
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-wrap: wrap;
         }
 
         button {
@@ -178,16 +199,10 @@
             border: 1px solid #cbd5e1;
         }
 
-        /* #p5canvas {
-            display: flex;
-            margin: 20px auto;
-            text-align: center;
-            border: 3px solid #cbd5e1;
-            border-radius: 16px;
-            background: #f8fafc;
-            padding: 5px;
-            box-shadow: 0 10px 15px #cbd5e1;
-        }  */
+        /* 条件显隐 */
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -258,6 +273,9 @@
             </div>
 
             <div class="controls">
+                <!-- 物理参数 -->
+                <div class="section-title">⚙️ 物理参数</div>
+
                 <div class="slider-group">
                     <label>A₀ (振幅, m):</label>
                     <input type="range" id="A0" min="0.005" max="0.02" step="0.001" value="0.01">
@@ -300,6 +318,9 @@
                     <span class="value" id="speed_val">1.0e-4</span>
                 </div>
 
+                <!-- 显示控制 -->
+                <div class="section-title">🎛️ 显示控制</div>
+
                 <div class="checkbox-group">
                     <label><input type="radio" name="displayMode" value="standing" checked>
                         驻波 + 回复力</label>
@@ -307,29 +328,35 @@
                         简正模分解</label>
                 </div>
 
-                <div class="slider-group">
+                <div class="slider-group" id="maxModesGroup">
                     <label>模态数</label>
                     <input type="range" id="maxModes" min="1" max="10" step="1" value="2">
                     <span class="value" id="maxModes_val">2</span>
                 </div>
 
-                <div class="checkbox-group">
+                <div class="checkbox-group" id="standingControls">
                     <label><input type="checkbox" id="chkStanding" checked> <span style="color:#1e40af;">●</span>
                         驻波</label>
                     <label><input type="checkbox" id="chkRestoring" checked> <span style="color:#ea580c;">●</span>
                         回复力</label>
                 </div>
 
-                <div class="wave-info">
-                    <span>波速 V = <strong id="waveSpeed">—</strong> m/s</span>
-                    <span>基频 f₁ = <strong id="fundFreq">—</strong> Hz</span>
-                    <span>角频率 ω₁ = <strong id="angFreq">—</strong> rad/s</span>
-                </div>
+                <!-- 播放控制 -->
+                <div class="section-title">🚀 播放控制</div>
 
                 <div class="button-group">
                     <button id="playBtn">▶ 播放</button>
                     <button id="resetBtn">重置时间</button>
                     <span class="time-display" id="timeDisplay">t = 0.0000 s</span>
+                </div>
+
+                <!-- 实时信息 -->
+                <div class="section-title">📊 实时信息</div>
+
+                <div class="wave-info">
+                    <span>波速 V = <strong id="waveSpeed">—</strong> m/s</span>
+                    <span>基频 f₁ = <strong id="fundFreq">—</strong> Hz</span>
+                    <span>角频率 ω₁ = <strong id="angFreq">—</strong> rad/s</span>
                 </div>
             </div>
 
@@ -591,12 +618,8 @@
 
             // 根据模式绘制
             if (displayMode === 'standing') {
-                document.getElementById('chkStanding').checked = true;
-                document.getElementById('chkRestoring').checked = true;
                 drawStandingWave();   // 驻波+回复力
             } else {
-                document.getElementById('chkStanding').checked = false;
-                document.getElementById('chkRestoring').checked = false;
                 drawNormalModes();    // 简正模绘制
             }
 
@@ -607,9 +630,27 @@
         document.querySelectorAll('input[name="displayMode"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 displayMode = e.target.value;
-
+                // 切换显示控制组件的显隐
+                const maxModesGroup = document.getElementById('maxModesGroup');
+                const standingControls = document.getElementById('standingControls');
+                if (displayMode === 'normalModes') {
+                    maxModesGroup.classList.remove('hidden');
+                    standingControls.classList.add('hidden');
+                } else {
+                    maxModesGroup.classList.add('hidden');
+                    standingControls.classList.remove('hidden');
+                }
                 redraw();
             });
+        });
+
+        // 页面加载时初始化显隐状态
+        document.addEventListener('DOMContentLoaded', () => {
+            const maxModesGroup = document.getElementById('maxModesGroup');
+            const standingControls = document.getElementById('standingControls');
+            // 默认选中 standing，所以隐藏 maxModesGroup
+            maxModesGroup.classList.add('hidden');
+            standingControls.classList.remove('hidden');
         });
 
         // DOM 控件绑定
