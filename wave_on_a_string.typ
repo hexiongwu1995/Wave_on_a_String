@@ -413,23 +413,15 @@ $
   sum_(n=1)^(infinity) (C_(2, n) D_(1, n) sin((n pi x)/L_0)) = cases(A_0/x_0 x #h(3.7cm) 0<= x<= x_0, A_0/(L_0 - x_0) (L_0 - x) #h(1.9cm) x_0 < x <= L_0)
 $<Fourier_Series_Form>
 
-整理基函数的形式后得：
+这是一个傅里叶正弦级数展开的形式，可以由傅里叶正弦级数的系数公式确定 $C_(2, n) D_(1, n)$的值。
 
-$
-  sum_(n=1)^(infinity) (C_(2, n) D_(1, n) sin((2 pi n x)/(2 L_0))) = cases(A_0/x_0 x #h(3.7cm) 0<= x<= x_0, A_0/(L_0 - x_0) (L_0 - x) #h(1.9cm) x_0 < x <= L_0)
-$<Fourier_Series_Form_Alt>
-
-
-这是一个傅里叶级数展开的形式，其中：$cases(a_n =0 #h(2cm) n in NN, b_n = C_(2,n) D_(1,n) #h(1cm) n in NN^+)$
-，可以由傅里叶级数的系数公式确定 $C_(2, n) D_(1, n)$的值。
-
-对比傅里叶级数的展开形式可知：
+对比傅里叶正弦级数的展开形式可知：
 
 #text(size: 8pt)[$
-  b_n &= C_(2, n) D_(1, n) #linebreak() &= 2/L_0 integral_(0)^(L_0) y(x,0) sin((n pi x)/L_0) d x #linebreak() &= 2/L_0 (A/x_0 integral_0^(x_0) x sin((n pi x)/L_0) d x + (A L_0)/(L_0 -x_0) integral_(x_0)^(L_0) sin((n pi x)/L_0) d x - A/(L_0 - x_0) integral_(x_0)^(L_0) x sin((n pi x)/L_0) d x ) #linebreak() &= (2A)/(L_0 x_0) integral_0^(x_0) x sin(k_n x) d x + (2A)/(L_0 - x_0) integral_(x_0)^(L_0) sin(k_n x) d x - (2A)/(L_0 (L_0 - x_0)) integral_(x_0)^(L_0) x sin(k_n x) d x #linebreak() &= - (2A)/(L_0 x_0 k_n) ( (x cos(k_n x)) lr(|, size: #200%)_0^(x_0) - integral_0^(x_0) cos(k_n x) d x) - (2A)/((L_0 - x_0)k_n) cos(k_n x) lr(|, size: #200%)_(x_0)^(L_0) + (2A)/(L_0 (L_0 - x_0) k_n) (x cos(k_n x) lr(|, size: #200%)_(x_0)^(L_0) - integral_(x_0)^(L_0) cos(k_n x) d x) #linebreak() &= - (2A)/(L_0 x_0 k_n) (x_0 cos(k_n x_0) - 1/k_n sin(k_n x_0)) - (2A)/((L_0 -x_0)k_n) (cos(k_n L_0) - cos(k_n x_0)) #linebreak() & + (2A)/(L_0(L_0 - x_0)k_n) (L_0 cos(k_n L_0) - x_0 cos(k_n x_0) - 1/k_n (sin(k_n L_0) - sin(k_n x_0)))
-  #linebreak() &= 2(- A/(L_0 k_n) + A/((L_0 - x_0)k_n) - (A x_0)/(L_0(L_0 - x_0)k_n)) cos(k_n x_0) + 2(- A/((L_0 - x_0)k_n) + A/((L_0 - x_0)k_n))cos(k_n L_0) #linebreak() & + 2(A/(L_0 x_0 k_n^2) + A/(L_0 (L_0 -x_0) k_n^2)) sin(k_n x_0) - (2A)/(L_0(L_0 - x_0) k_n^2) sin(k_n L_0)
-  #linebreak() &= 0 + 0 + (2A)/(L_0 k_n^2) dot L_0/(x_0(L_0- x_0)) sin(k_n x_0) - 0
-  #linebreak() &= (2A)/(x_0(L_0 - x_0) k_n^2 ) sin(k_n x_0) #h(1cm) "其中：" k_n= (n pi)/L_0 #linebreak() &= (2 A L_0^2)/(x_0(L_0 - x_0) pi^2 n^2) sin((n pi x_0)/L_0)
+  b_n &= C_(2, n) D_(1, n) #linebreak() &= 2/L_0 integral_(0)^(L_0) y(x,0) sin((n pi x)/L_0) d x #linebreak() &= 2/L_0 (A_0/x_0 integral_0^(x_0) x sin((n pi x)/L_0) d x + (A_0 L_0)/(L_0 -x_0) integral_(x_0)^(L_0) sin((n pi x)/L_0) d x - A_0/(L_0 - x_0) integral_(x_0)^(L_0) x sin((n pi x)/L_0) d x ) #linebreak() &= (2A_0)/(L_0 x_0) integral_0^(x_0) x sin(k_n x) d x + (2A_0)/(L_0 - x_0) integral_(x_0)^(L_0) sin(k_n x) d x - (2A_0)/(L_0 (L_0 - x_0)) integral_(x_0)^(L_0) x sin(k_n x) d x #linebreak() &= - (2A_0)/(L_0 x_0 k_n) ( (x cos(k_n x)) lr(|, size: #200%)_0^(x_0) - integral_0^(x_0) cos(k_n x) d x) - (2A_0)/((L_0 - x_0)k_n) cos(k_n x) lr(|, size: #200%)_(x_0)^(L_0) + (2A_0)/(L_0 (L_0 - x_0) k_n) (x cos(k_n x) lr(|, size: #200%)_(x_0)^(L_0) - integral_(x_0)^(L_0) cos(k_n x) d x) #linebreak() &= - (2A_0)/(L_0 x_0 k_n) (x_0 cos(k_n x_0) - 1/k_n sin(k_n x_0)) - (2A_0)/((L_0 -x_0)k_n) (cos(k_n L_0) - cos(k_n x_0)) #linebreak() & + (2A_0)/(L_0(L_0 - x_0)k_n) (L_0 cos(k_n L_0) - x_0 cos(k_n x_0) - 1/k_n (sin(k_n L_0) - sin(k_n x_0)))
+  #linebreak() &= 2(- A_0/(L_0 k_n) + A_0/((L_0 - x_0)k_n) - (A_0 x_0)/(L_0(L_0 - x_0)k_n)) cos(k_n x_0) + 2(- A_0/((L_0 - x_0)k_n) + A_0/((L_0 - x_0)k_n))cos(k_n L_0) #linebreak() & + 2(A_0/(L_0 x_0 k_n^2) + A_0/(L_0 (L_0 -x_0) k_n^2)) sin(k_n x_0) - (2A_0)/(L_0(L_0 - x_0) k_n^2) sin(k_n L_0)
+  #linebreak() &= 0 + 0 + (2A_0)/(L_0 k_n^2) dot L_0/(x_0(L_0- x_0)) sin(k_n x_0) - 0
+  #linebreak() &= (2A_0)/(x_0(L_0 - x_0) k_n^2 ) sin(k_n x_0) #h(1cm) "其中：" k_n= (n pi)/L_0 #linebreak() &= (2 A_0 L_0^2)/(x_0(L_0 - x_0) pi^2 n^2) sin((n pi x_0)/L_0)
 $]
 
 
@@ -437,15 +429,12 @@ $]
 
 #abstract(title: [满足所有边界条件和初始条件（初始三角波）的完整解$y(x,t)$为：])[
   $
-    y(x,t) & = X(x) T(t) #linebreak() & = underbrace(sum_(n=1)^(infinity) (b_n sin(k_n x) cos(omega_n t)), "驻波") #linebreak() &= 1/2 sum_(n=1)^(infinity) (b_n ( underbrace(sin(k_n x + omega_n t), "左行波") + underbrace(sin(k_n x - omega_n t), "右行波") ) )
+    y(x,t) & = sum_(n=1)^(infinity) X_n (x) T_n (t) #linebreak() & = underbrace(sum_(n=1)^(infinity) (b_n sin(k_n x) cos(omega_n t)), "驻波") #linebreak() &= 1/2 sum_(n=1)^(infinity) (b_n ( underbrace(sin(k_n x + omega_n t), "左行波") + underbrace(sin(k_n x - omega_n t), "右行波") ) )
   $<Complete_Solution>
 
   核心物理意义：两端固定的弦在初始三角波激励下的自由振动，可以分解为无穷多个简正模态的驻波叠加，而每个驻波又可以进一步分解为一对反向传播的行波。系数 $b_n$ 随 $1/n^2$衰减，说明高阶谐波的贡献迅速减小，实际振动主要由前几阶模态主导。
 ]
 
-#abstract(title: [分离变量形式])[
-  通过分离变量法，假设解可以分解为空间函数 X(x) 和时间函数 T(t) 的乘积。
-]
 
 #abstract(title: [驻波形式（级数叠加和模态分析）])[
   物理意义：
@@ -469,7 +458,7 @@ $]
 
 其中：
 
-$ b_n = (2 A L_0^2)/(x_0(L_0 - x_0) pi^2 n^2) sin((n pi x_0)/L_0) #h(1cm) n in NN^+ $
+$ b_n = (2 A_0 L_0^2)/(x_0(L_0 - x_0) pi^2 n^2) sin(k_n x_0) #h(1cm) n in NN^+ $
 
 $ k_n = (n pi)/L_0 $
 
@@ -481,23 +470,47 @@ $ omega_n = c dot k_n $
 因此，$k_n$称为波数？？？ $omega_n$称为角频率，$c= sqrt(T_0/mu_0)$称为波速（相速度）。
 
 
+
+
+
+
 = 琴弦上的张力在竖直方向上的分量 $T_y (x, t)$
 
-由弦上波模型的示意图 @Schematic_Diagram_of_wave_on_a_string 可知，
-
-$ T_y (x, t) & = T(x, t) dot sin (theta(x, t)) #linebreak() & = T(x, t) dot cos(theta(x, t)) dot tan(theta(x, t)) $
-
-#abstract(title: [近似])[
-  由小振幅假设：
-  - 将 $cos(theta(x, t))$ 近似为 1
-  - 将琴弦上的张力 $T(x ,t)$近似为静止预张力$T_0$
+#abstract(title: "张力的严格数学定义")[
+  如弦上波模型的示意图 @Schematic_Diagram_of_wave_on_a_string 所示：
+  - 取微元段右侧截面处受到的截面右侧弦的拉力作为张力$arrow(T)(x,t) = |T(x,t)| vec(cos theta, sin theta)$。
+  - 根据这个定义，张力的竖直分量
+  
+  $
+    T_y (x,t) &= arrow(T)(x,t) dot hat(y) #linebreak() &= |T(x,t)| vec(cos theta, sin theta) dot vec(0, 1) #linebreak() &= |T(x,t)| sin theta
+  $
+  
+  - 张力的竖直分量的方向是否总与位移的方向相反？类似于弹簧的回复力？
+  - 提供回复力的不是单点的 $T_y$ ，而是微元段两端 $T_y$ 的差值（净力）。所以净力确实与位移相反（回复力），但单点的 $T_y$ 不是这样。
 ]
 
 则：
 
-$ T_y (x,t) & = T_0 tan(theta(x, t)) #linebreak() & = - T_0 dot (partial y)/(partial x) $
+$
+  T_y (x, t) & = |T(x, t)| dot sin [theta^#footnote[$theta$ 是指弦的切线方向与水平线之间的夹角 $- pi/2 < theta < pi/2$] (x, t)] #linebreak() & = |T(x, t)| dot cos[theta(x, t)] dot tan[theta(x, t)]
+$
 
-在等式 @Complete_Solution 两端对x求偏导得：
+
+
+#abstract(title: [近似])[
+  由小振幅假设：
+  - 将 $cos(theta(x, t))$ 近似为 1
+  - 将琴弦上的张力的模长 $|T(x ,t)|$近似为静止预张力$T_0$
+]
+
+则：
+
+$ T_y (x,t) & = T_0 tan(theta(x, t)) $
+
+$ T_y (x,t) = T_0 dot (partial y)/(partial x) $<Y_component_of_Tension>
+
+
+对等式 @Complete_Solution 的行波形式求偏导得：
 
 $
   (partial y)/(partial x) = 1/2 sum_(n=1)^(infinity) lr({ b_n k_n lr([ cos(k_n x + omega_n t) + cos(k_n x - omega_n t) ], size: #200%) }, size: #150%)
@@ -506,10 +519,43 @@ $
 
 #abstract(title: [琴弦张力的竖直分量$T_y (x,t)$])[
   $
-    T_y (x,t) = - T_0/2 dot sum_(n=1)^(infinity) lr({ b_n k_n lr([ cos(k_n x + omega_n t) + cos(k_n x - omega_n t) ], size: #200%) }, size: #150%)
+    T_y (x,t) &= T_0/2 dot sum_(n=1)^(infinity) lr({ b_n k_n lr([ underbrace(cos(k_n x + omega_n t),"左行波") + underbrace(cos(k_n x - omega_n t),"右行波") ], size: #100%) }, size: #110%) #linebreak() &= T_0 dot sum_(n=1)^(infinity) lr({ underbrace(b_n k_n dot cos(k_n x) cos(omega_n t), "驻波形式") }, size: #100%) 
   $
 ]
 
+
+
+= 琴弦上的回复力
+
+如弦上波模型的示意图 @Schematic_Diagram_of_wave_on_a_string 所示，琴弦微元段上的回复力：$ F_y &= T_2 sin beta - T_1 sin alpha #linebreak() &= T_x (tan beta - tan alpha) #linebreak() $
+
+将 $T_x$ 近似为静止时的琴弦预张力$T_0$，则：
+
+$
+  F_y approx T_0 (partial^2 y)/(partial x^2) Delta x
+$
+
+#abstract(title:"琴弦单位长度上的回复力f_y")[
+  $ f_y & = F_y / (Delta x) #linebreak() & approx T_0 (partial^2 y)/(partial x^2) $
+]
+
+
+对等式 @Complete_Solution 的行波形式求偏导得：
+
+$
+  (partial y)/(partial x) = 1/2 sum_(n=1)^(infinity) lr({ b_n k_n lr([ cos(k_n x + omega_n t) + cos(k_n x - omega_n t) ], size: #200%) }, size: #150%)
+$
+
+继续求二阶偏导得：
+
+$ (partial^2 y)/(partial x^2) &= - 1/2 sum_(n=1)^(infinity) lr({ b_n k_n^2 lr([ sin(k_n x + omega_n t) + sin(k_n x - omega_n t) ], size: #150%) }, size: #110%) #linebreak() &= - sum_(n=1)^(infinity) lr({ b_n k_n^2 dot sin(k_n x) cos(omega_n t) }, size: #110%)  $
+
+
+则：
+
+#abstract(title: "琴弦单位长度上的回复力f_y")[
+  $ f_y & approx T_0 (partial^2 y)/(partial x^2) #linebreak() & = - T_0 sum_(n=1)^(infinity) lr({ underbrace(b_n k_n^2 dot sin(k_n x) cos(omega_n t), "驻波形式") }, size: #100%) #linebreak() &= - T_0/2 sum_(n=1)^(infinity) lr({ b_n k_n^2 lr([ underbrace(sin(k_n x + omega_n t),"左行波") + underbrace(sin(k_n x - omega_n t),"右行波") ], size: #100%) }, size: #100%) $
+]
 
 
 
