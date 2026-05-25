@@ -607,7 +607,17 @@
             textStyle(BOLD);
             text('琴弦振动的动画模拟', PAD.left + 10, PAD.top + 20);
             textStyle(NORMAL);
-
+            // 物理参数显示（右上角，每行一个）
+            fill(50);
+            textSize(12);
+            textAlign(LEFT);
+            const paramX = canvasW - PAD.right - 100;
+            const paramStartY = PAD.top + 20;
+            const lineH = 18;
+            text(`A₀ = ${A0.toFixed(3)} m`, paramX, paramStartY);
+            text(`L₀ = ${L0.toFixed(2)} m`, paramX, paramStartY + lineH);
+            text(`V = ${V.toFixed(2)} m/s`, paramX, paramStartY + lineH * 2);
+            textAlign(LEFT);
             // 采样波形（物理坐标和画布坐标）
             let pts = [];
             for (let i = 0; i <= segs; i++) {
