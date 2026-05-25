@@ -77,6 +77,7 @@
 + 在求解琴弦张力的竖直分量时，需要做两个近似：
   - 忽略琴弦的伸长，将$L(t)$近似为$L_0$
   - 将琴弦上的张力$T(x,t)$近似为静止时的琴弦预张力$T_0$
++ 在求解琴弦上的回复力时，同样需要将琴弦上的张力$T(x,t)$近似为静止时的琴弦预张力$T_0$。
 + 当振幅较小时（小振幅假设），将琴弦上任意位置$x$处的线密度$mu(x, t)$近似为琴弦静止时的线密度$mu_0$。
 + 将$t=0$ 时刻的琴弦形状近似为三角形。
 
@@ -581,7 +582,145 @@ $
 
 = 弦上波的能量
 
-由初始假设，初始时刻 t=0 时，琴弦的形状为三角形，需要求解此时琴弦上的能量。
+由初始假设，初始时刻 t=0 时，琴弦的形状为三角形，需要求解此时琴弦上的能量。对微元的能量进行分析：
+
+根据动能的定义： $ Delta K & = 1/2 mu_0 Delta x ( (partial y)/(partial t) )^2 \
+        & = mu_0 /2 ( (partial y)/(partial t) )^2 Delta x $
+
+根据势能的定义：
+
+#abstract(title: [势能的定义])[
+  - 琴弦在平衡状态（直线）时已经存在预张力 $T_0$ ，取此时的势能为零。
+  - 振动的势能来自琴弦被拉伸而产生的额外伸长，即 $Delta s - Delta x$，而非 $Delta s$ 本身。
+  - 势能应该是张力 $times$ 伸长量（即弧长减去原长），而不是张力 $times$ 弧长。正确的表达式应为：
+]
+
+$
+  Delta P & approx T_0 (Delta s - Delta x) \
+          & approx T_0 ( sqrt((Delta x)^2 + (Delta y)^2) - Delta x ) \
+          & = T_0 inline((sqrt(1 + ((partial y)/(partial x))^2) - 1)) Delta x
+$
+
+
+#abstract(title: [近似和误差])[
+  动能：
+  - 将线密度近似为 $mu_0$
+  势能：
+  - 将张力近似为 $T_0$
+  - 将弧长近似为 $Delta s = sqrt((Delta x)^2 + (Delta y)^2)$
+
+  关于误差估计的方法，详见"近似层次"一节。
+]
+
+总能量 $ E(t) &= integral_0^(L_0) inline((mu_0 /2 ( (partial y)/(partial t) )^2 + T_0 ( sqrt(1 + ((partial y)/(partial x))^2) -1 ) )) d x \ &= integral_0^(x_0) inline((mu_0 /2 ( (partial y)/(partial t) )^2 + T_0 ( sqrt(1 + ((partial y)/(partial x))^2) -1 ) )) d x + integral_(x_0)^(L_0) inline((mu_0 /2 ( (partial y)/(partial t) )^2 + T_0 ( sqrt(1 + ((partial y)/(partial x))^2) -1 ) )) d x $
+
+这个等式是正确的吗？
+
+== 求解 $t=0$ 时刻的能量
+
+由于完整解$y(x,t)$的表达式过于复杂，因此，仅求解$t=0$时刻的总能量，由于忽略所有能量损失的近似，总能量$E(t) = E(0)$
+
+因为：$ (partial y)/(partial t) lr(|, size: #200%)_(t=0) = 0 $
+$
+  (partial y)/(partial x) lr(|, size: #200%)_(t=0) = cases(A_0 / x_0 #h(1.5cm) 0 <= x < x_0, "不存在" #h(1cm) x = x_0, A_0 /(x_0 - L_0) #h(1cm) x_0 < x <= L_0)
+$
+
+将这两个等式代入总能量的公式得：$ E(0)
+&= integral_0^(x_0) inline(T_0 ( sqrt(1 + (A_0/x_0)^2) -1)) d x + integral_(x_0)^(L_0) inline(T_0 ( sqrt(1 + (A_0/(x_0 - L_0))^2) - 1 )) d x \
+&= T_0 ( sqrt(x_0^2 + A_0^2) - x_0 ) + T_0 ( sqrt((L_0 - x_0)^2 + A_0^2) - (L_0 - x_0) ) \
+&= T_0 (sqrt(x_0^2 + A_0^2) + sqrt((L_0 - x_0)^2 + A_0^2) - L_0) $
+
+
+= 近似层次
+
+势能表达式与波动方程之间的近似层次需要保持一致
+
+== 为什么存在近似层次问题
+
+在整篇文章中，我们先后做了两组不同的近似：
+
+#table(
+  columns: 3,
+  inset: 1em,
+  fill: (_, y) => { if y == 0 { rgb("#79bdc946") } else { none } },
+  align: left + horizon,
+  table.header("", "波动方程推导", "势能表达式"),
+  [核心近似],
+  [小角度近似：$tan theta approx theta approx sin theta$，即$(partial y)/(partial x) approx theta$（一阶量）],
+  [弧长展开：$Delta s = sqrt(1 + ((partial y)/(partial x))^2) Delta x$（精确到二阶及以上）],
+
+  [数学形式],
+  [$T_0 (partial^2 y)/(partial x^2) = mu_0 (partial^2 y)/(partial t^2)$（线性方程）],
+  [$T_0 (sqrt(1 + ((partial y)/(partial x))^2) - 1)$（非线性表达式）],
+
+  [近似层次],
+  [保留了 $O( (partial y)/(partial x) )$量级，忽略了 $O( ((partial y)/(partial x))^2 )$ 及更高阶],
+  [保留了 $O( ((partial y)/(partial x))^2 )$ 及所有更高阶的非线性项],
+)
+
+因此，波动方程只精确到斜率的一阶量，而势能表达式包含了斜率的二阶及更高阶量。将线性波动方程的解代入非线性势能表达式时，$E(t)$ 不再是严格守恒的，这是一个**近似层次不一致**的问题。
+
+== 线性化势能
+
+对于小振幅，斜率 $(partial y)/(partial x)$ 是一个小量。对非线性势能做泰勒展开：
+
+$
+  sqrt(1 + ((partial y)/(partial x))^2) - 1 = 1 + 1/2 ((partial y)/(partial x))^2 - 1/8 ((partial y)/(partial x))^4 + dots - 1 = 1/2 ((partial y)/(partial x))^2 - 1/8 ((partial y)/(partial x))^4 + dots
+$
+
+如果只保留到二阶项（即与波动方程一致的近似层次），则势能简化为：
+
+$
+  Delta P_("linear") approx T_0/2 ((partial y)/(partial x))^2 Delta x
+$
+
+对应的线性化总能量为：
+
+$
+  E_("linear")(t) = integral_0^(L_0) ( mu_0/2 ((partial y)/(partial t))^2 + T_0/2 ((partial y)/(partial x))^2 ) d x
+$
+
+#abstract(title: [线性化波动方程的严格守恒量])[
+  对于由线性波动方程 $(partial^2 y)/(partial t^2) = c^2 (partial^2 y)/(partial x^2)$ 描述的系统，$E_("linear")(t)$ 是严格的守恒量。直接对 $E_("linear")$ 求时间导数，代入波动方程，可以证明 $(d E_"linear") /(d t) = 0$。
+]
+
+
+== 非线性势能的能量波动
+
+如果坚持使用非线性势能 $T_0 (sqrt(1 + ((partial y)/(partial x))^2) - 1)$，而运动方程却是线性的，那么 $E(t)$ 将不再严格守恒，而是在 $E(0)$ 附近出现微小波动。
+
+$
+  E(t) = E_("linear")(t) + underbrace(integral_0^(L_0) lr(- T_0/8 ((partial y)/(partial x))^4 + dots, size: #150%) d x, "非线性修正项（小量）")
+$
+
+由于非线性修正项的存在，$E(t)$ 随时间的变化幅度约为：
+
+$ (|E(t) - E(0)|)/(E(0)) approx O(max |(partial y)/(partial x)|^2) $
+
+== 误差的定量估计
+
+对于小振幅，令 $"varepsilon" = max |(partial y)/(partial x)|$ 为最大斜率，则：
+
+$ sqrt(1 + "varepsilon"^2) - 1 = 1/2 "varepsilon"^2 - 1/8 "varepsilon"^4 + O("varepsilon"^6) $
+
+线性化势能（只取 $1/2 "varepsilon"^2$）的相对误差约为：
+
+$ (|Delta P - Delta P_("linear")|)/(Delta P) approx (1/8 "varepsilon"^4)/(1/2 "varepsilon"^2) = "varepsilon"^2/4 $
+
+#text(
+  size: 9pt,
+)[以默认参数为例：$A_0 = 0.01$ m，$x_0 = 0.06$ m（$x_("rel")=0.1$），左侧最大斜率为 $A_0/x_0 approx 0.167$。此时非线性项的相对误差约为 $(0.167)^2/4 approx 0.7%$，完全可以接受。]
+
+== 本文的处理方式
+
+本文采用的处理方式是**在波动方程中保持线性近似，在能量表达式中保留完整的非线性形式**。这种做法的合理性在于：
+
+- $t=0$ 时刻的计算不涉及波动方程的时间演化，$E(0)$ 只依赖于初始几何形状，无论使用线性化势能还是非线性势能，计算结果都是精确的（因为 $E(0)$ 是纯几何量）。
+- 在小振幅条件下，非线性修正项是高阶小量，$E(t)$ 围绕 $E(0)$ 的波动幅度很小。
+- 在物理直觉上，非线性势能表达式更直观地反映了"琴弦被拉伸产生势能"的物理图像。
+
+但如果要严格验证能量守恒，或进行高精度数值模拟，则应该使用与波动方程一致的线性化势能表达式 $T_0/2 ((partial y)/(partial x))^2$。
+
 
 
 
