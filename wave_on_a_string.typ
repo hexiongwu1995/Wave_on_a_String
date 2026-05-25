@@ -68,17 +68,17 @@
 
 + 如@Schematic_Diagram_of_wave_on_a_string 所示，一根琴弦的两端被固定，弦长为$L(t)$，琴弦的线密度为$mu(x, t)$，弦上张力为$T(x,t)$。
 + 初始时刻$t=0$，将琴弦的位置$x_0$处向上拉伸至一个高度$A_0$，然后立刻释放琴弦。
-+ 目标是求解琴弦的振动方程$y(x,t)$和琴弦张力的竖直分量$T_y (x,t)$。
++ 目标是求解琴弦的振动方程$y(x,t)$和琴弦单位长度上的回复力$f_y (x,t)$。
 
 = 模型假设
 + 不考虑空气阻力、弦的内阻力和其它任何形式所造成的能量耗散。
-+ 小振幅假设：将初始振幅$A_0$限定在较小的范围，比如：$A_0 /(L_0) < 2%$
++ 小振幅假设：将初始振幅$A_0$限定在较小的范围，比如：$A_0 /(L_0) < 1%$ ?
 + 当弦振动时，弦上各个位置处的受力和形变始终在随时间变化，因此，弦长$L(t)$是时间t的函数，琴弦上的张力$T(x,t)$是位置x和时间t的函数。
 + 在求解琴弦张力的竖直分量时，需要做两个近似：
   - 忽略琴弦的伸长，将$L(t)$近似为$L_0$
   - 将琴弦上的张力$T(x,t)$近似为静止时的琴弦预张力$T_0$
-+ 由实际观察可知，当琴弦振动时，波峰或波谷处的琴弦受拉伸力最大，拉伸形变会造成该位置处的线密度最小。
 + 当振幅较小时（小振幅假设），将琴弦上任意位置$x$处的线密度$mu(x, t)$近似为琴弦静止时的线密度$mu_0$。
++ 将$t=0$ 时刻的琴弦形状近似为三角形。
 
 
 
@@ -95,11 +95,12 @@
 // 真实数学建模时需要使用到的默认参数（与Javascript进行数据共享）
 #let A_0 = 0.01           // 初始振幅，单位为 m，参数滑块数据范围：(0.005, 0.02)
 #let L_0 = 0.6            // 弦长，单位为 m，参数滑块数据范围：(0.2, 1.0)
-#let x_0 = 0.2 * L_0      // 初始拨弦位置，单位为 m，参数滑块数据范围：(0.1, 0.9)*L_0
+#let x_rel = 0.1          // 相对拨弦位置，无量纲，参数滑块数据范围：(0.1, 0.9)
+#let x_0 = x_rel * L_0    // 拨弦位置，单位为 m，由相对拨弦位置计算得到
 #let T_0 = 80             // 预张力，单位为 N，参数滑块数据范围：(70, 100)
 #let mu_0 = 0.01          // 线密度，单位为 kg/m，参数滑块数据范围：(0.004, 0.01)
-#let N = 10               // 级数截断项数，无量纲，参数滑块数据范围：(1, 50)
-#let s = 1e-5              // 动画速度系数，无量纲，参数滑块数据范围：(1e-6, 1.0)
+#let N_terms = 50           // 级数截断项数，无量纲，参数滑块数据范围：(1, 100)
+#let simSpeed = 1e-4             // 动画速度系数，无量纲，参数滑块数据范围：(1e-4, 1e-3)
 
 
 
@@ -110,18 +111,17 @@
       import cetz.draw: *
       // 弦静止时的状态
       line((0, 0), (L, 0), stroke: (paint: gray, thickness: 2pt))
-      // 绘制t0时刻弦的状态
-      bezier((0, 0), (L, 0), bez-contr, name: "bezier", stroke: (paint: gray))
-      // circle(bez-contr, radius: 2pt, fill: gray, stroke: none, name: "bezier-control")
+      // 绘制t=0时刻的三角波
+      line((0, 0), (2, 0.35), (L, 0), stroke: (paint: rgb("#8d8d8d")), name: "Ini_Tri_Wave")
       circle((2, 0.35), radius: 0.2, name: "string_piece", stroke: (
         paint: rgb("#9d9d9d"),
         thickness: 1pt,
-        dash: "dashed",
+        dash: "dotted",
       ))
       circle(tube-pos, radius: 3, name: "string_detail")
 
-      line("string_piece.20%", "string_detail.15%", stroke: (paint: rgb("#bcbcbc9a"), thickness: 1pt, dash: "dashed"))
-      line("string_piece.55%", "string_detail.55%", stroke: (paint: rgb("#c0c0c0c3"), thickness: 1pt, dash: "dashed"))
+      line("string_piece.10%", "string_detail.13%", stroke: (paint: rgb("#bcbcbc9a"), thickness: 1pt, dash: "dashed"))
+      line("string_piece.55%", "string_detail.53%", stroke: (paint: rgb("#c0c0c0c3"), thickness: 1pt, dash: "dashed"))
 
       group({
         set-origin(tube-pos)
@@ -475,8 +475,24 @@ $ omega_n = c dot k_n $
 
 可以确认：$k_n$ 确实被称为波数（angular wave number），这是标准物理术语。
 
+= 求解思路解析
 
+求解思路正确，边界条件和初始条件是偏微分方程定解问题的两个独立组成部分。
 
+- 边界条件决定了空间基函数（特征函数系）
+- 初始条件决定了叠加系数（以及时间演化形式)
+
+#table(
+  columns: 3,
+  inset: 1em,
+  fill: (_, y) => { if y == 0 { rgb("#79bdc946") } else { none } },
+  align: left + horizon,
+  table.header("", "边界条件", "初始条件"),
+  [约束对象], [$X(x)$（空间函数）], [$T(t)$ 和 $b_n$（时间函数和系数）],
+  [时间范围], [对所有 $t≥0$], [仅在 $t=0$],
+  [在分离变量法中的角色], [确定特征值 $k_n$ 和特征函数 $sin(k_n x)$], [确定傅里叶系数 $b_n$ 和时间函数 $T_n (t)$],
+  [物理意义], [决定弦的振动模式（驻波形状）], [决定每个模式的振幅和时间演化],
+)
 
 = 琴弦上的张力在竖直方向上的分量 $T_y (x, t)$
 
@@ -538,7 +554,7 @@ $
 $
 
 琴弦单位长度上的回复力$f_y$
-  $ f_y & = F_y / (Delta x) #linebreak() & approx T_0 (partial^2 y)/(partial x^2) $
+$ f_y & = F_y / (Delta x) #linebreak() & approx T_0 (partial^2 y)/(partial x^2) $
 
 
 对等式 @Complete_Solution 的行波形式求偏导得：
@@ -556,12 +572,16 @@ $
 
 则：
 
-#abstract(title: "琴弦单位长度上的回复力f_y")[
+#abstract(title: [琴弦单位长度上的回复力$f_y$])[
   $
     f_y & approx T_0 (partial^2 y)/(partial x^2) #linebreak() & = - T_0 sum_(n=1)^(infinity) lr({ underbrace(b_n k_n^2 dot sin(k_n x) cos(omega_n t), "驻波形式") }, size: #100%) #linebreak() &= - T_0/2 sum_(n=1)^(infinity) lr({ b_n k_n^2 lr([ underbrace(sin(k_n x + omega_n t), "左行波") + underbrace(sin(k_n x - omega_n t), "右行波") ], size: #100%) }, size: #100%)
   $
 ]
 
+
+= 弦上波的能量
+
+由初始假设，初始时刻 t=0 时，琴弦的形状为三角形，需要求解此时琴弦上的能量。
 
 
 
@@ -766,7 +786,6 @@ $ b_n = 2/L_0 integral_(0)^(L_0) y(x,0) sin(frac(n pi x, L_0)) d x $
 
 #abstract(title: [对比完整傅里叶级数])[
   完整傅里叶级数的基函数为 $sin(frac(2 pi n x, T))$（周期 $T$），而傅里叶正弦级数的基函数为 $sin(frac(n pi x, L))$（半周期 $L$）。二者不可混淆：
-
   - 完整傅里叶级数的周期为 $T$，频率为 $frac(2 pi n, T)$；
   - 傅里叶正弦级数的"周期"为 $2L$（奇延拓后），半区间 $[0, L]$ 上的频率为 $frac(n pi, L)$。
 
