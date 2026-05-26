@@ -602,45 +602,33 @@ $
 $
 
 
-#abstract(title: [近似和误差])[
+
+#abstract(title:[泰勒展开近似])[
+$sqrt(1 + ((partial y)/(partial x))^2) - 1 & = 1/2 ((partial y)/(partial x) )^2 + O( ((partial y)/(partial x) )^4) \
+ & approx 1/2 ((partial y)/(partial x) )^2$
+
+ 为什么这里选择保留到二阶小量级的近似？
+]
+
+则：$ Delta P approx T_0 /2 ((partial y)/(partial x))^2 Delta x $
+
+#abstract(title: [模型近似和误差])[
   动能：
   - 将线密度近似为 $mu_0$
   势能：
   - 将张力近似为 $T_0$
   - 将弧长近似为 $Delta s = sqrt((Delta x)^2 + (Delta y)^2)$
-
-  关于误差估计的方法，详见"近似层次"一节。
-]
-
-#abstract(title: [带佩亚诺型余项的泰勒公式])[
-  定理：设函数 $f(x)$ 在点 $x_0$ 的某邻域内具有 $n$阶导数（足够光滑），则在该邻域内，可以使用一个多项式来近似代替这个函数： \
-  $f(x)= f(x_0) + f'(x_0)(x - x_0) + (f''(x_0))/(2!) (x - x_0)^2 + dots + (f^((n))(x_0))/(n!) (x - x_0)^n + O((x - x_0)^(n+1))$  \
-  记：$f(x)= sqrt(1 + x^2)$ \
-  $f'(x) = display(x / sqrt(1 + x^2))$ #h(2cm)
-  $f''(x) = display(1 / (1 + x^2)^(3/2))$ #h(2cm) $f'''(x) = display((- 3 x) / (1 + x^2)^(5/2))$ #h(2cm)
-
-  则，在 $x=0$的某个邻域内： \
-  $display(f(x) & = f(0) + f'(0)(x-0) + (f''(0))/(2!) (x - 0)^2 + dots + (f^((n))(0))/(n!) (x - 0)^n + O((x - 0)^(n+1)) \
-  & = 1 + x^2 /2 + O(x^4) )$
-]
-
-#abstract(title: [大$O$记号 与小$o$记号])[
-  当 $x -> 0$ 时，二者都用于描述无穷小的阶数，但有本质区别：
-  + $O(x^n)$：存在常数 $C>0$ 使得 $|O(x^n)| <= C |x|^n$。即该量至少与 $x^n$ 同阶（可能是 $x^n$、$x^(n+1)$ 或更高阶）。
-  + $o(x^n)$：满足 $display(lim_(x -> 0) (o(x^n))/(x^n) = 0)$。即该量严格比 $x^n$ 更高阶。
   
-  例：$x^4 = O(x^3)$ 成立（因为 $|x^4| <= C|x^3|$），但 $x^4 = o(x^3)$ 也成立（因为 $x^4/x^3 = x -> 0$）。而 $x^3 = O(x^3)$ 成立，但 $x^3 = o(x^3)$ 不成立。
+  我不知道这种近似是否合理，与之前波动方程推导中使用的小角度近似是否存在矛盾？
 ]
 
+总能量 $ E(t) &= integral_0^(L_0) inline( (mu_0 /2 ( (partial y)/(partial t) )^2 + T_0 /2 ((partial y)/(partial x))^2 ) d x) $
 
-
-总能量 $ E(t) &= integral_0^(L_0) inline((mu_0 /2 ( (partial y)/(partial t) )^2 + T_0 ( sqrt(1 + ((partial y)/(partial x))^2) -1 ) )) d x \ &= integral_0^(x_0) inline((mu_0 /2 ( (partial y)/(partial t) )^2 + T_0 ( sqrt(1 + ((partial y)/(partial x))^2) -1 ) )) d x + integral_(x_0)^(L_0) inline((mu_0 /2 ( (partial y)/(partial t) )^2 + T_0 ( sqrt(1 + ((partial y)/(partial x))^2) -1 ) )) d x $
-
-这个等式是正确的吗？
+在$x=x_0$处，$(partial y)/(partial x)$不存在，那么，上面这个等式还是正确的吗？
 
 == 求解 $t=0$ 时刻的能量
 
-由于完整解$y(x,t)$的表达式过于复杂，因此，仅求解$t=0$时刻的总能量，由于忽略所有能量损失的近似，总能量$E(t) = E(0)$
+由于完整解$y(x,t)$的表达式过于复杂，因此，仅求解$t=0$时刻的总能量，由于不考虑阻尼的近似，总能量$E(t) = E(0)$
 
 因为：$ (partial y)/(partial t) lr(|, size: #200%)_(t=0) = 0 $
 $
@@ -648,100 +636,30 @@ $
 $
 
 将这两个等式代入总能量的公式得：$ E(0)
-&= integral_0^(x_0) inline(T_0 ( sqrt(1 + (A_0/x_0)^2) -1)) d x + integral_(x_0)^(L_0) inline(T_0 ( sqrt(1 + (A_0/(x_0 - L_0))^2) - 1 )) d x \
-&= T_0 ( sqrt(x_0^2 + A_0^2) - x_0 ) + T_0 ( sqrt((L_0 - x_0)^2 + A_0^2) - (L_0 - x_0) ) \
-&= T_0 (sqrt(x_0^2 + A_0^2) + sqrt((L_0 - x_0)^2 + A_0^2) - L_0) $
+&= integral_0^(x_0) inline(T_0 /2 (A_0^2)/(x_0^2)  ) d x + integral_(x_0)^(L_0) inline(T_0 /2 (A_0^2)/((L_0 - x_0)^2)) d x \ 
+&= (T_0 A_0^2 L_0)/(2 x_0 (L_0 - x_0)) $
 
+#abstract(title: [初始总能量 $E(0)$ 的物理含义])[
+  
+  - 与振幅平方成正比：$E(0) #sym.prop A_0^2$，这是简谐系统（胡克定律型）的典型特征，与弹簧振子、LC 振荡电路等系统的能量形式一致。
+  
+  - 与预张力成正比：$E(0) #sym.prop T_0$，张力越大，琴弦越"硬"，在相同初始形变下储存的弹性势能就越大。
+  
+  - 拨弦位置 $x_0$ 的影响：分母中出现因子 $x_0 (L_0 - x_0)$，意味着：
+    - 当 $x_0 #sym.arrow 0$ 或 $x_0 #sym.arrow L_0$（在端点附近拨弦）时，$E(0) #sym.arrow infinity$，表明要在端点附近将弦拨到指定高度 $A_0$ 需要极大的能量——这符合直觉，因为靠近端点时弦的初始斜率 $A_0 / x_0$ 趋于无穷大。
+
+    - 表达式关于 $x_0 = L_0/2$ 对称，这符合物理对称性：从左侧 $x_0$ 处拨弦与从右侧 $L_0-x_0$ 处拨弦，结果完全相同。
+  
+    - 几何意义的验证：从斜率角度理解，$E(0)$ 还可写为：
+    $
+      E(0) = T_0/2 [ underbrace((A_0/x_0)^2, "左侧斜率平方") dot x_0 + underbrace((A_0/(L_0 - x_0))^2, "右侧斜率平方") dot (L_0 - x_0) ]
+    $
+    即左右两段弦各自的弹性势能之和，每段势能 = $T_0/2  dot ("斜率")^2 dot "段长"$，几何直观性极强。
+]
 
 = 近似层次
 
-势能表达式与波动方程之间的近似层次需要保持一致
-
-== 为什么存在近似层次问题
-
-在整篇文章中，我们先后做了两组不同的近似：
-
-#table(
-  columns: 3,
-  inset: 1em,
-  fill: (_, y) => { if y == 0 { rgb("#79bdc946") } else { none } },
-  align: left + horizon,
-  table.header("", "波动方程推导", "势能表达式"),
-  [核心近似],
-  [小角度近似：$tan theta approx theta approx sin theta$，即$(partial y)/(partial x) approx theta$（一阶量）],
-  [弧长展开：$Delta s = sqrt(1 + ((partial y)/(partial x))^2) Delta x$（精确到二阶及以上）],
-
-  [数学形式],
-  [$T_0 (partial^2 y)/(partial x^2) = mu_0 (partial^2 y)/(partial t^2)$（线性方程）],
-  [$T_0 (sqrt(1 + ((partial y)/(partial x))^2) - 1)$（非线性表达式）],
-
-  [近似层次],
-  [保留了 $O( (partial y)/(partial x) )$量级，忽略了 $O( ((partial y)/(partial x))^2 )$ 及更高阶],
-  [保留了 $O( ((partial y)/(partial x))^2 )$ 及所有更高阶的非线性项],
-)
-
-因此，波动方程只精确到斜率的一阶量，而势能表达式包含了斜率的二阶及更高阶量。将线性波动方程的解代入非线性势能表达式时，$E(t)$ 不再是严格守恒的，这是一个**近似层次不一致**的问题。
-
-== 线性化势能
-
-对于小振幅，斜率 $(partial y)/(partial x)$ 是一个小量。对非线性势能做泰勒展开：
-
-$
-  sqrt(1 + ((partial y)/(partial x))^2) - 1 = 1 + 1/2 ((partial y)/(partial x))^2 - 1/8 ((partial y)/(partial x))^4 + dots - 1 = 1/2 ((partial y)/(partial x))^2 - 1/8 ((partial y)/(partial x))^4 + dots
-$
-
-如果只保留到二阶项（即与波动方程一致的近似层次），则势能简化为：
-
-$
-  Delta P_("linear") approx T_0/2 ((partial y)/(partial x))^2 Delta x
-$
-
-对应的线性化总能量为：
-
-$
-  E_("linear")(t) = integral_0^(L_0) ( mu_0/2 ((partial y)/(partial t))^2 + T_0/2 ((partial y)/(partial x))^2 ) d x
-$
-
-#abstract(title: [线性化波动方程的严格守恒量])[
-  对于由线性波动方程 $(partial^2 y)/(partial t^2) = c^2 (partial^2 y)/(partial x^2)$ 描述的系统，$E_("linear")(t)$ 是严格的守恒量。直接对 $E_("linear")$ 求时间导数，代入波动方程，可以证明 $(d E_"linear") /(d t) = 0$。
-]
-
-
-== 非线性势能的能量波动
-
-如果坚持使用非线性势能 $T_0 (sqrt(1 + ((partial y)/(partial x))^2) - 1)$，而运动方程却是线性的，那么 $E(t)$ 将不再严格守恒，而是在 $E(0)$ 附近出现微小波动。
-
-$
-  E(t) = E_("linear")(t) + underbrace(integral_0^(L_0) lr(- T_0/8 ((partial y)/(partial x))^4 + dots, size: #150%) d x, "非线性修正项（小量）")
-$
-
-由于非线性修正项的存在，$E(t)$ 随时间的变化幅度约为：
-
-$ (|E(t) - E(0)|)/(E(0)) approx O(max |(partial y)/(partial x)|^2) $
-
-== 误差的定量估计
-
-对于小振幅，令 $"varepsilon" = max |(partial y)/(partial x)|$ 为最大斜率，则：
-
-$ sqrt(1 + "varepsilon"^2) - 1 = 1/2 "varepsilon"^2 - 1/8 "varepsilon"^4 + O("varepsilon"^6) $
-
-线性化势能（只取 $1/2 "varepsilon"^2$）的相对误差约为：
-
-$ (|Delta P - Delta P_("linear")|)/(Delta P) approx (1/8 "varepsilon"^4)/(1/2 "varepsilon"^2) = "varepsilon"^2/4 $
-
-#text(
-  size: 9pt,
-)[以默认参数为例：$A_0 = 0.01$ m，$x_0 = 0.06$ m（$x_("rel")=0.1$），左侧最大斜率为 $A_0/x_0 approx 0.167$。此时非线性项的相对误差约为 $(0.167)^2/4 approx 0.7%$，完全可以接受。]
-
-== 本文的处理方式
-
-本文采用的处理方式是**在波动方程中保持线性近似，在能量表达式中保留完整的非线性形式**。这种做法的合理性在于：
-
-- $t=0$ 时刻的计算不涉及波动方程的时间演化，$E(0)$ 只依赖于初始几何形状，无论使用线性化势能还是非线性势能，计算结果都是精确的（因为 $E(0)$ 是纯几何量）。
-- 在小振幅条件下，非线性修正项是高阶小量，$E(t)$ 围绕 $E(0)$ 的波动幅度很小。
-- 在物理直觉上，非线性势能表达式更直观地反映了"琴弦被拉伸产生势能"的物理图像。
-
-但如果要严格验证能量守恒，或进行高精度数值模拟，则应该使用与波动方程一致的线性化势能表达式 $T_0/2 ((partial y)/(partial x))^2$。
+势能表达式与波动方程之间的近似层次需要保持一致。
 
 
 
@@ -955,6 +873,32 @@ $ b_n = 2/L_0 integral_(0)^(L_0) y(x,0) sin(frac(n pi x, L_0)) d x $
 
 
 
+= 附录三：数学常识
+
+#abstract(title: [带佩亚诺型余项的泰勒公式])[
+  定理：设函数 $f(x)$ 在点 $x_0$ 的某邻域内具有 $n$阶导数（足够光滑），则在该邻域内，可以使用一个多项式来近似代替这个函数： \
+  $f(x)= f(x_0) + f'(x_0)(x - x_0) + (f''(x_0))/(2!) (x - x_0)^2 + dots + (f^((n))(x_0))/(n!) (x - x_0)^n + O((x - x_0)^(n+1))$  \ \
+  记：$f(x)= sqrt(1 + x^2)$ \
+  导数：$f'(x) = display(x / sqrt(1 + x^2))$ #h(2cm)
+  $f''(x) = display(1 / (1 + x^2)^(3/2))$ #h(2cm) $f'''(x) = display((- 3 x) / (1 + x^2)^(5/2))$ #h(2cm)
+  
+  则，在 $x=0$的某个邻域内： \
+  $display(
+    f(x) & = f(0) + f'(0)(x-0) + (f''(0))/(2!) (x - 0)^2 + dots + (f^((n))(0))/(n!) (x - 0)^n + O((x - 0)^(n+1)) \
+    & = 1 + x^2 /2 + O(x^4)
+  )$
+  
+  则： $display(sqrt(1 + x^2) -1 & = x^2 /2 + O(x^4))$
+]
+
+
+#abstract(title: [大$O$记号 与小$o$记号])[
+  当 $x -> 0$ 时，二者都用于描述无穷小的阶数，但有本质区别：
+  + $O(x^n)$：存在常数 $C>0$ 使得 $|O(x^n)| <= C |x|^n$。即该量至少与 $x^n$ 同阶（可能是 $x^n$、$x^(n+1)$ 或更高阶）。
+  + $o(x^n)$：满足 $display(lim_(x -> 0) (o(x^n))/(x^n) = 0)$。即该量严格比 $x^n$ 更高阶。
+  
+  例：$x^4 = O(x^3)$ 成立（因为 $|x^4| <= C|x^3|$），但 $x^4 = o(x^3)$ 也成立（因为 $x^4/x^3 = x -> 0$）。而 $x^3 = O(x^3)$ 成立，但 $x^3 = o(x^3)$ 不成立。
+]
 
 
 
