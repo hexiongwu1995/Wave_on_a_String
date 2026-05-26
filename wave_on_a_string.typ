@@ -587,11 +587,14 @@ $
 根据动能的定义： $ Delta K & = 1/2 mu_0 Delta x ( (partial y)/(partial t) )^2 \
         & = mu_0 /2 ( (partial y)/(partial t) )^2 Delta x $
 
-#abstract(title:[质量和弧长的近似])[
-    $ Delta m & approx mu_0 Delta s \ & approx mu_0 Delta x $
+#abstract(title: [质量和弧长的近似])[
+  $
+    Delta m & approx mu_0 Delta s \
+            & approx mu_0 Delta x
+  $
   - 将线密度近似为 $mu_0$，即认为振动过程中弦的线密度不发生变化。
   - 将弧长$Delta s$近似为水平距离 $Delta x$。
-我不知道这种近似是否合理，尤其是弧长$Delta s$近似为水平距离$Delta x$的近似是否合理，因为在势能的定义中，$Delta s - Delta x approx 1/2 ((partial y)/(partial x))^2 Delta x$
+  我不知道这种近似是否合理，尤其是弧长$Delta s$近似为水平距离$Delta x$的近似是否合理，因为在势能的定义中，$Delta s - Delta x approx 1/2 ((partial y)/(partial x))^2 Delta x$
 ]
 
 根据势能的定义：
@@ -610,11 +613,11 @@ $
 
 
 
-#abstract(title:[泰勒展开近似])[
-$sqrt(1 + ((partial y)/(partial x))^2) - 1 & = 1/2 ((partial y)/(partial x) )^2 + O( ((partial y)/(partial x) )^4) \
- & approx 1/2 ((partial y)/(partial x) )^2$
+#abstract(title: [泰勒展开近似])[
+  $sqrt(1 + ((partial y)/(partial x))^2) - 1 & = 1/2 ((partial y)/(partial x) )^2 + O( ((partial y)/(partial x) )^4) \
+  & approx 1/2 ((partial y)/(partial x) )^2$
 
- 为什么这里选择保留到二阶小量级的近似？
+  为什么这里选择保留到二阶小量级的近似？
 ]
 
 则：$ Delta P approx T_0 /2 ((partial y)/(partial x))^2 Delta x $
@@ -625,15 +628,15 @@ $sqrt(1 + ((partial y)/(partial x))^2) - 1 & = 1/2 ((partial y)/(partial x) )^2 
   势能：
   - 将张力近似为 $T_0$
   - 将弧长近似为 $Delta s = sqrt((Delta x)^2 + (Delta y)^2)$
-  
+
   我不知道这种近似是否合理，与之前波动方程推导中使用的小角度近似是否存在矛盾？
 ]
 
-总能量 $ E(t) &= integral_0^(L_0) inline( (mu_0 /2 ( (partial y)/(partial t) )^2 + T_0 /2 ((partial y)/(partial x))^2 ) d x) $
+总能量 $ E(t) & = integral_0^(L_0) inline((mu_0 /2 ( (partial y)/(partial t) )^2 + T_0 /2 ((partial y)/(partial x))^2 ) d x) $
 
 #question()[
   在$x=x_0$处，$(partial y)/(partial x)$不存在，那么，上面这个等式还是正确的吗？
-  
+
   答：仍然正确。 黎曼（或勒贝格）积分中，被积函数在有限个孤立点处的值（或不存在）不影响积分值。初始三角波仅在 $x=x_0$ 这一个点处导数不存在，在计算总能量时，积分区间可以避开该点（或理解为该点的贡献为零），因此 E(0) 的积分表达式仍然有效。
 ]
 
@@ -649,33 +652,223 @@ $
 $
 
 将这两个等式代入总能量的公式得：$ E(0)
-&= integral_0^(x_0) inline(T_0 /2 (A_0^2)/(x_0^2)  ) d x + integral_(x_0)^(L_0) inline(T_0 /2 (A_0^2)/((L_0 - x_0)^2)) d x \ 
+&= integral_0^(x_0) inline(T_0 /2 (A_0^2)/(x_0^2)) d x + integral_(x_0)^(L_0) inline(T_0 /2 (A_0^2)/((L_0 - x_0)^2)) d x \
 &= (T_0 A_0^2 L_0)/(2 x_0 (L_0 - x_0)) $
 
 #abstract(title: [初始总能量 $E(0)$ 的物理含义])[
-  
+
   - 与振幅平方成正比：$E(0) #sym.prop A_0^2$，这是简谐系统（胡克定律型）的典型特征，与弹簧振子、LC 振荡电路等系统的能量形式一致。
-  
+
   - 与预张力成正比：$E(0) #sym.prop T_0$，张力越大，琴弦越"硬"，在相同初始形变下储存的弹性势能就越大。
-  
+
   - 拨弦位置 $x_0$ 的影响：分母中出现因子 $x_0 (L_0 - x_0)$，意味着：
     - 当 $x_0 #sym.arrow 0$ 或 $x_0 #sym.arrow L_0$（在端点附近拨弦）时，$E(0) #sym.arrow infinity$，表明要在端点附近将弦拨到指定高度 $A_0$ 需要极大的能量——这符合直觉，因为靠近端点时弦的初始斜率 $A_0 / x_0$ 趋于无穷大。
 
     - 表达式关于 $x_0 = L_0/2$ 对称，这符合物理对称性：从左侧 $x_0$ 处拨弦与从右侧 $L_0-x_0$ 处拨弦，结果完全相同。
-  
+
     - 几何意义的验证：从斜率角度理解，$E(0)$ 还可写为：
     $
       E(0) = T_0/2 [ underbrace((A_0/x_0)^2, "左侧斜率平方") dot x_0 + underbrace((A_0/(L_0 - x_0))^2, "右侧斜率平方") dot (L_0 - x_0) ]
     $
-    即左右两段弦各自的弹性势能之和，每段势能 = $T_0/2  dot ("斜率")^2 dot "段长"$，几何直观性极强。
+    即左右两段弦各自的弹性势能之和，每段势能 = $T_0/2 dot ("斜率")^2 dot "段长"$，几何直观性极强。
 ]
 
 = 近似的合理性与一致性
 
+本文在多个环节使用了近似处理。这些近似看似零散，各有不同的精度，实际上它们全部建立在同一个核心假设之上——即"小振幅假设"。本章将从系统性角度出发，阐述这些近似之间的内在联系、它们的误差阶数，以及为什么它们在整体上是一致的。
 
+== 概述：什么是"合理的近似"？
 
+一个近似是否合理，不是由它"保留了多少项"决定的，而是由以下三个标准共同决定：
 
-#pagebreak()
++ *误差可量化*：能够明确给出近似的误差量级（即忽略了哪些阶数的小量），从而评估它对最终结果的影响是否在可接受范围内。
++ *计算可处理*：近似后的方程应当能够求解（或至少能够进行有效的数学分析），否则近似就失去了实际意义。
++ *一致性*：在同一物理问题中，不同环节的近似不能相互矛盾——即它们应当在同一小参数体系下成立，不能出现在一个环节保留到二阶项而在另一个环节却错误地丢弃了同阶项的情况。
+
+== 核心小参数
+
+在整个线性波动理论中，真正起作用的"小参数"只有一个，即初始振幅与弦长的比值：
+
+$ epsilon = A_0 / L_0 $
+
+这是一个无量纲的小量。根据本文的模型假设，$epsilon$ 的量级约为 $10^(-2)$（即 $A_0 / L_0 < 1%$）。
+
+在此基础上，可以进一步定义"相对斜率"：
+
+$ (partial y)/(partial x) = O(epsilon) $
+
+这意味着弦上各点的斜率与 $epsilon$ 同阶。这一点至关重要——它决定了后续所有近似的阶数。
+
+#abstract(title: [小参数 $epsilon$ 的物理含义])[
+  - $epsilon$ 是本文中唯一的"小参数"，所有近似都是在 $epsilon << 1$ 的前提下进行的。
+  - 在初始三角波形状中，左侧斜率绝对值为 $A_0/x_0$，右侧为 $A_0/(L_0 - x_0)$。由于 $x_0$ 和 $L_0 - x_0$ 均与 $L_0$ 同阶（除非拨弦位置极端靠近端点），因此 $partial y/partial x = O(epsilon)$ 在所有位置成立。
+  - 当拨弦位置 $x_0$ 非常靠近端点（例如 $x_0 / L_0 << 1$）时，左侧斜率 $A_0/x_0$ 远大于 $epsilon$，此时小振幅假设本身已不成立（因为斜率太大，小角度近似失效）。但在 $x_0$ 不极端靠近端点的正常范围内，$O(epsilon)$ 的估计是合理的。
+]
+
+此外，还可以定义另一个间接小量：斜率平方 $((partial y)/(partial x))^2 = O(epsilon^2)$，它在能量计算中起着核心作用。
+
+== 近似阶数的一致性分析
+
+有了 $epsilon$ 这个标准尺子，我们就可以将全文所有近似统一到同一套量级框架下，逐一分析它们的误差阶数。
+
+=== 近似一览表
+
+#{
+  set text(size: 0.8em)
+
+  table(
+    columns: 4,
+    inset: 0.5em,
+    fill: (_, y) => { if y == 0 { rgb("#79bdc946") } else { none } },
+    align: left + horizon,
+    table.header("近似内容", "使用的等式或位置", "近似结果", "误差阶数"),
+    [$cos theta approx 1$], [张力竖直分量 $T_y$ 的推导], [忽略 $theta^2$ 及以上项], [$O(epsilon^2)$],
+
+    [$sin theta approx theta$],
+    [$T_y$ 推导（隐含在 $tan theta approx (partial y)/(partial x)$ 中）],
+    [忽略 $theta^3$ 及以上项],
+    [$O(epsilon^3)$],
+
+    [$tan theta approx (partial y)/(partial x)$], [$T_y$ 和回复力推导], [将几何斜率直接等同于正切值], [$O(epsilon^2)$],
+
+    [$T(x,t) approx T_0$],
+    [波动方程推导、$T_y$推导、回复力推导、能量计算],
+    [将张力的模近似为静止预张力],
+    [$O(epsilon^2)$],
+
+    [$L(t) approx L_0$], [波动方程推导], [忽略弦的伸长], [$O(epsilon^2)$],
+
+    [$mu(x, t) approx mu_0$], [微元质量计算], [忽略线密度变化], [$O(epsilon^2)$],
+
+    [$Delta s approx Delta x$], [动能中微元质量的计算], [将弧长近似为水平投影], [$O(epsilon^2)$],
+
+    [$Delta s - Delta x approx 1/2 ((partial y)/(partial x))^2 Delta x$],
+    [势能中伸长量的计算],
+    [泰勒展开保留到二阶],
+    [误差 $O(epsilon^4)$],
+
+    [初始形状近似为三角形], [傅里叶系数计算], [用分段线性函数近似真实初始形状], [取决于实际拨弦方式],
+  )
+}
+
+=== 关键结论：所有近似在 $O(epsilon^2)$ 阶一致
+
+从上表可以清楚地看出：
+
+1. *波动方程推导*中的近似（$cos theta approx 1$、$T approx T_0$、$L approx L_0$、$mu approx mu_0$）都忽略的是 $O(epsilon^2)$ 及更高阶的小量。
+
+2. *能量计算*中的近似同样忽略 $O(epsilon^2)$ 及以上项：
+  - 动能中取 $Delta s approx Delta x$，误差为 $O(epsilon^2)$ 量级
+  - 势能中取 $Delta s - Delta x approx 1/2 ((partial y)/(partial x))^2 Delta x$，误差为 $O(epsilon^4)$ 量级
+
+  注意势能保留到二阶项 $(partial y)/(partial x)^2$ 而动能忽略弧长变化，这并不是矛盾——因为在动能中，弧长近似产生的 $O(epsilon^2)$ 误差直接乘以 $(partial y)/(partial t)^2$（它本身也是 $O(epsilon^2)$ 量级），因此对总动能产生的绝对误差是 $O(epsilon^4)$ 量级，与势能展开的误差阶数完全一致。
+
+3. 整篇文档中的所有近似在*同一套小参数体系*下是*自洽*的：它们都精确到 $O(epsilon^2)$ 量级，忽略了 $O(epsilon^4)$ 及更高阶的项。
+
+== 为什么势能中保留到二阶、而动能中弧长只取零阶？
+
+这是很多读者最容易困惑的地方。让我们用量级分析来澄清：
+
+=== 动能计算中的弧长近似
+
+动能表达式为：
+
+$ Delta K = 1/2 mu_0 Delta s ((partial y)/(partial t))^2 $
+
+其中 $Delta s$ 为微元弧长。若将 $Delta s$ 精确展开：
+
+$
+  Delta s = sqrt((Delta x)^2 + (Delta y)^2) = Delta x sqrt(1 + ((partial y)/(partial x))^2) = Delta x (1 + 1/2 ((partial y)/(partial x))^2 + O(epsilon^4))
+$
+
+代入动能表达式：
+
+$ Delta K = 1/2 mu_0 Delta x (1 + O(epsilon^2)) ((partial y)/(partial t))^2 $
+
+由于 $(partial y)/(partial t)^2$ 本身是 $O(epsilon^2)$ 量级（因为 $y$ 与 $epsilon$ 同阶，对时间求导不改变量级），因此弧长修正项 $1/2 ((partial y)/(partial x))^2 = O(epsilon^2)$ 乘以 $(partial y)/(partial t)^2 = O(epsilon^2)$ 后，贡献为 $O(epsilon^4)$ 量级——这已经超出了我们保留的精度范围。
+
+#abstract(title: [为什么动能中 $Delta s approx Delta x$ 就够了])[
+  简言之：*弧长修正本身是 $O(epsilon^2)$，但它乘上了一个同样是 $O(epsilon^2)$ 的物理量（速度平方），结果变成了 $O(epsilon^4)$ 量级的修正，在 $O(epsilon^2)$ 精度理论中可以被忽略。*
+]
+
+=== 势能计算中的弧长近似
+
+势能的定义是张力乘以伸长量：
+
+$ Delta P = T_0 (Delta s - Delta x) $
+
+这里的情况与动能完全不同——我们需要的是 $Delta s - Delta x$ 本身，而不是 $Delta s$。正是由于动能中使用的 $Delta s approx Delta x$ 近似，才使得 $Delta s - Delta x$ 成为一个重要的修正量。
+
+$
+  Delta s - Delta x = Delta x (sqrt(1 + ((partial y)/(partial x))^2) - 1) = Delta x (1/2 ((partial y)/(partial x))^2 + O(epsilon^4))
+$
+
+这里 $((partial y)/(partial x))^2 = O(epsilon^2)$，而 $Delta x$ 是一阶小量，因此 $Delta s - Delta x = O(epsilon^2 Delta x)$，即相对于 $Delta x$ 是 $O(epsilon^2)$ 量级的修正——这正是势能中必须保留二阶项的原因。
+
+#abstract(title: [两种"弧长近似"的本质区别])[
+  - *动能中的弧长*：使用的是 $Delta s$ 本身（零阶项 $Delta x$），弧长修正 $1/2 ((partial y)/(partial x))^2 Delta x = O(epsilon^2 Delta x)$ 被丢弃。这个修正再乘上速度平方后，最终贡献是 $O(epsilon^4)$，安全可忽略。
+  - *势能中的弧长*：使用的是 $Delta s - Delta x$（零阶项抵消后的净伸长），其首项就是 $1/2 ((partial y)/(partial x))^2 Delta x = O(epsilon^2 Delta x)$，必须保留，否则势能恒等于零。
+
+  这两种处理不仅不矛盾，反而是一体两面、高度自洽的。
+]
+
+=== 泰勒展开保留到二阶的合理性
+
+在势能表达式中，我们对 $sqrt(1 + x^2)$ 在 $x=0$ 附近进行泰勒展开（其中 $x = (partial y)/(partial x) = O(epsilon)$）：
+
+$ sqrt(1 + x^2) - 1 = 1/2 x^2 - 1/8 x^4 + O(x^6) $
+
+保留到 $x^2$ 项（即 $epsilon^2$ 阶），舍弃 $x^4$ 及以上项（即 $epsilon^4$ 阶及更高）。在 $epsilon approx 10^(-2)$ 的量级下，$epsilon^4 approx 10^(-8)$，这是一个极其微小的量——无论从数学严谨性还是物理精度来看，忽略它都是完全合理的。
+
+== 对小角度近似的进一步说明
+
+在波动方程推导中，我们使用了 $cos theta approx 1$ 和 $sin theta approx theta$ 的近似。这些近似与 $tan theta approx (partial y)/(partial x)$ 是一致的。
+
+由几何关系：
+
+$ tan theta = (partial y)/(partial x) $
+
+在 $theta << 1$ 时：
+
+$ cos theta = 1 - theta^2/2 + O(theta^4) $
+$ sin theta = theta - theta^3/6 + O(theta^5) $
+$ tan theta = theta + theta^3/3 + O(theta^5) $
+
+由于 $theta approx (partial y)/(partial x) = O(epsilon)$，因此：
+- $cos theta approx 1$ 的误差是 $O(epsilon^2)$
+- $tan theta approx (partial y)/(partial x)$ 的误差是 $O(epsilon^3)$
+- $sin theta approx theta = arctan(partial y)/(partial x)$ 也是 $O(epsilon^3)$ 误差
+
+全部在 $O(epsilon^2)$ 精度量级以内，一致。
+
+#question(
+  title: [$cos theta approx 1$ 的误差是 $O(epsilon^2)$，而 $sin theta approx theta$ 的误差是 $O(epsilon^3)$，它们"精度不同"会导致问题吗？],
+)[
+  不会。在最终的波动方程中：
+
+  - $cos theta approx 1$ 出现在张力水平分量的计算中（$T_x = T cos theta$），它所贡献的 $O(epsilon^2)$ 误差乘以张力 $T$ 后进入波动方程的系数。
+  - $sin theta approx theta$ 出现在 $y$ 方向受力分析中，它的 $O(epsilon^3)$ 误差乘以张力后，经过与 $Delta x$ 的比值处理，最终贡献为 $O(epsilon^2)$ 量级。
+
+  两者对最终波动方程的误差贡献均在 $O(epsilon^2)$ 量级，完全一致。不同中间步骤中不同阶数的近似，经过后续运算后可能会归并到同一精度量级——这正是进行量级分析的意义所在。
+]
+
+== 不确定性的量化
+
+以上所有的量级分析都建立在"量级估计"的基础上，而非严格的误差界。实际应用中，可以引入一个不确定度因子 $delta$ 来粗略估计近似模型的适用范围：
+
+$ delta = max((A_0)/(L_0), (A_0)/(x_0), (A_0)/(L_0 - x_0)) $
+
+当 $delta <= 0.05$（即最大相对斜率不超过 5%）时，线性近似模型预测的误差应在 $O(delta^2) approx 0.25%$ 量级以内。若 $delta$ 超过 0.1，则非线性效应开始变得显著，本文的线性模型不再可靠。
+
+== 总结
+
+#abstract(title: [全文近似的一致性总结])[
+  + 所有近似建立在同一小参数 $epsilon = A_0 / L_0 << 1$ 之上。
+  + 波动方程推导、张力分量计算、回复力推导、能量计算，均在同一精度量级（$O(epsilon^2)$）下自洽地保留了主要物理效应。
+  + 动能中弧长取零阶、势能中伸长量取二阶，是因为两项的物理起点不同（一个从 $Delta s$ 出发，一个从 $Delta s - Delta x$ 出发），但最终的能量精度一致：总能量精确到 $O(epsilon^2 Delta x)$，误差为 $O(epsilon^4 Delta x)$。
+  + 所有的"矛盾"感受，源于不同环节中看似不同的近似处理。一旦引入统一的量级分析框架，这些近似就呈现出清晰的自洽性。
+  + 在 $epsilon$ 足够小（$<= 0.05$）的范围内，线性近似模型是可靠且物理合理的。
+]
 
 
 = 附录一：周期函数 $f(x)$ 的傅里叶级数
@@ -891,13 +1084,13 @@ $ b_n = 2/L_0 integral_(0)^(L_0) y(x,0) sin(frac(n pi x, L_0)) d x $
   记：$f(x)= sqrt(1 + x^2)$ \
   导数：$f'(x) = display(x / sqrt(1 + x^2))$ #h(2cm)
   $f''(x) = display(1 / (1 + x^2)^(3/2))$ #h(2cm) $f'''(x) = display((- 3 x) / (1 + x^2)^(5/2))$ #h(2cm)
-  
+
   则，在 $x=0$的某个邻域内： \
   $display(
     f(x) & = f(0) + f'(0)(x-0) + (f''(0))/(2!) (x - 0)^2 + dots + (f^((n))(0))/(n!) (x - 0)^n + O((x - 0)^(n+1)) \
     & = 1 + x^2 /2 + O(x^4)
   )$
-  
+
   则： $display(sqrt(1 + x^2) -1 & = x^2 /2 + O(x^4))$
 ]
 
@@ -906,7 +1099,7 @@ $ b_n = 2/L_0 integral_(0)^(L_0) y(x,0) sin(frac(n pi x, L_0)) d x $
   当 $x -> 0$ 时，二者都用于描述无穷小的阶数，但有本质区别：
   + $O(x^n)$：存在常数 $C>0$ 使得 $|O(x^n)| <= C |x|^n$。即该量至少与 $x^n$ 同阶（可能是 $x^n$、$x^(n+1)$ 或更高阶）。
   + $o(x^n)$：满足 $display(lim_(x -> 0) (o(x^n))/(x^n) = 0)$。即该量严格比 $x^n$ 更高阶。
-  
+
   例：$x^4 = O(x^3)$ 成立（因为 $|x^4| <= C|x^3|$），但 $x^4 = o(x^3)$ 也成立（因为 $x^4/x^3 = x -> 0$）。而 $x^3 = O(x^3)$ 成立，但 $x^3 = o(x^3)$ 不成立。
 ]
 
