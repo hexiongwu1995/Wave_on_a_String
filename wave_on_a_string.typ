@@ -769,6 +769,123 @@ $ (partial^2 y)/(partial x^2) = 1/c^2 (partial^2 y)/(partial t^2) quad (c = sqrt
 
 = 小参数检验与量级分析
 
+本文所建立的弦上波线性模型依赖于小振幅假设 $A_0/L_0 lt.double 1$。本节以文档中定义的默认参数为例，对各近似引入的小参数进行系统检验与量级分析。
+
+== 小参数 $epsilon$ 的定义与典型取值
+
+定义无量纲小参数
+
+$ epsilon = A_0 / L_0 $
+
+代入默认参数：
+
+$ epsilon = 0.01 / 0.6 = 1/60 approx 0.0167 $
+
+该值满足文档中 $A_0/L_0 < 0.02$ 的典型实验要求。
+
+== 最大斜率与倾角的小参数检验
+
+初始三角波的最大斜率为
+
+$ m = max(A_0/x_0, A_0/(L_0 - x_0)) $
+
+对于默认相对拨弦位置 $x_"rel" = 0.1$，有 $x_0 = 0.06$ m，则
+
+$ m = 0.01 / 0.06 approx 0.1667 = 10 epsilon $
+
+对应的最大倾角满足
+
+$ theta_max = arctan(m)  approx 0.165 "rad" approx 9.46^degree $
+
+此时
+
+$ cos theta_max approx 0.986 $，相对偏差约 $1.4%$
+
+这表明小角度近似 $cos theta approx 1$ 的相对误差在可接受范围内（<$2%$）。
+
+当 $x_"rel"$ 趋近于 $0.5$ 时，$m approx 2 epsilon approx 0.033$，$theta_max$ 更小，近似精度显著提高。
+
+== 势能泰勒展开余项的量级分析
+
+势能近似中使用了泰勒展开
+
+$ sqrt(1 + s^2) - 1 = 1/2 s^2 + R_4(s) $
+
+其中余项满足 $R_4(s) = O(s^4)$，相对误差量级为 $O(s^2)$。
+
+取最不利情况 $s = m = 10 epsilon$，则
+
+$ O(s^2) = O(100 epsilon^2) approx 100 times (0.0167)^2 approx 0.0279 quad (2.8%) $
+
+当拨弦位置接近中点时，$m approx 2 epsilon$，相对误差降至
+
+$ O(4 epsilon^2) approx 0.0011 quad (0.11%) $
+
+因此，对于极端拨弦位置（$x_0 -> 0$ 或 $L_0$），线性模型的势能近似误差与 $epsilon^2$ 同阶且系数较大，需谨慎使用或改用非线性模型。
+
+== 张力模长变化与 $T_x approx T_0$ 的量级检验
+
+由微元受力分析知张力水平分量 $T_x$ 为常数，而实际张力模长
+
+$ |T| = T_x / (cos theta) approx T_x /(1 - 1/2 theta^2 + O(theta^4)) ??? $
+
+相对变化量级为
+
+$ ( Delta |T| )/ T_x = O(theta^2) = O(m^2) = O(100 epsilon^2) approx 0.0279 quad (2.8%) ??? $
+
+因此，将 $|T(x,t)| approx T_0$ 的近似相对误差约 $3%$，与小参数 $epsilon$ 的平方同阶。
+
+== 弦长伸长与线密度变化的量级
+
+弦的实际几何伸长量为
+
+$ Delta L approx integral_0^(L_0) 1/2 ((partial y) / (partial x))^2 d x approx 1/2 m^2 dot (L_0 / 2) = O(epsilon^2 L_0) $
+
+相对伸长
+
+$ (Delta L) / L_0 = O(epsilon^2) approx 0.00028 $
+
+线密度相对变化同样为 $O(epsilon^2)$ 量级。在本文模型中，由于假设预张力远大于由伸长引起的张力增量，故可将 $mu(x, t) approx mu_0$ 和 $L(t) approx L_0$。
+
+== 波动方程线性化误差的量级
+
+波动方程推导中忽略了 $x$ 方向加速度、非线性张力变化以及高阶几何效应。这些被忽略项的量级均为 $O(epsilon^2)$，相对于保留的主项 $O(1)$，线性波动方程
+
+$ (partial^2 y)/(partial x^2) = 1/c^2 (partial^2 y)/(partial t^2) $
+
+的相对截断误差为 $O(epsilon^2) approx 0.03$。
+
+== 傅里叶级数截断误差的量级
+
+由傅里叶系数公式知 $b_n prop 1/n^2$，部分和的截断误差估计为
+
+$ E_N approx integral_N^infinity (C / n^2) d n = C / N $
+
+取文档默认截断项数 $N_"terms" = 50$，相对误差约 $2%$，与 $epsilon$ 同阶。
+
+== 波速、周期与频率的量级
+
+波速
+
+$ c = sqrt(T_0 / mu_0) = sqrt(80 / 0.01) = sqrt(8000) approx 89.44 "m/s" $
+
+基频与周期
+
+$ f_1 = c / (2 L_0) approx 89.44 / 1.2 approx 74.53 "Hz" $
+
+$ T_1 = 1/f_1 approx 0.0134 "s" $
+
+在默认参数下，一个周期内波传播距离约 $c T_1 = 1.2 "m"$，恰好为 $2 L_0$，与驻波节点结构一致。
+
+== 结论
+
+通过以上系统的小参数检验与量级分析，本文模型在默认参数下各近似相对误差均控制在 $1% ~ 3%$ 量级，满足工程精度与教学演示要求。当满足
+
+$ epsilon < 0.01 quad "且" quad x_"rel" in [0.2, 0.8] $
+
+时，最大斜率 $m < 5 epsilon$，各近似相对误差可进一步降低至 $0.5%$ 以下。若需更高精度，应引入非线性修正或采用有限元数值方法。
+
+
 
 
 
