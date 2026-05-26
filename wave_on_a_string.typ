@@ -681,9 +681,9 @@ $
 
 一个近似是否合理，不是由它"保留了多少项"决定的，而是由以下三个标准共同决定：
 
-+ *误差可量化*：能够明确给出近似的误差量级（即忽略了哪些阶数的小量），从而评估它对最终结果的影响是否在可接受范围内。
-+ *计算可处理*：近似后的方程应当能够求解（或至少能够进行有效的数学分析），否则近似就失去了实际意义。
-+ *一致性*：在同一物理问题中，不同环节的近似不能相互矛盾——即它们应当在同一小参数体系下成立，不能出现在一个环节保留到二阶项而在另一个环节却错误地丢弃了同阶项的情况。
++ 误差可量化：能够明确给出近似的误差量级（即忽略了哪些阶数的小量），从而评估它对最终结果的影响是否在可接受范围内。
++ 计算可处理：近似后的方程应当能够求解（或至少能够进行有效的数学分析），否则近似就失去了实际意义。
++ 一致性：在同一物理问题中，不同环节的近似不能相互矛盾——即它们应当在同一小参数体系下成立，不能出现在一个环节保留到二阶项而在另一个环节却错误地丢弃了同阶项的情况。
 
 == 核心小参数
 
@@ -701,7 +701,7 @@ $ (partial y)/(partial x) = O(epsilon) $
 
 #abstract(title: [小参数 $epsilon$ 的物理含义])[
   - $epsilon$ 是本文中唯一的"小参数"，所有近似都是在 $epsilon << 1$ 的前提下进行的。
-  - 在初始三角波形状中，左侧斜率绝对值为 $A_0/x_0$，右侧为 $A_0/(L_0 - x_0)$。由于 $x_0$ 和 $L_0 - x_0$ 均与 $L_0$ 同阶（除非拨弦位置极端靠近端点），因此 $partial y/partial x = O(epsilon)$ 在所有位置成立。
+  - 在初始三角波形状中，左侧斜率绝对值为 $A_0/x_0$，右侧为 $A_0/(L_0 - x_0)$。由于 $x_0$ 和 $L_0 - x_0$ 均与 $L_0$ 同阶（除非拨弦位置极端靠近端点），因此 $(partial y)/(partial x) = O(epsilon)$ 在所有位置成立。
   - 当拨弦位置 $x_0$ 非常靠近端点（例如 $x_0 / L_0 << 1$）时，左侧斜率 $A_0/x_0$ 远大于 $epsilon$，此时小振幅假设本身已不成立（因为斜率太大，小角度近似失效）。但在 $x_0$ 不极端靠近端点的正常范围内，$O(epsilon)$ 的估计是合理的。
 ]
 
@@ -755,15 +755,15 @@ $ (partial y)/(partial x) = O(epsilon) $
 
 从上表可以清楚地看出：
 
-1. *波动方程推导*中的近似（$cos theta approx 1$、$T approx T_0$、$L approx L_0$、$mu approx mu_0$）都忽略的是 $O(epsilon^2)$ 及更高阶的小量。
+1. 波动方程推导中的近似（$cos theta approx 1$、$T approx T_0$、$L approx L_0$、$mu approx mu_0$）都忽略的是 $O(epsilon^2)$ 及更高阶的小量。
 
-2. *能量计算*中的近似同样忽略 $O(epsilon^2)$ 及以上项：
+2. 能量计算中的近似同样忽略 $O(epsilon^2)$ 及以上项：
   - 动能中取 $Delta s approx Delta x$，误差为 $O(epsilon^2)$ 量级
   - 势能中取 $Delta s - Delta x approx 1/2 ((partial y)/(partial x))^2 Delta x$，误差为 $O(epsilon^4)$ 量级
 
-  注意势能保留到二阶项 $(partial y)/(partial x)^2$ 而动能忽略弧长变化，这并不是矛盾——因为在动能中，弧长近似产生的 $O(epsilon^2)$ 误差直接乘以 $(partial y)/(partial t)^2$（它本身也是 $O(epsilon^2)$ 量级），因此对总动能产生的绝对误差是 $O(epsilon^4)$ 量级，与势能展开的误差阶数完全一致。
+  注意势能保留到二阶项 $((partial y)/(partial x))^2$ 而动能忽略弧长变化，这并不是矛盾——因为在动能中，弧长近似产生的 $O(epsilon^2)$ 误差直接乘以 $((partial y)/(partial t))^2$（它本身也是 $O(epsilon^2)$ 量级），因此对总动能产生的绝对误差是 $O(epsilon^4)$ 量级，与势能展开的误差阶数完全一致。
 
-3. 整篇文档中的所有近似在*同一套小参数体系*下是*自洽*的：它们都精确到 $O(epsilon^2)$ 量级，忽略了 $O(epsilon^4)$ 及更高阶的项。
+3. 整篇文档中的所有近似在同一套小参数体系下是自洽的：它们都精确到 $O(epsilon^2)$ 量级，忽略了 $O(epsilon^4)$ 及更高阶的项。
 
 == 为什么势能中保留到二阶、而动能中弧长只取零阶？
 
@@ -785,10 +785,10 @@ $
 
 $ Delta K = 1/2 mu_0 Delta x (1 + O(epsilon^2)) ((partial y)/(partial t))^2 $
 
-由于 $(partial y)/(partial t)^2$ 本身是 $O(epsilon^2)$ 量级（因为 $y$ 与 $epsilon$ 同阶，对时间求导不改变量级），因此弧长修正项 $1/2 ((partial y)/(partial x))^2 = O(epsilon^2)$ 乘以 $(partial y)/(partial t)^2 = O(epsilon^2)$ 后，贡献为 $O(epsilon^4)$ 量级——这已经超出了我们保留的精度范围。
+由于 $((partial y)/(partial t))^2$ 本身是 $O(epsilon^2)$ 量级（因为 $y$ 与 $epsilon$ 同阶，对时间求导不改变量级），因此弧长修正项 $1/2 ((partial y)/(partial x))^2 = O(epsilon^2)$ 乘以 $((partial y)/(partial t))^2 = O(epsilon^2)$ 后，贡献为 $O(epsilon^4)$ 量级——这已经超出了我们保留的精度范围。
 
 #abstract(title: [为什么动能中 $Delta s approx Delta x$ 就够了])[
-  简言之：*弧长修正本身是 $O(epsilon^2)$，但它乘上了一个同样是 $O(epsilon^2)$ 的物理量（速度平方），结果变成了 $O(epsilon^4)$ 量级的修正，在 $O(epsilon^2)$ 精度理论中可以被忽略。*
+  简言之：弧长修正本身是 $O(epsilon^2)$，但它乘上了一个同样是 $O(epsilon^2)$ 的物理量（速度平方），结果变成了 $O(epsilon^4)$ 量级的修正，在 $O(epsilon^2)$ 精度理论中可以被忽略。
 ]
 
 === 势能计算中的弧长近似
@@ -806,8 +806,8 @@ $
 这里 $((partial y)/(partial x))^2 = O(epsilon^2)$，而 $Delta x$ 是一阶小量，因此 $Delta s - Delta x = O(epsilon^2 Delta x)$，即相对于 $Delta x$ 是 $O(epsilon^2)$ 量级的修正——这正是势能中必须保留二阶项的原因。
 
 #abstract(title: [两种"弧长近似"的本质区别])[
-  - *动能中的弧长*：使用的是 $Delta s$ 本身（零阶项 $Delta x$），弧长修正 $1/2 ((partial y)/(partial x))^2 Delta x = O(epsilon^2 Delta x)$ 被丢弃。这个修正再乘上速度平方后，最终贡献是 $O(epsilon^4)$，安全可忽略。
-  - *势能中的弧长*：使用的是 $Delta s - Delta x$（零阶项抵消后的净伸长），其首项就是 $1/2 ((partial y)/(partial x))^2 Delta x = O(epsilon^2 Delta x)$，必须保留，否则势能恒等于零。
+  - 动能中的弧长：使用的是 $Delta s$ 本身（零阶项 $Delta x$），弧长修正 $1/2 ((partial y)/(partial x))^2 Delta x = O(epsilon^2 Delta x)$ 被丢弃。这个修正再乘上速度平方后，最终贡献是 $O(epsilon^4)$，安全可忽略。
+  - 势能中的弧长：使用的是 $Delta s - Delta x$（零阶项抵消后的净伸长），其首项就是 $1/2 ((partial y)/(partial x))^2 Delta x = O(epsilon^2 Delta x)$，必须保留，否则势能恒等于零。
 
   这两种处理不仅不矛盾，反而是一体两面、高度自洽的。
 ]
