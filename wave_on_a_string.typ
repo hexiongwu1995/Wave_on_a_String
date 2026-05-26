@@ -587,6 +587,13 @@ $
 根据动能的定义： $ Delta K & = 1/2 mu_0 Delta x ( (partial y)/(partial t) )^2 \
         & = mu_0 /2 ( (partial y)/(partial t) )^2 Delta x $
 
+#abstract(title:[质量和弧长的近似])[
+    $ Delta m & approx mu_0 Delta s \ & approx mu_0 Delta x $
+  - 将线密度近似为 $mu_0$，即认为振动过程中弦的线密度不发生变化。
+  - 将弧长$Delta s$近似为水平距离 $Delta x$。
+我不知道这种近似是否合理，尤其是弧长$Delta s$近似为水平距离$Delta x$的近似是否合理，因为在势能的定义中，$Delta s - Delta x approx 1/2 ((partial y)/(partial x))^2 Delta x$
+]
+
 根据势能的定义：
 
 #abstract(title: [势能的定义])[
@@ -624,7 +631,13 @@ $sqrt(1 + ((partial y)/(partial x))^2) - 1 & = 1/2 ((partial y)/(partial x) )^2 
 
 总能量 $ E(t) &= integral_0^(L_0) inline( (mu_0 /2 ( (partial y)/(partial t) )^2 + T_0 /2 ((partial y)/(partial x))^2 ) d x) $
 
-在$x=x_0$处，$(partial y)/(partial x)$不存在，那么，上面这个等式还是正确的吗？
+#question()[
+  在$x=x_0$处，$(partial y)/(partial x)$不存在，那么，上面这个等式还是正确的吗？
+  
+  答：仍然正确。 黎曼（或勒贝格）积分中，被积函数在有限个孤立点处的值（或不存在）不影响积分值。初始三角波仅在 $x=x_0$ 这一个点处导数不存在，在计算总能量时，积分区间可以避开该点（或理解为该点的贡献为零），因此 E(0) 的积分表达式仍然有效。
+]
+
+
 
 == 求解 $t=0$ 时刻的能量
 
@@ -657,10 +670,7 @@ $
     即左右两段弦各自的弹性势能之和，每段势能 = $T_0/2  dot ("斜率")^2 dot "段长"$，几何直观性极强。
 ]
 
-= 近似层次
-
-势能表达式与波动方程之间的近似层次需要保持一致。
-
+= 近似的合理性与一致性
 
 
 
