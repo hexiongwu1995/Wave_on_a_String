@@ -612,6 +612,28 @@ $
   关于误差估计的方法，详见"近似层次"一节。
 ]
 
+#abstract(title: [带佩亚诺型余项的泰勒公式])[
+  定理：设函数 $f(x)$ 在点 $x_0$ 的某邻域内具有 $n$阶导数（足够光滑），则在该邻域内，可以使用一个多项式来近似代替这个函数： \
+  $f(x)= f(x_0) + f'(x_0)(x - x_0) + (f''(x_0))/(2!) (x - x_0)^2 + dots + (f^((n))(x_0))/(n!) (x - x_0)^n + O((x - x_0)^(n+1))$  \
+  记：$f(x)= sqrt(1 + x^2)$ \
+  $f'(x) = display(x / sqrt(1 + x^2))$ #h(2cm)
+  $f''(x) = display(1 / (1 + x^2)^(3/2))$ #h(2cm) $f'''(x) = display((- 3 x) / (1 + x^2)^(5/2))$ #h(2cm)
+
+  则，在 $x=0$的某个邻域内： \
+  $display(f(x) & = f(0) + f'(0)(x-0) + (f''(0))/(2!) (x - 0)^2 + dots + (f^((n))(0))/(n!) (x - 0)^n + O((x - 0)^(n+1)) \
+  & = 1 + x^2 /2 + O(x^4) )$
+]
+
+#abstract(title: [大$O$记号 与小$o$记号])[
+  当 $x -> 0$ 时，二者都用于描述无穷小的阶数，但有本质区别：
+  + $O(x^n)$：存在常数 $C>0$ 使得 $|O(x^n)| <= C |x|^n$。即该量至少与 $x^n$ 同阶（可能是 $x^n$、$x^(n+1)$ 或更高阶）。
+  + $o(x^n)$：满足 $display(lim_(x -> 0) (o(x^n))/(x^n) = 0)$。即该量严格比 $x^n$ 更高阶。
+  
+  例：$x^4 = O(x^3)$ 成立（因为 $|x^4| <= C|x^3|$），但 $x^4 = o(x^3)$ 也成立（因为 $x^4/x^3 = x -> 0$）。而 $x^3 = O(x^3)$ 成立，但 $x^3 = o(x^3)$ 不成立。
+]
+
+
+
 总能量 $ E(t) &= integral_0^(L_0) inline((mu_0 /2 ( (partial y)/(partial t) )^2 + T_0 ( sqrt(1 + ((partial y)/(partial x))^2) -1 ) )) d x \ &= integral_0^(x_0) inline((mu_0 /2 ( (partial y)/(partial t) )^2 + T_0 ( sqrt(1 + ((partial y)/(partial x))^2) -1 ) )) d x + integral_(x_0)^(L_0) inline((mu_0 /2 ( (partial y)/(partial t) )^2 + T_0 ( sqrt(1 + ((partial y)/(partial x))^2) -1 ) )) d x $
 
 这个等式是正确的吗？
