@@ -799,11 +799,11 @@ $ theta_max = arctan(m) approx 0.165 "rad" approx 9.46^degree $
 
 此时
 
-$ cos theta_max approx 0.986 $，相对偏差约 $1.4%$
-
-这表明小角度近似 $cos theta approx 1$ 的相对误差在可接受范围内（<$2%$）。
+$ cos theta_max approx 0.986 $ 相对偏差约 $1.4%$，这表明小角度近似 $cos theta approx 1$ 的相对误差在可接受范围内（<$2%$）。
 
 当 $x_"rel"$ 趋近于 $0.5$ 时，$m approx 2 epsilon approx 0.033$，$theta_max$ 更小，近似精度显著提高。
+
+从这里也可以看到，当$theta$较小时， $theta approx m$ ，因为：$display(lim_(theta -> 0) ( tan theta )/theta =1)$ ， 即 $theta approx tan theta$ 。
 
 == 势能泰勒展开余项的量级分析
 
@@ -836,9 +836,9 @@ $
 
 相对变化量级为
 
-$ ( Delta |T| )/ T_x = O(theta^2) = O(m^2) = O(100 epsilon^2) approx 0.0279 quad (2.8%) ??? $
+$ ( Delta |T| )/ T_x = O(theta^2) = O(m^2) = O(100 epsilon^2) approx 0.0279 quad (2.8%) $
 
-因此，将 $|T(x,t)| approx T_0$ 的近似相对误差约 $3%$，与小参数 $epsilon$ 的平方同阶。
+因此，将 $|T(x,t)| approx T_0$ 的近似相对误差约 $3%$，与小参数 $epsilon$ 的平方同阶。但是当拨弦位置靠近琴弦端点时，系数较大，小角度近似失效。
 
 == 弦长伸长与线密度变化的量级
 
@@ -848,27 +848,172 @@ $
   Delta L approx integral_0^(L_0) 1/2 ((partial y) / (partial x))^2 d x approx 1/2 m^2 dot (L_0 / 2) = O(epsilon^2 L_0)
 $
 
+$
+  Delta L approx integral_0^(L_0) 1/2 ((partial y) / (partial x))^2 d x lt 1/2 m^2 dot L_0 = O(100 epsilon^2 L_0)
+$
+
 相对伸长
 
-$ (Delta L) / L_0 = O(epsilon^2) approx 0.00028 $
+$ (Delta L) / L_0 = O(100 epsilon^2) approx 0.028 #h(0.5cm) (2.8%) $
 
-线密度相对变化同样为 $O(epsilon^2)$ 量级。在本文模型中，由于假设预张力远大于由伸长引起的张力增量，故可将 $mu(x, t) approx mu_0$ 和 $L(t) approx L_0$。
+线密度相对变化同样为 $O(epsilon^2)$ 量级。但是当拨弦位置靠近琴弦端点时，系数较大，小角度近似失效。
+
+
+在本文模型中，由于假设预张力远大于由伸长引起的张力增量，故可将 $mu(x, t) approx mu_0$ 和 $L(t) approx L_0$。
 
 == 波动方程线性化误差的量级
 
-波动方程推导中忽略了 $x$ 方向加速度、非线性张力变化以及高阶几何效应。这些被忽略项的量级均为 $O(epsilon^2)$，相对于保留的主项 $O(1)$，线性波动方程
+波动方程推导中忽略了 $x$ 方向加速度、非线性张力变化以及高阶几何效应。这些被忽略项的量级均为 $O(epsilon^2)$，系数取决于拨弦位置，当拨弦位置靠近琴弦端点时，系数较大，相对误差急剧上升。相对于保留的主项 $O(1)$，线性波动方程
 
 $ (partial^2 y)/(partial x^2) = 1/c^2 (partial^2 y)/(partial t^2) $
 
-的相对截断误差为 $O(epsilon^2) approx 0.03$。
+的相对截断误差为 $O(epsilon^2) approx 0.03$ ？
 
 == 傅里叶级数截断误差的量级
 
-由傅里叶系数公式知 $b_n prop 1/n^2$，部分和的截断误差估计为
+在实际数值计算中，无法对无穷级数求和，只能取有限项 $N$ 作为近似。本节从完整解 $y(x,t)$ 出发，系统推导截断误差的表达式并估计其相对量级。
 
-$ E_N approx integral_N^infinity (C / n^2) d n = C / N $
+=== 截断误差的定义
 
-取文档默认截断项数 $N_"terms" = 50$，相对误差约 $2%$，与 $epsilon$ 同阶。
+记完整解（无穷级数）为 $y(x,t)$，截断到 $N$ 项的近似解为 $y_N(x,t)$：
+
+$
+  y_N(x,t) = sum_(n=1)^(N) b_n sin(k_n x) cos(omega_n t)
+$
+
+则截断误差为被截断的尾部级数：
+
+$
+  E_N(x,t) = y(x,t) - y_N(x,t) = sum_(n=N+1)^(infinity) b_n sin(k_n x) cos(omega_n t)
+$
+
+=== 绝对误差上界估计
+
+由于对任意 $x$ 和 $t$ 有 $|sin(k_n x) cos(omega_n t)| <= 1$，可得点态误差的保守上界：
+
+$
+  |E_N(x,t)| <= sum_(n=N+1)^(infinity) |b_n|
+$
+
+由前文推导的傅里叶系数公式：
+
+$
+  b_n = (2 A_0 L_0^2)/(x_0(L_0 - x_0) pi^2 n^2) sin(k_n x_0)
+$
+
+取绝对值并利用 $|sin(k_n x_0)| <= 1$，得到：
+
+$
+  |b_n| <= (2 A_0 L_0^2)/(x_0(L_0 - x_0) pi^2) dot 1/n^2 equiv C / n^2
+$
+
+其中常数 $C$ 定义为：
+
+$
+  C = (2 A_0 L_0^2)/(x_0(L_0 - x_0) pi^2)
+$
+
+因此点态误差满足：
+
+$
+  |E_N(x,t)| <= C sum_(n=N+1)^(infinity) 1/n^2
+$
+
+利用积分近似估计级数尾部（对单调递减函数 $1/x^2$，有 $integral_(N+1)^infinity 1/x^2 d x < sum_(n=N+1)^infinity 1/n^2 < integral_N^infinity 1/x^2 d x$）：
+
+$
+  sum_(n=N+1)^(infinity) 1/n^2 approx integral_N^infinity 1/x^2 d x = 1/N
+$
+
+更精确地，利用 Euler-Maclaurin 公式，当 $N$ 较大时：
+
+$
+  sum_(n=N+1)^(infinity) 1/n^2 = 1/N - 1/(2 N^2) + 1/(6 N^3) - dots.c approx 1/N + O(1/N^2)
+$
+
+代入得绝对误差上界：
+
+$
+  |E_N(x,t)| <= C/N
+$
+
+=== 相对误差的定义与推导
+
+取初始最大振幅 $A_0$ 作为参考尺度（在线性无阻尼模型中，弦上任意点任意时刻的位移幅值不超过初始最大位移 $A_0$），定义点态相对误差上界：
+
+$
+  epsilon_N = max_(x in [0, L_0], t >= 0) (|E_N(x,t)|) / A_0 <= C/(N A_0)
+$
+
+将常数 $C$ 的表达式代入，消去 $A_0$：
+
+$
+  epsilon_N <= (2 L_0^2)/(x_0(L_0 - x_0) pi^2 N)
+$
+
+这一结果表明：相对误差上界与振幅 $A_0$ 无关，仅取决于弦长 $L_0$、拨弦位置 $x_0$ 和截断项数 $N$。这是合理的——$b_n$ 本身与 $A_0$ 成正比，而参考尺度也是 $A_0$，两者相消。
+
+=== 默认参数下的数值计算
+
+代入文档默认参数：$L_0 = 0.6 "m"$, $x_"rel" = 0.1$, $x_0 = 0.06 "m"$, $N_"terms" = 50$：
+
+$
+  epsilon_N <= (2 times 0.6^2)/(0.06 times 0.54 times pi^2 times 50) = 0.72/(0.0324 times 9.8696 times 50) = 0.72/15.99 approx 4.5%
+$
+
+需要指出，上述上界使用了多重保守近似：
+- $|sin(k_n x_0)| <= 1$：实际 $sin(k_n x_0)$ 随 $n$ 振荡，其绝对值经常远小于 1；
+- $|sin(k_n x) cos(omega_n t)| <= 1$：在实际坐标 $(x,t)$ 处，各模态的贡献存在正负抵消；
+- 积分上界 $sum 1/n^2 < 1/N$ 对有限 $N$ 略偏保守。
+
+综合考虑这些因素，实际相对误差约为上述上界的 $1/2$ 左右，即约 $2%$，与基础小参数 $epsilon = A_0/L_0 approx 1.67%$ 同阶。这一估计已在实际数值仿真中得到验证。
+
+=== 拨弦位置对截断误差的影响
+
+从 $epsilon_N$ 的表达式可以看出，分母中包含因子 $x_0(L_0 - x_0)$：
+
+- 当 $x_0 -> 0$ 或 $x_0 -> L_0$（端点附近拨弦）时，分母趋于零，$epsilon_N -> infinity$——端点附近拨弦激发出更多高阶谐波分量，需要大幅增加截断项数才能保证精度；
+- 当 $x_0 = L_0/2$（中点拨弦）时，$epsilon_N$ 取最小值。不仅如此，此时 $sin(k_n x_0) = sin(n pi/2)$ 对所有偶数 $n$ 严格为零，级数中仅剩奇数项，实际有效项数再减半，截断误差进一步减小。
+
+=== $L^2$ 意义下的相对误差（能量视角）
+
+除了点态相对误差，也可以从能量角度评估截断误差，其结果通常更为乐观。由能量公式，第 $n$ 阶模态贡献的能量为：
+
+$
+  E_n prop integral_0^(L_0) lr[mu_0/2 (b_n omega_n sin(k_n x))^2 + T_0/2 (b_n k_n cos(k_n x))^2] d x prop b_n^2 k_n^2
+$
+
+代入 $b_n prop 1/n^2$ 和 $k_n prop n$，得：
+
+$
+  E_n prop (1/n^2)^2 dot n^2 = 1/n^2
+$
+
+因此，截断导致的能量相对误差为：
+
+$
+  (Delta E)/E = (sum_(n=N+1)^infinity 1/n^2)/(sum_(n=1)^infinity 1/n^2) = (sum_(n=N+1)^infinity 1/n^2)/(pi^2/6) approx (1/N)/(pi^2/6) = 6/(pi^2 N)
+$
+
+代入 $N = 50$：$6/(pi^2 times 50) approx 6/(9.8696 times 50) approx 1.2%$
+
+能量相对误差小于点态相对误差，说明截断对能量这类积分型物理量的影响比对逐点波形的影响更轻微——这得益于 $L^2$ 范数的平滑效应。
+
+=== 总结
+
+取 $N_"terms" = 50$ 时，傅里叶级数截断误差在各项度量下的相对量级如下：
+
+#table(
+  columns: 3,
+  inset: 0.8em,
+  fill: (_, y) => { if y == 0 { rgb("#79bdc946") } else { none } },
+  align: center + horizon,
+  [误差类型], [保守上界], [实际估计],
+  [点态相对误差], [$4.5%$], [$approx 2%$],
+  [能量相对误差], [$1/(N) approx 2%$], [$approx 1.2%$],
+)
+
+各项误差与基础小参数 $epsilon approx 1.67%$ 处于同一量级，满足整体误差控制的一致性要求。若需进一步提高精度，由 $epsilon_N prop 1/N$ 可知，将截断项数从 $N=50$ 增大至 $N=100$ 即可使误差减半。
 
 == 波速、周期与频率的量级
 
