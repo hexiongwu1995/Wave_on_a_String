@@ -51,7 +51,7 @@
 
 #set math.equation(numbering: "(1)", supplement: [Eq.])
 
-#show math.equation: set block(breakable: false)
+#show math.equation: set block(breakable: true)
 
 #import "@preview/cetz:0.5.0"
 #import "@preview/gentle-clues:1.3.1": *
@@ -95,8 +95,8 @@
 
 
 // 真实数学建模时需要使用到的默认参数（与Javascript进行数据共享）
-#let A_0 = 0.01           // 初始振幅，单位为 m，参数滑块数据范围：(0.005, 0.02)
-#let L_0 = 0.6            // 弦长，单位为 m，参数滑块数据范围：(0.2, 1.0)
+#let A_0 = 0.01           // 初始振幅，单位为 m，参数滑块数据范围：(0.001, 0.01)
+#let L_0 = 0.6            // 弦长，单位为 m，参数滑块数据范围：(0.6, 0.8)
 #let x_rel = 0.1          // 相对拨弦位置，无量纲，参数滑块数据范围：(0.1, 0.9)
 #let x_0 = x_rel * L_0    // 拨弦位置，单位为 m，由相对拨弦位置计算得到
 #let T_0 = 80             // 预张力，单位为 N，参数滑块数据范围：(70, 100)
@@ -795,7 +795,7 @@ $ m = 0.01 / 0.06 approx 0.1667 = 10 epsilon $
 
 对应的最大倾角满足
 
-$ theta_max = arctan(m)  approx 0.165 "rad" approx 9.46^degree $
+$ theta_max = arctan(m) approx 0.165 "rad" approx 9.46^degree $
 
 此时
 
@@ -827,7 +827,12 @@ $ O(4 epsilon^2) approx 0.0011 quad (0.11%) $
 
 由微元受力分析知张力水平分量 $T_x$ 为常数，而实际张力模长
 
-$ |T| = T_x / (cos theta) approx T_x /(1 - 1/2 theta^2 + O(theta^4)) ??? $
+$
+  |T| & = T_x / (cos theta) \
+      & approx T_x /(1 - 1/2 theta^2 + O(theta^4)) \
+      & approx (T_x [1 - 1/2 theta^2 + O(theta^4) + 1/2 theta^2 - O(theta^4)])/(1 - 1/2 theta^2 + O(theta^4)) \
+      & approx T_x [1 + O(theta^2)]
+$
 
 相对变化量级为
 
@@ -839,7 +844,9 @@ $ ( Delta |T| )/ T_x = O(theta^2) = O(m^2) = O(100 epsilon^2) approx 0.0279 quad
 
 弦的实际几何伸长量为
 
-$ Delta L approx integral_0^(L_0) 1/2 ((partial y) / (partial x))^2 d x approx 1/2 m^2 dot (L_0 / 2) = O(epsilon^2 L_0) $
+$
+  Delta L approx integral_0^(L_0) 1/2 ((partial y) / (partial x))^2 d x approx 1/2 m^2 dot (L_0 / 2) = O(epsilon^2 L_0)
+$
 
 相对伸长
 
