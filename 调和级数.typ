@@ -104,7 +104,7 @@ $ H_n = sum_(k=1)^n 1/k > sum_(k=1)^n integral_k^(k+1) 1/x dif x = integral_1^(n
     xlabel: [$x$],
     ylabel: [$y$],
     width: 80%,
-    height: 8cm,
+    height: 6cm,
     xlim: (0, 12),
     ylim: (0, 1.2),
     xaxis: (
@@ -120,6 +120,7 @@ $ H_n = sum_(k=1)^n 1/k > sum_(k=1)^n integral_k^(k+1) 1/x dif x = integral_1^(n
       x => 1 / x,
       stroke: 1pt + rgb("#0066ff"),
       label: [$f(x) = 1/x$],
+      mark:none,
       z-index: 3,
     ),
     lq.fill-between(
@@ -154,6 +155,74 @@ $ H_n = sum_(k=1)^n 1/k > sum_(k=1)^n integral_k^(k+1) 1/x dif x = integral_1^(n
 $ gamma = lim_(n->oo) (H_n - ln n) approx 0.5772156649 dots.c $
 
 这个常数 $gamma$ 被称为欧拉—马歇罗尼常数（Euler-Mascheroni Constant），它是数学中最重要的常数之一。至今人们仍不知道 $gamma$ 是有理数还是无理数，这仍是数学界的一个未解之谜。
+
+#let n = range(1, 101)
+#let ln_n = n.map(it => calc.ln(it))
+#let H_n = {
+  let arr = ()
+  let s = 0.0
+  for k in range(1, 101) {
+    s += 1.0 / k
+    arr.push(s)
+  }
+  arr
+}
+#let diff = H_n.zip(ln_n).map(((a, b)) => a - b)
+
+#show lq.selector(lq.legend): set grid(row-gutter: 2pt)
+
+#figure(
+  lq.diagram(
+    title: [],
+    xlabel: [$n$],
+    ylabel: [],
+    width: 80%,
+    height: 7cm,
+    xlim: (0, 105),
+    ylim: (0, 6),
+    xaxis: (
+      ticks: (1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100),
+    ),
+    yaxis: (
+      ticks: (0, 1, 2, 3, 4, 5),
+    ),
+    grid: (stroke: luma(95%), stroke-sub: luma(98%) + 0.25pt),
+    legend: (stroke: none, position: left + top),
+    lq.plot(
+      n,
+      H_n,
+      stroke: 1.2pt + rgb("#ff6600"),
+      mark: none,
+      label: [$H_n$],
+      z-index: 2,
+    ),
+    lq.plot(
+      n,
+      ln_n,
+      stroke: 1.2pt + rgb("#0066ff"),
+      mark: none,
+      label: [$ln n$],
+      z-index: 2,
+    ),
+    lq.plot(
+      n,
+      diff,
+      stroke: 1pt + rgb("#aeaeae"),
+      mark: none,
+      label: [$H_n - ln n$],
+      z-index: 3,
+    ),
+    lq.plot(
+      (1, 100),
+      (0.5772156649, 0.5772156649),
+      mark: none,
+      stroke: (thickness: 0.5pt, paint: rgb("#7a7a7a"), dash: "dotted"),
+      label: [$gamma approx 0.5772$],
+      z-index: 3,
+    ),
+  ),
+  caption: [调和数 $H_n$、对数函数 $ln n$ 及其差值 $H_n - ln n$ 随 $n$ 的变化趋势。可见 $H_n$ 与 $ln n$ 均随 $n$ 增大而增长，但二者之差逐渐趋近于欧拉—马歇罗尼常数 $gamma$。],
+) <fig:harmonic-asymptotic>
 
 = 调和级数的推广
 
