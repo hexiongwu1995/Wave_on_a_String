@@ -319,8 +319,10 @@ $ a_n = 2 / pi integral_0^pi x^2 cos(n x) dif x $
 $
   a_n & = 2 / pi ( [x^2 (sin(n x)) / n]_0^pi - integral_0^pi 2x (sin(n x)) / n dif x ) \
       & = - 4 / (n pi) integral_0^pi x sin(n x) dif x \
-      & = - 4 / (n pi) ( [x (-cos(n x)) / n]_0^pi + integral_0^pi (cos(n x)) / n dif x ) \
-      & = - 4 / (n pi) dot (pi (-1)^n) / n \ & = (4 (-1)^n) / n^2
+      & = - 4 / (n pi) ( [x (-cos(n x)) / n]_0^pi + integral_0^pi (cos(n x)) / n dif x ) \ 
+      & = - 4/(n pi) ( [ pi/n (-1)^(n-1) - 0 ] + 0  ) \ 
+      & = - 4 / (n pi) dot (pi (-1)^(n-1)) / n \ 
+      & = (4 (-1)^n) / n^2
 $
 
 因此，$x^2$ 的傅里叶级数展开为：
@@ -357,16 +359,13 @@ $ sum_(n = 1)^oo 1 / n^2 = pi^2 / 6 $
 #show lq.selector(lq.legend): set grid(row-gutter: 10pt)
 
 
-
-
-
 #figure(
   lq.diagram(
     title: [],
     xlabel: [$n$],
     ylabel: [$S_n$],
     width: 80%,
-    height: 3cm,
+    height: 4cm,
     xlim: (0, N + 3),
     ylim: (0, 1.7),
     xaxis: (
