@@ -231,6 +231,173 @@ $ zeta(p) = sum_(n=1)^oo 1/n^p $
 
 特别地，当 $p = 2$ 时，我们得到著名的巴塞尔问题（Basel Problem），欧拉在1734年证明了其和为 $pi^2/6$。交替调和级数 $sum_(n=1)^oo (-1)^(n+1)/n$ 则是一个条件收敛的级数，其和为 $ln 2$，但通过重排其项可以使其收敛到任意实数甚至发散——这正是黎曼重排定理的一个经典示例。
 
+= $p = 2$ 的情形——巴塞尔问题
+
+当 $p = 2$ 时，$p$-级数取如下形式：
+
+$ zeta(2) = sum_(n=1)^oo 1/n^2 = 1/1^2 + 1/2^2 + 1/3^2 + dots.c $
+
+这一级数的求和问题是数学史上著名的巴塞尔问题（Basel Problem），其名称源自瑞士城市巴塞尔——伯努利家族和欧拉的故乡。该问题由皮耶特罗·门戈利（Pietro Mengoli）于1644年正式提出，此后近一个世纪里，众多数学家尝试求解却未能成功。
+
+这一问题的解决者是莱昂哈德·欧拉（Leonhard Euler）。1734年，年仅27岁的欧拉以非凡的洞察力证明了：
+
+$ sum_(n=1)^oo 1/n^2 = pi^2 / 6 $
+
+#figure(
+  lq.diagram(
+    title: [],
+    xlabel: [$x$],
+    ylabel: [$y$],
+    width: 80%,
+    height: 6cm,
+    xlim: (0, 12),
+    ylim: (0, 1.1),
+    xaxis: (
+      ticks: range(1, 12),
+    ),
+    yaxis: (
+      ticks: lq.linspace(0, 1, num: 3),
+    ),
+    grid: (stroke: luma(95%), stroke-sub: luma(98%) + 0.25pt),
+    legend: (stroke: none),
+    lq.plot(
+      lq.linspace(0.9, 11.5, num: 100),
+      x => 1 / (x * x),
+      stroke: 1pt + rgb("#0066ff"),
+      label: [$f(x) = 1/x^2$],
+      mark: none,
+    ),
+    lq.fill-between(
+      lq.linspace(1, 11, num: 100),
+      x => 1 / (x * x),
+      fill: rgb("#aaccff"),
+      stroke: none,
+      label: [曲线下方面积 $integral_1^(n+1) 1/x^2 dif x$],
+    ),
+    lq.bar(
+      range(1, 11),
+      x => 1 / (x * x),
+      fill: rgb("#ffccaa2b"),
+      stroke: 0.8pt + rgb("#ff6600"),
+      align: left,
+      width: 1,
+      label: [矩形面积 $1/k^2$（$p = 2$ 级数各项）],
+    ),
+  ),
+  caption: [$p = 2$ 时积分判别法示意：与调和级数不同，$f(x) = 1/x^2$ 的曲线下降极为迅速。每个矩形 $1/k^2$ 的面积仍大于其下方曲边梯形的面积，但由于反常积分 $integral_1^oo 1/x^2 dif x = 1$ 收敛至有限值，$p = 2$ 级数亦收敛。],
+) <fig:integral-test-p2>
+
+欧拉的证明基于正弦函数的无穷乘积展开。他将函数 $sinc(x) = sin x / x$ 表示为无穷乘积：
+
+$ sin x / x = product_(n=1)^oo (1 - x^2 / (n^2 pi^2)) = 1 - x^2 / (3!) + x^4 / (5!) - x^6 / (7!) + dots.c $
+
+通过比较等式两边 $x^2$ 项的系数，立即得到 $sum_(n=1)^oo 1/n^2 = pi^2 / 6$。这一结果不仅让欧拉一举成名，也标志着无穷级数理论的重大突破。
+
+== 傅里叶级数证明
+
+除欧拉的无穷乘积法外，傅里叶级数（Fourier Series）提供了另一种简洁而优雅的证明途径。考虑函数 $f(x) = x^2$ 在区间 $[-pi, pi]$ 上的傅里叶级数展开。由于 $f(x)=x^2$在 $[-pi, pi]$ 上连续且绝对可积，因此它可以展开为一个傅里叶级数：
+
+$ f(x) = a_0/2 + sum_(n=1)^infinity [a_n cos((2 pi n x)/T) + b_n sin((2 pi n x)/T)] $
+
+ $T= 2 pi$, 且：$ b_n = 2/T integral_(-pi)^(pi) f(x) sin((2 pi n x)/T) dif x $
+
+
+由于 $f(x)$ 是偶函数，则：$ b_n = 0 $ 
+
+因为奇函数与偶函数的乘积在对称区间上的积分为零。因此，$f(x)$ 的傅里叶级数展开式中仅包含余弦项：
+
+$ f(x) = a_0 / 2 + sum_(n = 1)^oo a_n cos(n x) $
+
+其中傅里叶系数由欧拉公式计算：
+
+$ a_0 = 2 / pi integral_0^pi x^2 dif x = 2 / pi dot [x^3 / 3]_0^pi = 2 / 3 pi^2 $
+
+$ a_n = 2 / pi integral_0^pi x^2 cos(n x) dif x $
+
+利用两次分部积分计算 $a_n$：
+
+$
+  a_n & = 2 / pi ( [x^2 (sin(n x)) / n]_0^pi - integral_0^pi 2x (sin(n x)) / n dif x ) \
+      & = - 4 / (n pi) integral_0^pi x sin(n x) dif x \
+      & = - 4 / (n pi) ( [x (-cos(n x)) / n]_0^pi + integral_0^pi (cos(n x)) / n dif x ) \
+      & = - 4 / (n pi) dot (pi (-1)^n) / n \ & = (4 (-1)^n) / n^2
+$
+
+因此，$x^2$ 的傅里叶级数展开为：
+
+$ x^2 = pi^2 / 3 + sum_(n = 1)^oo (4 (-1)^n) / n^2 cos(n x) $
+
+令 $x = pi$，则 $cos(n pi) = (-1)^n$，代入上式得：
+
+$ pi^2 = pi^2 / 3 + sum_(n = 1)^oo (4 (-1)^n) / n^2 (-1)^n = pi^2 / 3 + 4 sum_(n = 1)^oo 1 / n^2 $
+
+移项整理即得：
+
+$ sum_(n = 1)^oo 1 / n^2 = pi^2 / 6 $
+
+这一证明仅需微积分和傅里叶级数的基础知识，无需无穷乘积等较深的概念。其核心思想——将函数展开为三角级数后代入特定自变量——逻辑清晰、计算直接，堪称巴塞尔问题最直观的证明之一。
+
+
+
+为了直观地观察 $zeta(2)$ 的收敛过程，我们可以绘制其部分和 $S_n = sum_(k=1)^n 1/k^2$ 随 $n$ 的变化曲线。注意到该级数收敛极为迅速——前 10 项的和就已达到 $pi^2/6$ 的约 $99.5%$，远快于调和级数。
+
+#let N = 30
+#let n2 = range(1, N + 1)
+#let S_n = {
+  let arr = ()
+  let s = 0.0
+  for k in range(1, N + 1) {
+    s += 1.0 / (k * k)
+    arr.push(s)
+  }
+  arr
+}
+#let zeta2 = calc.pi * calc.pi / 6
+
+#show lq.selector(lq.legend): set grid(row-gutter: 10pt)
+
+
+
+
+
+#figure(
+  lq.diagram(
+    title: [],
+    xlabel: [$n$],
+    ylabel: [$S_n$],
+    width: 80%,
+    height: 3cm,
+    xlim: (0, N + 3),
+    ylim: (0, 1.7),
+    xaxis: (
+      ticks: range(0, N + 1, step: 5),
+    ),
+    yaxis: (
+      ticks: lq.linspace(0, 1.6, num: 5),
+    ),
+    grid: (stroke: luma(95%), stroke-sub: luma(98%) + 0.25pt),
+    legend: (stroke: none, position: (75%, 20%)),
+    lq.plot(
+      n2,
+      S_n,
+      stroke: 1.2pt + rgb("#0066ff"),
+      mark: none,
+      step: end,
+      label: [$display(S_n = sum_(k=1)^n 1/k^2)$],
+    ),
+    lq.plot(
+      (1, N),
+      (zeta2, zeta2),
+      mark: none,
+      stroke: (thickness: 1pt, paint: rgb("#898989"), dash: "dashed"),
+      label: [$pi^2/6 approx 1.6449$],
+    ),
+  ),
+  caption: [$p = 2$ 时，部分和 $S_n = sum_(k=1)^n 1/k^2$ 的收敛趋势。灰色虚线为极限值 $pi^2/6$。],
+) <fig:basel-convergence>
+
+由 @fig:basel-convergence 可以清晰地看到，$S_n$ 随着 $n$ 的增大迅速趋近于 $pi^2/6 approx 1.6449$。与调和级数缓慢发散形成鲜明对比，$p = 2$ 的级数收敛十分迅速，这也再次印证了 $p$-级数在 $p = 1$ 处发生了从发散到收敛的临界转折。
+
 
 
 
