@@ -142,7 +142,7 @@ $ H_n = sum_(k=1)^n 1/k > sum_(k=1)^n integral_k^(k+1) 1/x dif x = integral_1^(n
   caption: [积分判别法示意],
 ) <fig:integral-test>
 
-蓝色曲线为 $f(x)=1/x$，橙色矩形代表调和级数前 10 项（高度 $1/k$、宽度 $1$，左端位于 $x = k$ 处）。由于 $f(x)$ 单调递减，在区间 $[k, k+1]$ 上恒有 $1/k >= 1/x$，因此每个矩形面积均大于其下方曲边梯形的面积，求和即得 $H_n > integral_1^(n+1) 1/x dif x = ln(n+1)$，从而推出调和级数发散。
+在 @fig:integral-test 中，蓝色曲线为 $f(x)=1/x$，橙色矩形代表调和级数前 10 项（高度 $1/k$、宽度 $1$，左端位于 $x = k$ 处）。由于 $f(x)$ 单调递减，在区间 $[k, k+1]$ 上恒有 $1/k >= 1/x$，因此每个矩形面积均大于其下方曲边梯形的面积，求和即得 $H_n > integral_1^(n+1) 1/x dif x = ln(n+1)$，从而推出调和级数发散。
 
 
 = 调和数的渐近行为
@@ -216,8 +216,10 @@ $ gamma = lim_(n->oo) (H_n - ln n) approx 0.5772156649 dots.c $
       label: [$gamma approx 0.5772$],
     ),
   ),
-  caption: [调和数 $H_n$、对数函数 $ln n$ 及其差值 $H_n - ln n$ 随 $n$ 的变化趋势。可见 $H_n$ 与 $ln n$ 均随 $n$ 增大而增长，但二者之差逐渐趋近于欧拉—马歇罗尼常数 $gamma$。],
+  caption: [调和数 $H_n$、对数函数 $ln n$ 及其差值 $H_n - ln n$ 随 $n$ 的变化趋势。],
 ) <fig:harmonic-asymptotic>
+
+由 @fig:harmonic-asymptotic 可见： $H_n$ 与 $ln n$ 均随 $n$ 增大而增长，但二者之差逐渐趋近于欧拉—马歇罗尼常数 $gamma$。
 
 = 调和级数的推广
 
