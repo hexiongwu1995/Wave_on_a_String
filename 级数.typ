@@ -25,6 +25,7 @@
 #set heading(numbering: "1.1")
 
 #show heading.where(level: 1): it => {
+  counter(math.equation).update(0)
   v(1em)
   set text(size: 15pt, weight: "bold", fill: rgb("0066fff0"))
   it
@@ -488,6 +489,21 @@ $ sum_(n = 1)^oo 1 / n^2 = pi^2 / 6 $
 由 @fig:basel-convergence 可以清晰地看到，$S_n$ 随着 $n$ 的增大迅速趋近于 $pi^2/6 approx 1.6449$。与调和级数缓慢发散形成鲜明对比，$p = 2$ 的级数收敛十分迅速，这也再次印证了 $p$-级数在 $p = 1$ 处发生了从发散到收敛的临界转折。
 
 
+
+== 证明
+
+证明：对单调递减函数 $1/x^2$，有
+$ display(integral_(N+1)^infinity 1/x^2 dif x < sum_(n=N+1)^infinity 1/n^2 < integral_N^infinity 1/x^2 dif x) $
+
+因为 $1/x^2$ 严格单调递减，在区间 $[k, k+1]$ 上恒有 $1/(k+1)^2 < 1/x^2 < 1/k^2$。对 $k = N+1$：
+
+$ integral_(N+1)^(N+2) 1/x^2 dif x < 1/(N+1)^2 < integral_N^(N+1) 1/x^2 dif x $
+
+推广到一般项：对任意 $k >= N+1$，有
+$ integral_(k)^(k+1) 1/x^2 dif x < 1/k^2 < integral_(k-1)^(k) 1/x^2 dif x $
+
+对 $k$ 从 $N+1$ 到 $oo$ 求和，即得：
+$ integral_(N+1)^oo 1/x^2 dif x < sum_(n=N+1)^oo 1/n^2 < integral_N^oo 1/x^2 dif x $
 
 
 

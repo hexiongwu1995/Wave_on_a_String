@@ -26,6 +26,7 @@
 #set heading(numbering: "1.1")
 
 #show heading.where(level: 1): it => {
+  counter(math.equation).update(0)
   v(1em)
   set text(size: 15pt, weight: "bold", fill: rgb("0066fff0"))
   it
