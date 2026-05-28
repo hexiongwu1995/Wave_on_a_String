@@ -96,9 +96,11 @@ $ H_n = sum_(k=1)^n 1/k > sum_(k=1)^n integral_k^(k+1) 1/x dif x = integral_1^(n
 
 当 $n -> oo$ 时，$ln(n+1)$ 趋于无穷大，因而 $H_n$ 也必趋于无穷大，这就从积分比较的角度严格证明了调和级数的发散性。这条不等式还给出了调和数的一个下界估计：$H_n > ln(n+1)$，清晰地揭示了调和数至少以对数速度增长的事实。
 
+#show lq.selector(lq.legend): set grid(row-gutter: 6pt)
+
 #figure(
   lq.diagram(
-    title: [积分判别法的几何示意],
+    title: [],
     xlabel: [$x$],
     ylabel: [$y$],
     width: 80%,
@@ -111,6 +113,8 @@ $ H_n = sum_(k=1)^n 1/k > sum_(k=1)^n integral_k^(k+1) 1/x dif x = integral_1^(n
     yaxis: (
       ticks: (0, 0.5, 1.0),
     ),
+    grid: (stroke: luma(95%), stroke-sub: luma(98%) + 0.25pt),
+    legend: (stroke: none),
     lq.plot(
       lq.linspace(0.9, 11.5, num: 100),
       x => 1 / x,
@@ -137,8 +141,11 @@ $ H_n = sum_(k=1)^n 1/k > sum_(k=1)^n integral_k^(k+1) 1/x dif x = integral_1^(n
       z-index: 2,
     ),
   ),
-  caption: [积分判别法示意：蓝色曲线为 $f(x)=1/x$，橙色矩形代表调和级数前 10 项（高度 $1/k$、宽度 $1$，左端位于 $x = k$ 处）。由于 $f(x)$ 单调递减，在区间 $[k, k+1]$ 上恒有 $1/k >= 1/x$，因此每个矩形面积均大于其下方曲边梯形的面积，求和即得 $H_n > integral_1^(n+1) 1/x dif x = ln(n+1)$，从而推出调和级数发散。],
+  caption: [积分判别法示意],
 ) <fig:integral-test>
+
+蓝色曲线为 $f(x)=1/x$，橙色矩形代表调和级数前 10 项（高度 $1/k$、宽度 $1$，左端位于 $x = k$ 处）。由于 $f(x)$ 单调递减，在区间 $[k, k+1]$ 上恒有 $1/k >= 1/x$，因此每个矩形面积均大于其下方曲边梯形的面积，求和即得 $H_n > integral_1^(n+1) 1/x dif x = ln(n+1)$，从而推出调和级数发散。
+
 
 = 调和数的渐近行为
 
