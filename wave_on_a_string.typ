@@ -49,7 +49,8 @@
   it
 }
 
-#set math.equation(numbering: "(1)", supplement: [Eq.])
+#set math.equation(numbering: n => numbering("(1.1)", counter(heading).get().first(), n), supplement: [Eq.])
+
 
 #show math.equation: set block(breakable: true)
 
