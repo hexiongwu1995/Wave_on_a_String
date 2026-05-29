@@ -49,7 +49,7 @@
 
 #set text(
   lang: "zh",
-  font: ("Cambria Math", "KaiTi", "DengXian", "New Computer Modern Sans", "Noto Sans Mono CJK SC", "SimSun"),
+  font: ("Cambria Math", "KaiTi", "DengXian", "New Computer Modern Sans", "Noto Sans Mono CJK SC", "SimSun", "Seogoe UI Emoji"),
   size: 10pt,
 )
 
