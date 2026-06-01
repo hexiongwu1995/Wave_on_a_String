@@ -23,9 +23,44 @@
         body {
             font-family: 'Noto Serif SC', 'KaiTi', 'Georgia', serif;
             color: #1a1a2e;
-            background: #f5f6fa;
+            background: linear-gradient(180deg, #87CEEB 0%, #B0E0F6 40%, #E0F4FF 70%, #F0F8FF 100%);
+            background-attachment: fixed;
             line-height: 1.8;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 白云装饰 */
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::before {
+            width: 300px;
+            height: 100px;
+            top: 80px;
+            left: -40px;
+            box-shadow:
+                180px 30px 0 -10px rgba(255, 255, 255, 0.5),
+                400px 60px 0 -20px rgba(255, 255, 255, 0.4),
+                600px 10px 0 -5px rgba(255, 255, 255, 0.6);
+        }
+
+        body::after {
+            width: 250px;
+            height: 80px;
+            top: 200px;
+            right: -30px;
+            box-shadow:
+                -200px 40px 0 -15px rgba(255, 255, 255, 0.5),
+                -450px 70px 0 -25px rgba(255, 255, 255, 0.3);
         }
 
         /* ===== 顶部导航栏 ===== */
@@ -47,6 +82,8 @@
             justify-content: space-between;
             padding: 0 24px;
             height: 56px;
+            position: relative;
+            z-index: 2;
         }
 
         .top-nav .nav-brand {
@@ -140,6 +177,8 @@
             max-width: 1100px;
             margin: 0 auto;
             padding: 40px 24px;
+            position: relative;
+            z-index: 1;
         }
 
         /* ===== 介绍区 ===== */
@@ -459,7 +498,7 @@
                         <span>Fourier 级数</span>
                         <span>CeTZ 绘图</span>
                     </div>
-                    <a href="wave-model.pdf" class="btn btn-primary" target="_blank">下载 PDF</a>
+                    <a href="wave-model.pdf" class="btn btn-primary" target="_blank">查看 PDF</a>
                 </div>
             </div>
 
@@ -480,7 +519,7 @@
                         <span>泰勒公式</span>
                         <span>狄利克雷条件</span>
                     </div>
-                    <a href="math-basics.pdf" class="btn btn-primary" target="_blank">下载 PDF</a>
+                    <a href="math-basics.pdf" class="btn btn-primary" target="_blank">查看 PDF</a>
                 </div>
             </div>
 
@@ -501,7 +540,7 @@
                         <span>欧拉证明</span>
                         <span>lilaq 图表</span>
                     </div>
-                    <a href="series.pdf" class="btn btn-primary" target="_blank">下载 PDF</a>
+                    <a href="series.pdf" class="btn btn-primary" target="_blank">查看 PDF</a>
                 </div>
             </div>
 
