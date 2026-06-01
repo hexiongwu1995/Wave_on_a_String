@@ -1,0 +1,48 @@
+# Workflow: Deploy HTML from docs/ to GitHub Pages
+#
+# 触发条件: 推送到 main 分支时自动触发
+# 部署方式: 使用 GitHub Actions 官方 Pages 动作
+# 部署内容: docs/ 目录下的所有文件（Wave_on_a_String.html, guitar.svg 等）
+
+name: Deploy to GitHub Pages
+
+on:
+  # 推送到 main 分支时触发
+  push:
+    branches: [ "main" ]
+  # 允许手动触发
+  workflow_dispatch:
+
+# 设置 GITHUB_TOKEN 的权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 确保同一时间只有一个部署在进行
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # 上传 docs/ 目录作为静态站点内容
+          path: 'docs'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
