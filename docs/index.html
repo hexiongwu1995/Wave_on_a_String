@@ -23,12 +23,21 @@
         body {
             font-family: 'Noto Serif SC', 'KaiTi', 'Georgia', serif;
             color: #1e293b;
-            background: #ffffff;
+            background: #eef1f5;
             background-attachment: fixed;
             line-height: 1.8;
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
+        }
+
+        .page-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 0px;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
         }
 
         /* ===== Hero 区域 ===== */
@@ -333,113 +342,117 @@
 
 <body>
 
-    <!-- ===== Hero ===== -->
-    <section class="hero">
-        <h1>弦上波的数学模型</h1>
-        <p class="subtitle">MATHEMATICAL MODELING OF WAVES ON A STRING</p>
-        <p class="author-info">何雄武 &nbsp;·&nbsp; 2026 年 5 月</p>
-    </section>
+    <div class="page-wrapper">
 
-    <!-- ===== 主体 ===== -->
-    <div class="container">
+        <!-- ===== Hero ===== -->
+        <section class="hero">
+            <h1>弦上波的数学模型</h1>
+            <p class="subtitle">MATHEMATICAL MODELING OF WAVES ON A STRING</p>
+            <p class="author-info">何雄武 &nbsp;·&nbsp; 2026 年 5 月</p>
+        </section>
 
-        <!-- 介绍 -->
-        <div class="intro-section">
-            <p>
-                本项目系统研究两端固定的琴弦在初始激励下的自由振动问题。
-                从物理建模到偏微分方程求解，完整呈现了弦振动理论的数学推导过程，
-                并提供了交互式可视化模拟工具。
-            </p>
-            <div class="divider"></div>
-        </div>
+        <!-- ===== 主体 ===== -->
+        <div class="container">
 
-        <!-- ===== 文档卡片 ===== -->
-        <div class="card-grid">
+            <!-- 介绍 -->
+            <div class="intro-section">
+                <p>
+                    本项目系统研究两端固定的琴弦在初始激励下的自由振动问题。
+                    从物理建模到偏微分方程求解，完整呈现了弦振动理论的数学推导过程，
+                    并提供了交互式可视化模拟工具。
+                </p>
+                <div class="divider"></div>
+            </div>
 
-            <!-- 卡片 1：弦上波的数学模型 -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-icon">🏛️</div>
-                    <h2>弦上波的数学模型</h2>
-                    <div class="card-sub">wave_on_a_string.typ &nbsp;|&nbsp; 完整推导</div>
-                    <p>
-                        从真实物理模型出发，建立坐标系和微元受力分析，
-                        推导波动方程，使用分离变量法求解，
-                        结合边界条件与初始三角波条件，
-                        得到完整的 Fourier 正弦级数解。
-                    </p>
-                    <div class="card-tags">
-                        <span>波动方程</span>
-                        <span>分离变量法</span>
-                        <span>Fourier 级数</span>
-                        <span>CeTZ 绘图</span>
+            <!-- ===== 文档卡片 ===== -->
+            <div class="card-grid">
+
+                <!-- 卡片 1：弦上波的数学模型 -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-icon">🏛️</div>
+                        <h2>弦上波的数学模型</h2>
+                        <div class="card-sub">wave_on_a_string.typ &nbsp;|&nbsp; 完整推导</div>
+                        <p>
+                            从真实物理模型出发，建立坐标系和微元受力分析，
+                            推导波动方程，使用分离变量法求解，
+                            结合边界条件与初始三角波条件，
+                            得到完整的 Fourier 正弦级数解。
+                        </p>
+                        <div class="card-tags">
+                            <span>波动方程</span>
+                            <span>分离变量法</span>
+                            <span>Fourier 级数</span>
+                            <span>CeTZ 绘图</span>
+                        </div>
+                        <a href="wave-model.pdf" class="btn btn-primary" target="_blank">查看 PDF</a>
                     </div>
-                    <a href="wave-model.pdf" class="btn btn-primary" target="_blank">查看 PDF</a>
                 </div>
-            </div>
 
-            <!-- 卡片 2：数学常识（傅里叶级数与泰勒公式） -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-icon">∑</div>
-                    <h2>数学常识</h2>
-                    <div class="card-sub">数学常识.typ &nbsp;|&nbsp; 基础知识</div>
-                    <p>
-                        系统介绍傅里叶级数的定义、系数公式、正交性基础、
-                        狄利克雷收敛条件、复数形式，以及傅里叶正弦级数在
-                        弦振动问题中的应用。涵盖泰勒公式等基础内容。
-                    </p>
-                    <div class="card-tags">
-                        <span>Fourier 级数</span>
-                        <span>正交性</span>
-                        <span>泰勒公式</span>
-                        <span>狄利克雷条件</span>
+                <!-- 卡片 2：数学常识（傅里叶级数与泰勒公式） -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-icon">∑</div>
+                        <h2>数学常识</h2>
+                        <div class="card-sub">数学常识.typ &nbsp;|&nbsp; 基础知识</div>
+                        <p>
+                            系统介绍傅里叶级数的定义、系数公式、正交性基础、
+                            狄利克雷收敛条件、复数形式，以及傅里叶正弦级数在
+                            弦振动问题中的应用。涵盖泰勒公式等基础内容。
+                        </p>
+                        <div class="card-tags">
+                            <span>Fourier 级数</span>
+                            <span>正交性</span>
+                            <span>泰勒公式</span>
+                            <span>狄利克雷条件</span>
+                        </div>
+                        <a href="math-basics.pdf" class="btn btn-primary" target="_blank">查看 PDF</a>
                     </div>
-                    <a href="math-basics.pdf" class="btn btn-primary" target="_blank">查看 PDF</a>
                 </div>
-            </div>
 
-            <!-- 卡片 3：级数（调和级数与巴塞尔问题） -->
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-icon">∞</div>
-                    <h2>级数理论</h2>
-                    <div class="card-sub">级数.typ &nbsp;|&nbsp; 调和级数与巴塞尔问题</div>
-                    <p>
-                        从级数的基本定义出发，深入探讨调和级数的发散性证明
-                        （Oresme 分组法与积分判别法），引出 Euler-Mascheroni 常数，
-                        并完整呈现欧拉对巴塞尔问题的天才证明。
-                    </p>
-                    <div class="card-tags">
-                        <span>调和级数</span>
-                        <span>巴塞尔问题</span>
-                        <span>欧拉证明</span>
-                        <span>lilaq 图表</span>
+                <!-- 卡片 3：级数（调和级数与巴塞尔问题） -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-icon">∞</div>
+                        <h2>级数理论</h2>
+                        <div class="card-sub">级数.typ &nbsp;|&nbsp; 调和级数与巴塞尔问题</div>
+                        <p>
+                            从级数的基本定义出发，深入探讨调和级数的发散性证明
+                            （Oresme 分组法与积分判别法），引出 Euler-Mascheroni 常数，
+                            并完整呈现欧拉对巴塞尔问题的天才证明。
+                        </p>
+                        <div class="card-tags">
+                            <span>调和级数</span>
+                            <span>巴塞尔问题</span>
+                            <span>欧拉证明</span>
+                            <span>lilaq 图表</span>
+                        </div>
+                        <a href="series.pdf" class="btn btn-primary" target="_blank">查看 PDF</a>
                     </div>
-                    <a href="series.pdf" class="btn btn-primary" target="_blank">查看 PDF</a>
+                </div>
+
+            </div>
+
+            <!-- ===== 交互模拟特色卡片 ===== -->
+            <div class="featured-card">
+                <div class="featured-body">
+                    <div class="featured-text">
+                        <h2>🎻 交互式弦振动模拟</h2>
+                        <p>
+                            基于 p5.js 构建的实时物理模拟，支持调节振幅、弦长、
+                            张力、线密度等物理参数，可切换驻波/简正模显示模式，
+                            实时观察波速、基频等物理量，直观理解弦振动的数学原理。
+                        </p>
+                        <a href="Visualization_of_wave_on_a_string.html" class="btn">
+                            打开交互模拟 →
+                        </a>
+                    </div>
+                    <div class="featured-preview">
+                        <div class="preview-icon">🎵</div>
+                    </div>
                 </div>
             </div>
 
-        </div>
-
-        <!-- ===== 交互模拟特色卡片 ===== -->
-        <div class="featured-card">
-            <div class="featured-body">
-                <div class="featured-text">
-                    <h2>🎻 交互式弦振动模拟</h2>
-                    <p>
-                        基于 p5.js 构建的实时物理模拟，支持调节振幅、弦长、
-                        张力、线密度等物理参数，可切换驻波/简正模显示模式，
-                        实时观察波速、基频等物理量，直观理解弦振动的数学原理。
-                    </p>
-                    <a href="Visualization_of_wave_on_a_string.html" class="btn">
-                        打开交互模拟 →
-                    </a>
-                </div>
-                <div class="featured-preview">
-                    <div class="preview-icon">🎵</div>
-                </div>
-            </div>
         </div>
 
     </div>
