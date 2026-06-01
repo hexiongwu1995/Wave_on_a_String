@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>琴弦振动可视化</title>
     <link rel="icon" type="image/svg+xml" href="guitar.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/p5@2.2.3/lib/p5.min.js"></script>
@@ -13,10 +16,73 @@
     <!-- <script src="https://cdn.jsdelivr.net/gh/your-handle/p5.vector-arrows/index.js"></script> -->
     <!-- 使用linspace, map, foreach, sum等函数 -->
     <style>
+        /* 导航栏样式 */
+        .top-nav {
+            background: #1a1a2e;
+            color: #e8e8e8;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+            margin: -10px -10px 0;
+        }
+
+        .top-nav .nav-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            height: 56px;
+        }
+
+        .top-nav .nav-brand {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+            text-decoration: none;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .top-nav .nav-brand img {
+            width: 22px;
+            height: 22px;
+            filter: brightness(0) invert(1);
+        }
+
+        .top-nav .nav-links {
+            display: flex;
+            gap: 6px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-nav .nav-links a {
+            color: #b0b0c0;
+            text-decoration: none;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            padding: 8px 14px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .top-nav .nav-links a:hover,
+        .top-nav .nav-links a.active {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
         body {
             font-family: KaiTi, system-ui, sans-serif;
-            margin: 20px 10px;
-            padding: 0;
+            margin: 0;
+            padding: 10px;
             background: white;
             color: black;
             line-height: 1.6;
@@ -226,6 +292,19 @@
 </head>
 
 <body>
+
+    <!-- 导航栏 -->
+    <nav class="top-nav">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-brand">
+                <img src="guitar.svg" alt="logo"> 弦振动理论
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="Visualization_of_wave_on_a_string.html" class="active">交互模拟</a></li>
+            </ul>
+        </div>
+    </nav>
 
     <div class="container">
         <header>
