@@ -1,8 +1,8 @@
-name: Deploy to GitHub Pages
+name: Deploy shiroa book to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -21,20 +21,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+      - name: Install Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
 
-      - name: Upload artifact
+      - name: Install shiroa
+        run: cargo install --git https://github.com/Myriad-Dreamin/shiroa --locked shiroa
+
+      - name: Build book
+        run: shiroa build --mode dyn-paged --path-to-root /Wave_on_a_String/
+
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'docs'   # 关键修正：指向包含 HTML 文件的 docs 文件夹
+          path: ./book
 
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
