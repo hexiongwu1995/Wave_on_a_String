@@ -22,11 +22,8 @@
 
         body {
             font-family: 'Noto Serif SC', 'KaiTi', 'Georgia', serif;
-            color: #2c2c2c;
-            background: #faf8f5;
-            background-image:
-                radial-gradient(ellipse at 50% 0%, rgba(210, 195, 170, 0.15) 0%, transparent 70%),
-                radial-gradient(ellipse at 80% 100%, rgba(180, 160, 140, 0.08) 0%, transparent 50%);
+            color: #1e293b;
+            background: #ffffff;
             background-attachment: fixed;
             line-height: 1.8;
             min-height: 100vh;
@@ -36,13 +33,14 @@
 
         /* ===== Hero 区域 ===== */
         .hero {
-            background: #f5f0eb;
-            color: #2c2c2c;
+            background: #1a56db;
+            color: #ffffff;
             padding: 72px 24px 56px;
             text-align: center;
             position: relative;
             overflow: hidden;
-            border-bottom: 2px solid #e8e0d6;
+            border-bottom: 1px solid #1a56db;
+            box-shadow: 0 2px 12px rgba(26, 86, 219, 0.06);
         }
 
         .hero::before {
@@ -51,8 +49,8 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #c0a88a, #a8896a, #c0a88a);
+            height: 4px;
+            background: linear-gradient(90deg, #1a56db, #60a5fa, #1a56db);
             pointer-events: none;
         }
 
@@ -62,7 +60,7 @@
             letter-spacing: 4px;
             margin-bottom: 16px;
             position: relative;
-            color: #3a3a3a;
+            color: #ffffff;
         }
 
         .hero .subtitle {
@@ -70,14 +68,14 @@
             font-family: 'Inter', sans-serif;
             font-weight: 300;
             letter-spacing: 6px;
-            color: #8a7a6a;
+            color: rgba(255, 255, 255, 0.85);
             margin-bottom: 24px;
             position: relative;
         }
 
         .hero .author-info {
             font-size: 14px;
-            color: #9a8a7a;
+            color: rgba(255, 255, 255, 0.75);
             font-family: 'Inter', sans-serif;
             position: relative;
         }
@@ -96,7 +94,7 @@
             text-align: center;
             max-width: 800px;
             margin: 0 auto 48px;
-            color: #555;
+            color: #475569;
         }
 
         .intro-section p {
@@ -106,10 +104,10 @@
 
         .intro-section .divider {
             width: 60px;
-            height: 2px;
-            background: #c0a88a;
+            height: 3px;
+            background: linear-gradient(90deg, #1a56db, #93b4e8);
             margin: 20px auto;
-            border-radius: 1px;
+            border-radius: 2px;
         }
 
         /* ===== 文档卡片网格 ===== */
@@ -123,14 +121,15 @@
         .card {
             background: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 6px rgba(26, 86, 219, 0.04);
             overflow: hidden;
-            transition: box-shadow 0.25s;
-            border: 1px solid #ece6de;
+            transition: box-shadow 0.25s, border-color 0.25s;
+            border: 1px solid #dde3ed;
         }
 
         .card:hover {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 20px rgba(26, 86, 219, 0.08);
+            border-color: #93b4e8;
         }
 
         .card-body {
@@ -145,20 +144,20 @@
         .card h2 {
             font-size: 18px;
             font-weight: 700;
-            color: #3a3a3a;
+            color: #1a365d;
             margin-bottom: 8px;
         }
 
         .card .card-sub {
             font-size: 13px;
             font-family: 'Inter', sans-serif;
-            color: #6b7280;
+            color: #64748b;
             margin-bottom: 12px;
         }
 
         .card p {
             font-size: 14px;
-            color: #4b5563;
+            color: #475569;
             line-height: 1.7;
             margin-bottom: 16px;
         }
@@ -174,8 +173,8 @@
             font-family: 'Inter', sans-serif;
             font-size: 11px;
             padding: 2px 10px;
-            background: #f0ebe4;
-            color: #7a6a5a;
+            background: #e8edf5;
+            color: #4a6fa5;
             border-radius: 12px;
             font-weight: 500;
         }
@@ -194,23 +193,23 @@
         }
 
         .card .btn-primary {
-            background: #8a7a6a;
+            background: #1a56db;
             color: white;
         }
 
         .card .btn-primary:hover {
-            background: #6a5a4a;
+            background: #1643b0;
         }
 
         .card .btn-outline {
             background: transparent;
-            color: #8a7a6a;
-            border: 1.5px solid #8a7a6a;
+            color: #1a56db;
+            border: 1.5px solid #1a56db;
             margin-left: 8px;
         }
 
         .card .btn-outline:hover {
-            background: #8a7a6a;
+            background: #1a56db;
             color: white;
         }
 
@@ -218,8 +217,8 @@
         .featured-card {
             background: #ffffff;
             border-radius: 8px;
-            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.05);
-            border: 1px solid #ece6de;
+            box-shadow: 0 1px 6px rgba(26, 86, 219, 0.04);
+            border: 1px solid #dde3ed;
             overflow: hidden;
             margin-bottom: 48px;
         }
@@ -240,13 +239,13 @@
         .featured-card .featured-text h2 {
             font-size: 20px;
             font-weight: 700;
-            color: #3a3a3a;
+            color: #1a365d;
             margin-bottom: 8px;
         }
 
         .featured-card .featured-text p {
             font-size: 14px;
-            color: #4b5563;
+            color: #475569;
             line-height: 1.7;
             margin-bottom: 16px;
         }
@@ -254,7 +253,7 @@
         .featured-card .featured-text .btn {
             display: inline-block;
             padding: 10px 24px;
-            background: #8a7a6a;
+            background: #1a56db;
             color: white;
             border-radius: 6px;
             text-decoration: none;
@@ -265,7 +264,7 @@
         }
 
         .featured-card .featured-text .btn:hover {
-            background: #6a5a4a;
+            background: #1643b0;
         }
 
         .featured-card .featured-preview {
