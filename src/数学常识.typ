@@ -22,8 +22,17 @@
 
 #set text(
   lang: "zh",
-  font: ("Cambria Math", "KaiTi", "DengXian", "New Computer Modern Sans", "Noto Sans Mono CJK SC", "SimSun"),
-  size: 10pt,
+  font: (
+    "Cambria Math",
+    "Source Han Serif SC",
+    "Source Han Sans SC",
+    "Noto Serif CJK SC",
+    "Noto Sans CJK SC",
+    "KaiTi",
+    "DengXian",
+    "SimSun",
+  ),
+  size: 20pt,
 )
 
 #show table: it => {

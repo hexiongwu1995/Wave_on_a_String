@@ -32,14 +32,15 @@
   lang: "zh",
   font: (
     "Cambria Math",
+    "Source Han Serif SC",
+    "Source Han Sans SC",
+    "Noto Serif CJK SC",
+    "Noto Sans CJK SC",
     "KaiTi",
     "DengXian",
-    "New Computer Modern Sans",
-    "Noto Sans Mono CJK SC",
     "SimSun",
-    "Seogoe UI Emoji",
   ),
-  size: 10pt,
+  size: 20pt,
 )
 
 #show table: it => {

@@ -39,8 +39,12 @@
 #let main-font = (
   "Charter",
   "Source Han Serif SC",
-  // "Source Han Serif TC",
-  // shiroa's embedded font
+  "Source Han Sans SC",
+  "Noto Serif CJK SC",
+  "Noto Sans CJK SC",
+  "KaiTi",
+  "DengXian",
+  "SimSun",
   "Libertinus Serif",
 )
 #let code-font = (
@@ -51,7 +55,7 @@
 
 // Sizes
 #let main-size = if is-web-target {
-  16pt
+  20pt
 } else {
   10.5pt
 }
@@ -68,6 +72,9 @@
   font-size: 1.2rem;
   font-weight: 600;
   font-style: italic;
+}
+:root {
+  font-size: 62.5%;
 }
 ```
 
@@ -113,7 +120,6 @@
       // remove rest margins.
       rest: 0pt,
     ),
-    height: auto,
   ) if is-web-target and not is-html-target
 
   let common = (
