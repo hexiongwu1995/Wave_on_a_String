@@ -254,10 +254,14 @@
             max-width: 100%;
         }
 
+        #pdf-viewer .pdf-page {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
         #pdf-viewer .pdf-page canvas {
             display: block;
-            max-width: 100%;
-            height: auto !important;
+            margin: 0 auto;
         }
 
         .loading {
@@ -411,6 +415,7 @@
         function renderPage(pageNum) {
             pdfDoc.getPage(pageNum).then(page => {
                 const viewport = page.getViewport({ scale: zoomScale });
+                const outputScale = window.devicePixelRatio || 1;
 
                 // 移除该页已有的 canvas（如果有）
                 const existing = document.querySelector(`.pdf-page[data-page="${pageNum}"]`);
@@ -422,8 +427,15 @@
 
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
+
+                // 物理像素分辨率 × devicePixelRatio，确保 Retina 屏清晰
+                const logicalW = Math.ceil(viewport.width);
+                const logicalH = Math.ceil(viewport.height);
+                canvas.width = logicalW * outputScale;
+                canvas.height = logicalH * outputScale;
+                canvas.style.width = logicalW + 'px';
+                canvas.style.height = logicalH + 'px';
+                ctx.scale(outputScale, outputScale);
 
                 container.appendChild(canvas);
                 // 在当前页位置插入
