@@ -71,6 +71,7 @@
 
 #show math.equation: set block(breakable: true)
 
+#import "@preview/typsite:0.1.0"
 #import "@preview/cetz:0.5.0"
 #import "@preview/gentle-clues:1.3.1": *
 #import "@preview/physica:0.9.8": *
