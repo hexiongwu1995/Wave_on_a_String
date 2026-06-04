@@ -10,8 +10,6 @@
   title: "弦上波的数学模型",
   author: "何雄武",
   date: datetime.today(),
-  keywords: ("数学建模", "弦上波模型"),
-  abstract: [本文研究了...],
 )
 
 

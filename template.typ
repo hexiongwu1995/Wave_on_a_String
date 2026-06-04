@@ -3,15 +3,14 @@
 
 
 // 辅助函数定义
-#let title-page(title, author, date, abstract, keywords) = {
+#let title-page(title, author, date) = {
   align(center)[
     #v(5cm)
-    #set text(size: 24pt, weight: "bold")
+    #set text(size: 20pt, weight: "bold")
     #title
     #set text(size: 12pt)
     #v(1em)
     #author
-
     #v(1em)
 
     #date.display("[year]-[month]-[day]")
@@ -21,7 +20,6 @@
 
 
 #let table-of-contents() = {
-  heading(level: 1, numbering: none)[目录]
   outline(depth: 2, indent: auto)
   pagebreak()
 }
@@ -31,8 +29,6 @@
   // 文档元数据参数
   title: "文档标题",
   author: "作者姓名",
-  abstract: [],
-  keywords: (),
   date: datetime.today(),
   // 其他自定义参数...
   body,
@@ -105,13 +101,13 @@
 
 
   // 封面 / 前置部分
-  title-page(title, author, date, abstract, keywords) // 自定义封面函数
+  title-page(title, author, date) // 自定义封面函数
 
 
   // 目录
   table-of-contents()
 
-  // 6. 正文内容（必须置于最后）
+  // 正文内容（必须置于最后）
   body
 }
 

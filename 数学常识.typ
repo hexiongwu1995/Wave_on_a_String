@@ -1,74 +1,13 @@
 
-#set page(
-  paper: "a4",
-  flipped: false,
-  margin: 1.5cm,
-  numbering: "1/1",
-  number-align: center,
-  fill: rgb("#ffffff13"),
-)
-
-#set document(
-  title: [数学常识],
-  author: ("何雄武",),
-  date: datetime(year: 2026, month: 5, day: 6),
-)
-
-#show title: it => {
-  set align(center)
-  set text(size: 18pt, weight: "bold", fill: rgb("#0066fff0"))
-  it
-  v(1em)
-}
-
-#set par(spacing: 2em, leading: 1em, justify: true)
-
-#set heading(numbering: "1.1")
-
-#show heading.where(level: 1): it => {
-  counter(math.equation).update(0)
-  v(1em)
-  set text(size: 15pt, weight: "bold", fill: rgb("#0066fff0"))
-  it
-  v(1em)
-}
-
-#show heading.where(level: 2): it => {
-  set text(size: 10pt, weight: "bold", fill: rgb("#0066fff0"))
-  it
-  v(0.5em)
-}
-
-#set text(
-  lang: "zh",
-  font: ("Cambria Math", "KaiTi", "DengXian", "New Computer Modern Sans", "Noto Sans Mono CJK SC", "SimSun"),
-  size: 10pt,
-)
-
-#show table: it => {
-  set align(center)
-  it
-}
-
-#set math.equation(numbering: n => numbering("(1.1)", counter(heading).get().first(), n), supplement: [Eq.])
-
-#show math.equation: set block(breakable: true)
-
-
-
-#import "@preview/typsite:0.1.0"
+#import "template.typ": conf
 #import "@preview/lilaq:0.6.0" as lq
-#import "@preview/cetz:0.5.0"
 #import "@preview/gentle-clues:1.3.1": *
-#import "@preview/physica:0.9.8": *
-#import "@preview/numty:0.1.0" as nt
 
-#show: gentle-clues.with(
-  breakable: true,
+#show: conf.with(
+  title: "数学常识",
+  author: "何雄武",
+  date: datetime.today(),
 )
-
-#title()
-
 
 
 = 级数的定义
