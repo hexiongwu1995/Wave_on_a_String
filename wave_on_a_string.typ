@@ -1,86 +1,13 @@
-#set page(
-  paper: "a4",
-  flipped: false,
-  margin: 1.5cm,
-  numbering: "1/1",
-  number-align: center,
-  fill: rgb("#ffffff13"),
-)
 
-#set document(
-  title: [弦上波的数学模型],
-  author: ("何雄武",),
-  date: datetime(year: 2026, month: 5, day: 6),
-  keywords: ("数学建模", "弦上波模型"),
-)
-
-#show title: it => {
-  set align(center)
-  set text(size: 18pt, weight: "bold", fill: rgb("#0066fff0"))
-  it
-  v(1em)
-}
-
-#set par(spacing: 2em, leading: 1em, justify: true)
-
-#set heading(numbering: "1.1")
-
-#show heading.where(level: 1): it => {
-  counter(math.equation).update(0)
-  v(1em)
-  set text(size: 15pt, weight: "bold", fill: rgb("0066fff0"))
-  it
-  v(1em)
-}
-
-#show heading.where(level: 2): it => {
-  v(0.5em)
-  set text(size: 12pt, weight: "bold", fill: rgb("0066fff0"))
-  it
-  v(0.5em)
-}
-
-#show heading.where(level: 3): it => {
-  v(0.5em)
-  set text(size: 10pt, weight: "bold", fill: rgb("0066fff0"))
-  it
-  v(0.5em)
-}
-
-#set text(
-  lang: "zh",
-  font: (
-    "Cambria Math",
-    "KaiTi",
-    "DengXian",
-    "New Computer Modern Sans",
-    "Noto Sans Mono CJK SC",
-    "SimSun",
-    "Seogoe UI Emoji",
-  ),
-  size: 10pt,
-)
-
-#show table: it => {
-  set align(center)
-  it
-}
-
-#set math.equation(numbering: n => numbering("(1.1)", counter(heading).get().first(), n), supplement: [Eq.])
-
-
-#show math.equation: set block(breakable: true)
-
-#import "@preview/typsite:0.1.0"
+#import "template.typ": conf
 #import "@preview/cetz:0.5.0"
 #import "@preview/gentle-clues:1.3.1": *
-#import "@preview/physica:0.9.8": *
-#import "@preview/numty:0.1.0" as nt
-#show: gentle-clues.with(
-  breakable: true,
-)
 
-#title()
+#show: conf.with(
+  title: "弦上波的数学模型",
+  author: "何雄武",
+  date: datetime.today(),
+)
 
 
 = 真实物理模型
@@ -1734,5 +1661,3 @@ $ cal(L)(y_2) = cal(N)_2 (y_0, y_1) quad text("二阶修正") $
 本章从数学角度系统介绍了小参数检验方法。该方法的核心是通过量纲分析构造无量纲小参数 $epsilon$，然后利用 $epsilon lt.double 1$ 这一事实，对控制方程或物理量进行量级估计、渐近展开和模型简化。小参数检验与摄动理论既有联系又有区别：前者是近似合理性的验证工具，后者是近似解的系统构造方法。在实际应用中，二者通常结合使用，共同构成从物理模型到可解数学模型之间的桥梁。
 
 在本文的弦振动模型中，$epsilon = A_0/L_0$ 是最基本的小参数，所有近似的相对误差均可量化为 $epsilon$ 的幂次与几何相关因子的乘积。$epsilon approx 1.67%$ 的默认取值确保了各近似环节的一致性，使得线性化模型在小振幅条件下具有良好的工程精度。
-
-#image("images/吉他.webp", width:50%)
