@@ -28,13 +28,13 @@
 #show heading.where(level: 1): it => {
   counter(math.equation).update(0)
   v(1em)
-  set text(size: 15pt, weight: "bold", fill: rgb("0066fff0"))
+  set text(size: 15pt, weight: "bold", fill: rgb("#0066fff0"))
   it
   v(1em)
 }
 
 #show heading.where(level: 2): it => {
-  set text(size: 10pt, weight: "bold", fill: rgb("0066fff0"))
+  set text(size: 10pt, weight: "bold", fill: rgb("#0066fff0"))
   it
   v(0.5em)
 }
